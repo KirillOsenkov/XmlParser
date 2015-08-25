@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" TreatAsLocalProperty="OutDir">
+
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+
+  <PropertyGroup>
+    <SrcRoot Condition="$(SrcRoot) == ''">$(MSBuildThisFileDirectory)</SrcRoot>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">$(SrcRoot)\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(DevEnvDir)' == ''">
+    <DevEnvDir Condition="'$(VisualStudioVersion)' == '12.0'">$(VS120COMNTOOLS)\..\IDE</DevEnvDir>
+    <DevEnvDir Condition="'$(VisualStudioVersion)' == '14.0'">$(VS140COMNTOOLS)\..\IDE</DevEnvDir>
+    <DevEnvDir>$([System.IO.Path]::GetFullPath('$(DevEnvDir)'))</DevEnvDir>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Common Properties">
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">12.0</VisualStudioVersion>
+    <VisualStudioReferenceAssemblyVersion>$(VisualStudioVersion).0.0</VisualStudioReferenceAssemblyVersion>
+    <OutputType Condition="$(OutputType)==''">Library</OutputType>
+    <TargetFrameworkVersion Condition="$(TargetFrameworkVersion)==''">v4.5</TargetFrameworkVersion>
+    <SignAssembly Condition="'$(SignAssembly)' == ''">false</SignAssembly>
+    <DefineConstants Condition="'$(SignAssembly)' == 'true'">$(DefineConstants);SIGN;</DefineConstants>
+    <DelaySign>false</DelaySign>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Configuration Condition="'$(Configuration)'==''">Debug</Configuration>
+    <Platform Condition="'$(Platform)'==''">Mixed Platforms</Platform>
+    <RootNamespace Condition="$(RootNamespace) == ''">$(AssemblyName)</RootNamespace>
+  </PropertyGroup>
+  
+  <PropertyGroup Label="Output directory">
+    <BinariesFolder>$(SrcRoot)\bin</BinariesFolder>
+    <IntermediateOutputRoot>$(SrcRoot)\obj</IntermediateOutputRoot>
+    <IntermediateOutputPath>$(IntermediateOutputRoot)\$(Configuration)\$(AssemblyName)</IntermediateOutputPath>
+    <AssemblyInfoPath Condition="'$(AssemblyInfoPath)' == ''">$(IntermediateOutputRoot)\GlobalAssemblyInfo.cs</AssemblyInfoPath>
+    <CommonOutputDirectory>$(BinariesFolder)\$(Configuration)</CommonOutputDirectory>
+    <BuildToCommonOutputDirectory Condition="'$(BuildToCommonOutputDirectory)' == ''">true</BuildToCommonOutputDirectory>
+    <OutputPath Condition="'$(OutputPath)' == ''">$(BinariesFolder)\$(Configuration)\$(AssemblyName)</OutputPath>
+    <OutputPath Condition="'$(BuildToCommonOutputDirectory)' == 'true'">$(CommonOutputDirectory)</OutputPath>
+    <OutDir>$(OutputPath)\</OutDir>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Platform)' == 'Any CPU' OR '$(Platform)' == 'AnyCPU' OR '$(Platform)' == 'Mixed Platforms'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <DefineConstants>$(DefineConstants);DEBUG;TRACE</DefineConstants>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <DebugType>pdbonly</DebugType>
+    <DefineConstants>$(DefineConstants);TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+
+</Project>

@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <SrcRoot>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildProjectDirectory), Common.props))</SrcRoot>
+    <ProjectGuid>{2989FBE6-194F-46C9-8EF4-022F62519C9A}</ProjectGuid>
+    <AssemblyName>Microsoft.Language.Xml</AssemblyName>
+  </PropertyGroup>
+  <Import Project="$(SrcRoot)\Common.props" />
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ArrayElement.cs" />
+    <Compile Include="Buffer.cs" />
+    <Compile Include="Classification\ClassificationTypeNames.cs" />
+    <Compile Include="Classification\ClassifierVisitor.cs" />
+    <Compile Include="Classification\XmlClassificationTypes.cs" />
+    <Compile Include="ErrorFactory.cs" />
+    <Compile Include="HashFunctions.cs" />
+    <Compile Include="ObjectPool.cs" />
+    <Compile Include="Parser.cs" />
+    <Compile Include="PooledStringBuilder.cs" />
+    <Compile Include="Scanner.cs" />
+    <Compile Include="ScannerState.cs" />
+    <Compile Include="StringBuffer.cs" />
+    <Compile Include="StringTable.cs" />
+    <Compile Include="Structure\IXmlElement.cs" />
+    <Compile Include="Syntax\BadTokenSyntax.cs" />
+    <Compile Include="Syntax\ERRID.cs" />
+    <Compile Include="Syntax\KeywordSyntax.cs" />
+    <Compile Include="Syntax\PunctuationSyntax.cs" />
+    <Compile Include="Syntax\SeparatedSyntaxList`1.cs" />
+    <Compile Include="Syntax\SeparatedSyntaxListBuilder`1.cs" />
+    <Compile Include="Syntax\SkippedTokensTriviaSyntax.cs" />
+    <Compile Include="Syntax\SkippedTriviaBuilder.cs" />
+    <Compile Include="Syntax\StructuredTriviaSyntax.cs" />
+    <Compile Include="Syntax\SyntaxFactory.cs" />
+    <Compile Include="Syntax\SyntaxKind.cs" />
+    <Compile Include="Syntax\SyntaxList.cs" />
+    <Compile Include="Syntax\SyntaxList`1.cs" />
+    <Compile Include="Syntax\SyntaxListBuilder.cs" />
+    <Compile Include="Syntax\SyntaxListBuilder`1.cs" />
+    <Compile Include="Syntax\SyntaxListPool.cs" />
+    <Compile Include="Syntax\SyntaxNode.cs" />
+    <Compile Include="Syntax\SyntaxNodeExtensions.cs" />
+    <Compile Include="Syntax\SyntaxRewriter.cs" />
+    <Compile Include="Syntax\SyntaxSubKind.cs" />
+    <Compile Include="Syntax\SyntaxToken.cs" />
+    <Compile Include="Syntax\SyntaxTrivia.cs" />
+    <Compile Include="Syntax\SyntaxVisitor.cs" />
+    <Compile Include="Syntax\TriviaInfo.cs" />
+    <Compile Include="Syntax\XmlAttributeSyntax.cs" />
+    <Compile Include="Syntax\XmlCDataSectionSyntax.cs" />
+    <Compile Include="Syntax\XmlCommentSyntax.cs" />
+    <Compile Include="Syntax\XmlContentExtensions.cs" />
+    <Compile Include="Syntax\XmlContext.cs" />
+    <Compile Include="Syntax\XmlDeclarationOptionSyntax.cs" />
+    <Compile Include="Syntax\XmlDeclarationSyntax.cs" />
+    <Compile Include="Syntax\XmlDocumentSyntax.cs" />
+    <Compile Include="Syntax\XmlElementEndTagSyntax.cs" />
+    <Compile Include="Syntax\XmlElementStartTagSyntax.cs" />
+    <Compile Include="Syntax\XmlElementSyntax.cs" />
+    <Compile Include="Syntax\XmlEmptyElementSyntax.cs" />
+    <Compile Include="Syntax\XmlNameSyntax.cs" />
+    <Compile Include="Syntax\XmlNameTokenSyntax.cs" />
+    <Compile Include="Syntax\XmlNodeSyntax.cs" />
+    <Compile Include="Syntax\XmlPrefixSyntax.cs" />
+    <Compile Include="Syntax\XmlProcessingInstructionSyntax.cs" />
+    <Compile Include="Syntax\XmlStringSyntax.cs" />
+    <Compile Include="Syntax\XmlTextSyntax.cs" />
+    <Compile Include="Syntax\XmlTextTokenSyntax.cs" />
+    <Compile Include="Utilities\FirstTokenReplacer.cs" />
+    <Compile Include="Utilities\LastTokenReplacer.cs" />
+    <Compile Include="XmlCharType.cs" />
+    <Compile Include="XmlWhitespaceChecker.cs" />
+  </ItemGroup>
+  <Import Project="$(SrcRoot)\Common.targets" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
