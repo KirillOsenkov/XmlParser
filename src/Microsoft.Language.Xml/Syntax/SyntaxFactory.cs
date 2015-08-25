@@ -187,7 +187,7 @@ namespace Microsoft.Language.Xml
         internal static XmlDeclarationSyntax XmlDeclaration(PunctuationSyntax lessThanQuestionToken, SyntaxToken xmlKeyword, XmlDeclarationOptionSyntax version, XmlDeclarationOptionSyntax encoding, XmlDeclarationOptionSyntax standalone, PunctuationSyntax questionGreaterThanToken)
         {
             Debug.Assert(lessThanQuestionToken != null && lessThanQuestionToken.Kind == SyntaxKind.LessThanQuestionToken);
-            Debug.Assert(xmlKeyword != null && xmlKeyword.Kind == SyntaxKind.XmlKeyword);
+            //Debug.Assert(xmlKeyword != null && xmlKeyword.Kind == SyntaxKind.XmlKeyword);
             Debug.Assert(version != null);
             Debug.Assert(questionGreaterThanToken != null && questionGreaterThanToken.Kind == SyntaxKind.QuestionGreaterThanToken);
             return new XmlDeclarationSyntax(SyntaxKind.XmlDeclaration, lessThanQuestionToken, xmlKeyword, version, encoding, standalone, questionGreaterThanToken);

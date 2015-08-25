@@ -32,14 +32,14 @@ namespace Microsoft.Language.Xml
 
         public XmlNodeSyntax Parse()
         {
-            Debug.Assert(
-                CurrentToken.Kind == SyntaxKind.LessThanToken ||
-                CurrentToken.Kind == SyntaxKind.LessThanGreaterThanToken ||
-                CurrentToken.Kind == SyntaxKind.LessThanSlashToken ||
-                CurrentToken.Kind == SyntaxKind.BeginCDataToken ||
-                CurrentToken.Kind == SyntaxKind.LessThanExclamationMinusMinusToken ||
-                CurrentToken.Kind == SyntaxKind.LessThanQuestionToken,
-                "Invalid XML");
+            //Debug.Assert(
+            //    CurrentToken.Kind == SyntaxKind.LessThanToken ||
+            //    CurrentToken.Kind == SyntaxKind.LessThanGreaterThanToken ||
+            //    CurrentToken.Kind == SyntaxKind.LessThanSlashToken ||
+            //    CurrentToken.Kind == SyntaxKind.BeginCDataToken ||
+            //    CurrentToken.Kind == SyntaxKind.LessThanExclamationMinusMinusToken ||
+            //    CurrentToken.Kind == SyntaxKind.LessThanQuestionToken,
+            //    "Invalid XML");
 
             XmlNodeSyntax Result = null;
             if (CurrentToken.Kind == SyntaxKind.LessThanQuestionToken)
@@ -144,7 +144,7 @@ namespace Microsoft.Language.Xml
             followingMisc = ParseXmlMisc(false, whitespaceChecker, ref node);
             body = node as XmlNodeSyntax;
 
-            Debug.Assert(CurrentToken.Kind == SyntaxKind.EndOfFileToken);
+            //Debug.Assert(CurrentToken.Kind == SyntaxKind.EndOfFileToken);
 
             return SyntaxFactory.XmlDocument(prologue, precedingMisc, body, followingMisc, CurrentToken);
         }
@@ -235,18 +235,18 @@ namespace Microsoft.Language.Xml
 
         public XmlNodeSyntax ParseXmlElement(ScannerState enclosingState)
         {
-            Debug.Assert(
-                IsToken(CurrentToken,
-                    SyntaxKind.LessThanToken,
-                    SyntaxKind.LessThanGreaterThanToken,
-                    SyntaxKind.LessThanSlashToken,
-                    SyntaxKind.BeginCDataToken,
-                    SyntaxKind.LessThanExclamationMinusMinusToken,
-                    SyntaxKind.LessThanQuestionToken,
-                    SyntaxKind.LessThanPercentEqualsToken,
-                    SyntaxKind.XmlTextLiteralToken,
-                    SyntaxKind.BadToken),
-                "ParseXmlElement call on wrong token.");
+            //Debug.Assert(
+            //    IsToken(CurrentToken,
+            //        SyntaxKind.LessThanToken,
+            //        SyntaxKind.LessThanGreaterThanToken,
+            //        SyntaxKind.LessThanSlashToken,
+            //        SyntaxKind.BeginCDataToken,
+            //        SyntaxKind.LessThanExclamationMinusMinusToken,
+            //        SyntaxKind.LessThanQuestionToken,
+            //        SyntaxKind.LessThanPercentEqualsToken,
+            //        SyntaxKind.XmlTextLiteralToken,
+            //        SyntaxKind.BadToken),
+            //    "ParseXmlElement call on wrong token.");
 
             XmlNodeSyntax xml = null;
             var contexts = new List<XmlContext>(0);
