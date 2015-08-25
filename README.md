@@ -11,3 +11,9 @@ This is work in progress and by no means complete. Specifically:
  * Although most of the tree is immutable, shortcuts were taken just to get it working, for example parent and position information were slapped directly onto the nodes, instead of proper red-green model like in Roslyn.
  * Code wasn't tuned for performance and allocations, I'm sure a lot can be done to reduce memory consumption by the resulting tree. It should be pretty efficient though.
  * I reserve the right to accept only very high quality pull requests. I have very limited time to work on this so I ask everybody to please respect that.
+
+Sample:
+
+```
+var root = Parser.ParseText(xml);
+```
