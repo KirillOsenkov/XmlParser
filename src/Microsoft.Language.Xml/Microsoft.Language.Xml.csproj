@@ -74,6 +74,9 @@
     <Compile Include="XmlCharType.cs" />
     <Compile Include="XmlWhitespaceChecker.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Microsoft.Language.Xml.nuspec" />
+  </ItemGroup>
   <Import Project="$(SrcRoot)\Common.targets" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

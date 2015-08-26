@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>Microsoft.Language.Xml.Editor</id>
-    <summary>An XML language service for the Visual Studio editor</summary>
+    <summary>A simple XML language service for the Visual Studio editor</summary>
     <description>
       Currently includes a classifier, outlining and smart indent.
     </description>
@@ -15,7 +15,7 @@
     <version>$currentVersion$</version>
     <authors>Microsoft</authors>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0.html</licenseUrl>
-    <projectUrl>http://github.com/KirillOsenkov/Microsoft.Language.Xml</projectUrl>
+    <projectUrl>http://github.com/KirillOsenkov/XmlParser</projectUrl>
     <releaseNotes></releaseNotes>
     <tags>Xml LanguageService Classifier VS VisualStudio Editor</tags>
   </metadata>

@@ -33,6 +33,9 @@
       <Name>Microsoft.Language.Xml</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Microsoft.Language.Xml.Editor.nuspec" />
+  </ItemGroup>
   <Import Project="$(SrcRoot)\Common.targets" />
   <Import Project="$(SrcRoot)\ReferencesEditor.targets" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
