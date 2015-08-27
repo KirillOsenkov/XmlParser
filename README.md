@@ -4,6 +4,7 @@ A Roslyn-inspired full-fidelity XML parser with no dependencies and a simple Vis
  * The parser produces a full-fidelity syntax tree, meaning every character of the source text is represented in the tree. The tree covers the entire source text.
  * The parser has no dependencies and can easily be made portable. I would appreciate a high quality pull request making the parser portable.
  * The parser is based on the section of the Roslyn VB parser that parses XML literals. The Roslyn code is ported to C# and is made standalone.
+ * The parser is error-tolerant. It will still produce a full tree even from invalid XML with missing tags, extra invalid text, etc. Missing and skipped tokens are still represented in the tree.
  * This library is more low-level than XLinq (for instance XLinq doesn't seem to represent whitespace around attributes). Also it has no idea about XML namespaces and just tells you what's in the source text (whereas in XLinq there's too much ceremony around XML namespaces).
 
 This is work in progress and by no means complete. Specifically:
