@@ -21,4 +21,13 @@ This is work in progress and by no means complete. Specifically:
 
 ```
 var root = Parser.ParseText(xml);
+...
+public interface IXmlElement
+{
+    string Name { get; }
+    IXmlElement Parent { get; }
+    IEnumerable<IXmlElement> Elements { get; }
+    IEnumerable<KeyValuePair<string, string>> Attributes { get; }
+    string this[string attributeName] { get; }
+}
 ```
