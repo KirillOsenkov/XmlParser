@@ -43,6 +43,11 @@
                     return null;
                 }
 
+                if (xmlString.TextTokens.Node == null)
+                {
+                    return "";
+                }
+
                 return xmlString.TextTokens.Node.ToFullString();
             }
         }

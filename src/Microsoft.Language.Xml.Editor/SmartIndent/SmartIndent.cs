@@ -47,7 +47,9 @@ namespace Microsoft.Language.Xml.Editor
                 return indent;
             }
 
-            if (node is IXmlElement && !string.IsNullOrEmpty(((IXmlElement)node).Name))
+            if (node is IXmlElement &&
+                !(node is XmlDocumentSyntax) &&
+                !string.IsNullOrEmpty(((IXmlElement)node).Name))
             {
                 indent += 4;
             }

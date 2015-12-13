@@ -22,7 +22,7 @@ namespace Microsoft.Language.Xml
             this.cancellationToken = cancellationToken;
         }
 
-        public static XmlNodeSyntax ParseText(string xml)
+        public static XmlDocumentSyntax ParseText(string xml)
         {
             var buffer = new StringBuffer(xml);
             var parser = new Parser(buffer);
@@ -30,7 +30,7 @@ namespace Microsoft.Language.Xml
             return root;
         }
 
-        public XmlNodeSyntax Parse()
+        public XmlDocumentSyntax Parse()
         {
             //Debug.Assert(
             //    CurrentToken.Kind == SyntaxKind.LessThanToken ||
@@ -41,23 +41,27 @@ namespace Microsoft.Language.Xml
             //    CurrentToken.Kind == SyntaxKind.LessThanQuestionToken,
             //    "Invalid XML");
 
-            XmlNodeSyntax Result = null;
+            XmlDocumentSyntax result = null;
             if (CurrentToken.Kind == SyntaxKind.LessThanQuestionToken)
             {
-                Result = ParseXmlDocument();
+                result = ParseXmlDocument();
             }
             else
             {
-                Result = ParseXmlElements(ScannerState.Content);
-                if (!(Result is XmlDocumentSyntax))
+                var elements = ParseXmlElements(ScannerState.Content);
+                if (!(elements is XmlDocumentSyntax))
                 {
-                    Result = SyntaxFactory.XmlDocument(null, null, Result, null, CurrentToken);
+                    result = SyntaxFactory.XmlDocument(null, null, elements, null, CurrentToken);
+                }
+                else
+                {
+                    result = elements as XmlDocumentSyntax;
                 }
             }
 
-            SetParentsAndStartPositions(Result);
+            SetParentsAndStartPositions(result);
 
-            return Result;
+            return result;
         }
 
         private void SetParentsAndStartPositions(SyntaxNode node, SyntaxNode parent = null, int start = 0)
@@ -124,7 +128,7 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        public XmlNodeSyntax ParseXmlDocument()
+        public XmlDocumentSyntax ParseXmlDocument()
         {
             Debug.Assert(CurrentToken.Kind == SyntaxKind.LessThanQuestionToken);
             var whitespaceChecker = new XmlWhitespaceChecker();

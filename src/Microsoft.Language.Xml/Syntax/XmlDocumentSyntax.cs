@@ -1,6 +1,8 @@
-﻿namespace Microsoft.Language.Xml
+﻿using System.Collections.Generic;
+
+namespace Microsoft.Language.Xml
 {
-    public class XmlDocumentSyntax : XmlNodeSyntax
+    public class XmlDocumentSyntax : XmlNodeSyntax, IXmlElement
     {
         public XmlNodeSyntax Body { get; private set; }
         public SyntaxNode PrecedingMisc { get; private set; }
@@ -22,6 +24,74 @@
             this.FollowingMisc = followingMisc;
             this.Eof = eof;
             SlotCount = 5;
+        }
+
+        public IXmlElement Root
+        {
+            get
+            {
+                return Body as IXmlElement;
+            }
+        }
+
+        public string Name
+        {
+            get
+            {
+                if (Root == null)
+                {
+                    return null;
+                }
+
+                return Root.Name;
+            }
+        }
+
+        IXmlElement IXmlElement.Parent
+        {
+            get
+            {
+                return null;
+            }
+        }
+
+        public IEnumerable<IXmlElement> Elements
+        {
+            get
+            {
+                if (Root == null)
+                {
+                    return null;
+                }
+
+                return Root.Elements;
+            }
+        }
+
+        public IEnumerable<KeyValuePair<string, string>> Attributes
+        {
+            get
+            {
+                if (Root == null)
+                {
+                    return null;
+                }
+
+                return Root.Attributes;
+            }
+        }
+
+        public string this[string attributeName]
+        {
+            get
+            {
+                if (Root == null)
+                {
+                    return null;
+                }
+
+                return Root[attributeName];
+            }
         }
 
         public override SyntaxNode GetSlot(int index)
