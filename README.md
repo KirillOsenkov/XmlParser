@@ -25,6 +25,7 @@ var root = Parser.ParseText(xml);
 public interface IXmlElement
 {
     string Name { get; }
+    string Value { get; }
     IXmlElement Parent { get; }
     IEnumerable<IXmlElement> Elements { get; }
     IEnumerable<KeyValuePair<string, string>> Attributes { get; }
