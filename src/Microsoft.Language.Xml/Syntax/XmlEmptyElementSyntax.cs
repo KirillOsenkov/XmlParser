@@ -105,6 +105,14 @@ namespace Microsoft.Language.Xml
             }
         }
 
+        public string Value
+        {
+            get
+            {
+                return "";
+            }
+        }
+
         public string this[string attributeName]
         {
             get

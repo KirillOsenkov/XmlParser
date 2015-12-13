@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Microsoft.Language.Xml
 {
@@ -78,6 +79,19 @@ namespace Microsoft.Language.Xml
                 }
 
                 return Root.Attributes;
+            }
+        }
+
+        public string Value
+        {
+            get
+            {
+                if (Root == null)
+                {
+                    return null;
+                }
+
+                return Root.Value;
             }
         }
 

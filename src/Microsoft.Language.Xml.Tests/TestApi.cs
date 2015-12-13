@@ -13,5 +13,13 @@ namespace Microsoft.Language.Xml.Tests
             var attributeValue = root.Attributes.First().Value;
             Assert.AreEqual("", attributeValue);
         }
+
+        [TestMethod]
+        public void TestContent()
+        {
+            var root = Parser.ParseText("<e>Content</e>");
+            var value = root.Value;
+            Assert.AreEqual("Content", value);
+        }
     }
 }

@@ -110,6 +110,19 @@ namespace Microsoft.Language.Xml
             }
         }
 
+        public string Value
+        {
+            get
+            {
+                if (Content != null)
+                {
+                    return Content.ToFullString();
+                }
+
+                return null;
+            }
+        }
+
         public string this[string attributeName]
         {
             get
