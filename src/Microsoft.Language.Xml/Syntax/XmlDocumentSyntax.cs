@@ -35,6 +35,14 @@ namespace Microsoft.Language.Xml
             }
         }
 
+        public IXmlElementSyntax RootSyntax
+        {
+            get
+            {
+                return Body as IXmlElementSyntax;
+            }
+        }
+
         public string Name
         {
             get
@@ -92,6 +100,14 @@ namespace Microsoft.Language.Xml
                 }
 
                 return Root.Value;
+            }
+        }
+
+        public IXmlElementSyntax AsSyntaxElement
+        {
+            get
+            {
+                return Root as IXmlElementSyntax;
             }
         }
 

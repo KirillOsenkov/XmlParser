@@ -24,6 +24,7 @@
     <Compile Include="ScannerState.cs" />
     <Compile Include="StringBuffer.cs" />
     <Compile Include="StringTable.cs" />
+    <Compile Include="Syntax\IXmlElementSyntax.cs" />
     <Compile Include="Structure\IXmlElement.cs" />
     <Compile Include="Syntax\BadTokenSyntax.cs" />
     <Compile Include="Syntax\ERRID.cs" />
@@ -60,6 +61,7 @@
     <Compile Include="Syntax\XmlElementEndTagSyntax.cs" />
     <Compile Include="Syntax\XmlElementStartTagSyntax.cs" />
     <Compile Include="Syntax\XmlElementSyntax.cs" />
+    <Compile Include="Syntax\XmlElementSyntaxBase.cs" />
     <Compile Include="Syntax\XmlEmptyElementSyntax.cs" />
     <Compile Include="Syntax\XmlNameSyntax.cs" />
     <Compile Include="Syntax\XmlNameTokenSyntax.cs" />
