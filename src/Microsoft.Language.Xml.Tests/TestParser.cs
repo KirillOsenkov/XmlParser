@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Language.Xml.Test
@@ -23,6 +24,13 @@ namespace Microsoft.Language.Xml.Test
         public void ParserErrorTolerance2()
         {
             T("<a/ >");
+        }
+
+        [TestMethod]
+        public void ParserAttributeOnNonEmptyElement()
+        {
+            var document = T("<a b='bval'><c /></a>");
+            Assert.AreEqual(1, document.Root.Attributes.Count());
         }
 
         [TestMethod]
@@ -78,7 +86,7 @@ namespace Microsoft.Language.Xml.Test
             }
         }
 
-        private void T(string xml)
+        private XmlDocumentSyntax T(string xml)
         {
             var root = Parser.ParseText(xml);
             var width = root.FullWidth;
@@ -86,6 +94,8 @@ namespace Microsoft.Language.Xml.Test
 
             root.GetLeadingTrivia();
             root.GetTrailingTrivia();
+
+            return root;
         }
     }
 }
