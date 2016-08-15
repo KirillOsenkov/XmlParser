@@ -29,8 +29,9 @@ namespace Microsoft.Language.Xml.Test
         [TestMethod]
         public void ParserAttributeOnNonEmptyElement()
         {
-            var document = T("<a b='bval'><c /></a>");
-            Assert.AreEqual(1, document.Root.Attributes.Count());
+            var document = T("<a b='bval' d='dval'><c /></a>");
+            Assert.AreEqual(2, document.Root.Attributes.Count());
+            Assert.AreEqual("bval", document.Root["b"]);
         }
 
         [TestMethod]

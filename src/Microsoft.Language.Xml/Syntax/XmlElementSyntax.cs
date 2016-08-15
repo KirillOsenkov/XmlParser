@@ -11,7 +11,7 @@ namespace Microsoft.Language.Xml
         public override SyntaxNode Content { get; }
 
         public XmlElementSyntax(XmlElementStartTagSyntax start, SyntaxNode content, XmlElementEndTagSyntax end) : 
-            base(SyntaxKind.XmlElement, start?.NameNode, start)
+            base(SyntaxKind.XmlElement, start?.NameNode, start?.Attributes)
         {
             StartTag = start;
             Content = content;
