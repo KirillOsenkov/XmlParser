@@ -4,13 +4,14 @@ using System.Linq;
 
 namespace Microsoft.Language.Xml
 {
-    public class XmlElementSyntax : XmlNodeSyntax, IXmlElement
+    public class XmlElementSyntax : XmlElementSyntaxBase
     {
         public XmlElementStartTagSyntax StartTag { get; set; }
         public XmlElementEndTagSyntax EndTag { get; set; }
-        public SyntaxNode Content { get; set; }
+        public override SyntaxNode Content { get; }
 
-        public XmlElementSyntax(XmlElementStartTagSyntax start, SyntaxNode content, XmlElementEndTagSyntax end) : base(SyntaxKind.XmlElement)
+        public XmlElementSyntax(XmlElementStartTagSyntax start, SyntaxNode content, XmlElementEndTagSyntax end) : 
+            base(SyntaxKind.XmlElement, start?.NameNode, start?.Attributes)
         {
             StartTag = start;
             Content = content;
@@ -35,107 +36,20 @@ namespace Microsoft.Language.Xml
             return visitor.VisitXmlElement(this);
         }
 
-        IXmlElement IXmlElement.Parent
-        {
-            get
-            {
-                var current = this.Parent;
-                while (current != null)
-                {
-                    if (current is IXmlElement)
-                    {
-                        return current as IXmlElement;
-                    }
-
-                    current = current.Parent;
-                }
-
-                return null;
-            }
-        }
-
-        public string Name
-        {
-            get
-            {
-                string name = null;
-
-                if (StartTag != null)
-                {
-                    name = StartTag.Name;
-                }
-
-                if (name == null && EndTag != null)
-                {
-                    return EndTag.Name;
-                }
-
-                return name;
-            }
-        }
-
-        public IEnumerable<IXmlElement> Elements
+        protected override IEnumerable<IXmlElementSyntax> SyntaxElements
         {
             get
             {
                 if (Content is SyntaxList)
                 {
-                    return ((SyntaxList)Content).ChildNodes.OfType<IXmlElement>();
+                    return ((SyntaxList)Content).ChildNodes.OfType<IXmlElementSyntax>();
                 }
-
-                return Enumerable.Empty<IXmlElement>();
-            }
-        }
-
-        public IEnumerable<KeyValuePair<string, string>> Attributes
-        {
-            get
-            {
-                if (StartTag == null || StartTag.Attributes == null)
+                else if (Content is IXmlElementSyntax)
                 {
-                    yield break;
+                    return new IXmlElementSyntax[] { (IXmlElementSyntax)Content };
                 }
 
-                var singleAttribute = StartTag.Attributes as XmlAttributeSyntax;
-                if (singleAttribute != null)
-                {
-                    yield return new KeyValuePair<string, string>(singleAttribute.Name, singleAttribute.Value);
-                    yield break;
-                }
-
-                foreach (var attribute in StartTag.Attributes.ChildNodes.OfType<XmlAttributeSyntax>())
-                {
-                    yield return new KeyValuePair<string, string>(attribute.Name, attribute.Value);
-                }
-            }
-        }
-
-        public string Value
-        {
-            get
-            {
-                if (Content != null)
-                {
-                    return Content.ToFullString();
-                }
-
-                return null;
-            }
-        }
-
-        public string this[string attributeName]
-        {
-            get
-            {
-                foreach (var attribute in Attributes)
-                {
-                    if (attribute.Key == attributeName)
-                    {
-                        return attribute.Value;
-                    }
-                }
-
-                return null;
+                return Enumerable.Empty<IXmlElementSyntax>();
             }
         }
     }

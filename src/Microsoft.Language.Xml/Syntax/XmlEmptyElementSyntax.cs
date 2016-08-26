@@ -4,43 +4,25 @@ using System.Linq;
 
 namespace Microsoft.Language.Xml
 {
-    public class XmlEmptyElementSyntax : XmlNodeSyntax, IXmlElement
+    public class XmlEmptyElementSyntax : XmlElementSyntaxBase
     {
         public PunctuationSyntax LessThanToken;
-        public XmlNameSyntax NameNode;
-        public SyntaxNode AttributesNode;
         public PunctuationSyntax SlashGreaterThanToken;
 
         public XmlEmptyElementSyntax(
             PunctuationSyntax lessThanToken,
             XmlNameSyntax name,
             SyntaxNode attributes,
-            PunctuationSyntax slashGreaterThanToken) : base(SyntaxKind.XmlEmptyElement)
+            PunctuationSyntax slashGreaterThanToken) : base(
+                SyntaxKind.XmlEmptyElement,
+                name, 
+                attributes)
         {
             this.LessThanToken = lessThanToken;
             this.NameNode = name;
             this.AttributesNode = attributes;
             this.SlashGreaterThanToken = slashGreaterThanToken;
             this.SlotCount = 4;
-        }
-
-        IXmlElement IXmlElement.Parent
-        {
-            get
-            {
-                var current = this.Parent;
-                while (current != null)
-                {
-                    if (current is IXmlElement)
-                    {
-                        return current as IXmlElement;
-                    }
-
-                    current = current.Parent;
-                }
-
-                return null;
-            }
         }
 
         public override SyntaxNode GetSlot(int index)
@@ -61,71 +43,19 @@ namespace Microsoft.Language.Xml
             return visitor.VisitXmlEmptyElement(this);
         }
 
-        public string Name
+        public override SyntaxNode Content
         {
             get
             {
-                if (NameNode == null)
-                {
-                    return null;
-                }
-
-                return NameNode.Name;
-            }
-        }
-
-        public IEnumerable<IXmlElement> Elements
-        {
-            get
-            {
-                return Enumerable.Empty<IXmlElement>();
-            }
-        }
-
-        public IEnumerable<KeyValuePair<string, string>> Attributes
-        {
-            get
-            {
-                if (AttributesNode == null)
-                {
-                    yield break;
-                }
-
-                var singleAttribute = AttributesNode as XmlAttributeSyntax;
-                if (singleAttribute != null)
-                {
-                    yield return new KeyValuePair<string, string>(singleAttribute.Name, singleAttribute.Value);
-                    yield break;
-                }
-
-                foreach (var attribute in AttributesNode.ChildNodes.OfType<XmlAttributeSyntax>())
-                {
-                    yield return new KeyValuePair<string, string>(attribute.Name, attribute.Value);
-                }
-            }
-        }
-
-        public string Value
-        {
-            get
-            {
-                return "";
-            }
-        }
-
-        public string this[string attributeName]
-        {
-            get
-            {
-                foreach (var attribute in Attributes)
-                {
-                    if (attribute.Key == attributeName)
-                    {
-                        return attribute.Value;
-                    }
-                }
-
                 return null;
+            }
+        }
+
+        protected override IEnumerable<IXmlElementSyntax> SyntaxElements
+        {
+            get
+            {
+                return Enumerable.Empty<IXmlElementSyntax>();
             }
         }
     }

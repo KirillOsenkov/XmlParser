@@ -10,5 +10,6 @@ namespace Microsoft.Language.Xml
         IEnumerable<IXmlElement> Elements { get; }
         IEnumerable<KeyValuePair<string, string>> Attributes { get; }
         string this[string attributeName] { get; }
+        IXmlElementSyntax AsSyntaxElement { get; }
     }
 }

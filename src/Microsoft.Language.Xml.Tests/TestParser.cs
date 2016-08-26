@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Language.Xml.Test
@@ -31,6 +32,14 @@ namespace Microsoft.Language.Xml.Test
         {
             var text = File.ReadAllText(@"D:\1.xml");
             T(text);
+        }
+
+        [TestMethod]
+        public void ParserAttributeOnNonEmptyElement()
+        {
+            var document = T("<a b='bval' d='dval'><c /></a>");
+            Assert.AreEqual(2, document.Root.Attributes.Count());
+            Assert.AreEqual("bval", document.Root["b"]);
         }
 
         [TestMethod]
@@ -86,7 +95,7 @@ namespace Microsoft.Language.Xml.Test
             }
         }
 
-        private void T(string xml)
+        private XmlDocumentSyntax T(string xml)
         {
             var root = Parser.ParseText(xml);
             var width = root.FullWidth;
@@ -94,6 +103,8 @@ namespace Microsoft.Language.Xml.Test
 
             root.GetLeadingTrivia();
             root.GetTrailingTrivia();
+
+            return root;
         }
     }
 }
