@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Language.Xml.Test
@@ -22,7 +23,14 @@ namespace Microsoft.Language.Xml.Test
         [TestMethod]
         public void ParserErrorTolerance2()
         {
-            T("<a/ >");
+            T("<abc></abc>");
+        }
+
+        //[TestMethod]
+        public void ParseLargeFile()
+        {
+            var text = File.ReadAllText(@"D:\1.xml");
+            T(text);
         }
 
         [TestMethod]
