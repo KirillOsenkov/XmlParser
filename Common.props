@@ -21,7 +21,8 @@
     <VisualStudioReferenceAssemblyVersion>$(VisualStudioVersion).0.0</VisualStudioReferenceAssemblyVersion>
     <OutputType Condition="$(OutputType)==''">Library</OutputType>
     <TargetFrameworkVersion Condition="$(TargetFrameworkVersion)==''">v4.5</TargetFrameworkVersion>
-    <SignAssembly Condition="'$(SignAssembly)' == ''">false</SignAssembly>
+    <AssemblyOriginatorKeyFile>$(SrcRoot)\key.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly Condition="'$(SignAssembly)' == ''">true</SignAssembly>
     <DefineConstants Condition="'$(SignAssembly)' == 'true'">$(DefineConstants);SIGN;</DefineConstants>
     <DelaySign>false</DelaySign>
     <UseVSHostingProcess>false</UseVSHostingProcess>
