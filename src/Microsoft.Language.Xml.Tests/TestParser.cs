@@ -100,6 +100,7 @@ namespace Microsoft.Language.Xml.Test
             var root = Parser.ParseText(xml);
             var width = root.FullWidth;
             Assert.AreEqual(xml.Length, width);
+            Assert.AreEqual(width, root.ComputeFullWidthIterative());
 
             root.GetLeadingTrivia();
             root.GetTrailingTrivia();
