@@ -64,32 +64,43 @@ namespace Microsoft.Language.Xml
             return result;
         }
 
-        private void SetParentsAndStartPositions(SyntaxNode node, SyntaxNode parent = null, int start = 0)
+        private void SetParentsAndStartPositions(SyntaxNode node)
         {
-            node.Parent = parent;
-            node.Start = start;
+            Stack<SyntaxNode> nodes = new Stack<SyntaxNode>();
+            nodes.Push(node);
+            int start = 0;
 
-            foreach (var child in node.ChildNodes)
+            while (nodes.Count != 0)
             {
-                SetParentsAndStartPositions(child, node, start);
-                start += child.FullWidth;
+                node = nodes.Pop();
+                node.Start = start;
+                bool hasChildren = false;
+                foreach (var child in node.ChildNodes)
+                {
+                    hasChildren = true;
+                    child.Parent = node;
+                    nodes.Push(child);
+                }
+
+                if (!hasChildren)
+                {
+                    start += node.FullWidth;
+                }
             }
         }
 
         public XmlNodeSyntax ParseXmlElements(ScannerState state)
         {
             XmlNodeSyntax element = null;
-            int totalWidth = 0;
             var parts = new List<SyntaxNode>();
             do
             {
                 element = ParseXmlElement(state);
-                if (element == null || element.FullWidth == 0)
+                if (element == null)
                 {
                     break;
                 }
 
-                totalWidth += element.FullWidth;
                 parts.Add(element);
             }
             while (element != null);

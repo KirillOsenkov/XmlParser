@@ -39,6 +39,85 @@ namespace Microsoft.Language.Xml
 
         internal abstract SyntaxNode Accept(SyntaxVisitor visitor);
 
+        private struct ComputeFullWidthState
+        {
+            public SyntaxNode Node;
+            public SyntaxNode Parent;
+            public int Index;
+        }
+
+        internal int ComputeFullWidthIterative()
+        {
+            return ComputeFullWidthIterative(this);
+        }
+
+        private static int ComputeFullWidthIterative(SyntaxNode node)
+        {
+            if (node.fullWidth >= 0)
+            {
+                return node.fullWidth;
+            }
+
+            Stack<ComputeFullWidthState> nodes = new Stack<ComputeFullWidthState>();
+            nodes.Push(new ComputeFullWidthState()
+            {
+                Node = node
+            });
+
+            while (nodes.Count != 0)
+            {
+                var state = nodes.Pop();
+
+                AfterPopState:
+                node = state.Node;
+                var parent = state.Parent;
+
+                for (; state.Index < node.SlotCount; state.Index++)
+                {
+                    var child = node.GetSlot(state.Index);
+                    if (child == null)
+                    {
+                        continue;
+                    }
+
+                    if (child.fullWidth == -1)
+                    {
+                        state.Index++;
+                        nodes.Push(state);
+
+                        state = new ComputeFullWidthState()
+                        {
+                            Node = child,
+                            Parent = node
+                        };
+
+                        goto AfterPopState;
+                    }
+                    else
+                    {
+                        if (node.fullWidth == -1)
+                        {
+                            node.fullWidth = 0;
+                        }
+
+                        node.fullWidth += child.fullWidth;
+                    }
+                }
+
+                if (parent != null)
+                {
+                    if (parent.fullWidth == -1)
+                    {
+                        parent.fullWidth = 0;
+                    }
+
+                    parent.fullWidth += node.fullWidth;
+                }
+            }
+
+            return node.fullWidth;
+        }
+
         private int ComputeFullWidth()
         {
             int width = 0;
