@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Language.Xml.Test
@@ -15,6 +16,46 @@ namespace Microsoft.Language.Xml.Test
                 XmlClassificationTypes.XmlDelimiter,
                 XmlClassificationTypes.XmlName,
                 XmlClassificationTypes.XmlDelimiter,
+                XmlClassificationTypes.XmlDelimiter,
+                XmlClassificationTypes.XmlName,
+                XmlClassificationTypes.XmlDelimiter);
+        }
+
+        [TestMethod]
+        public void ClassifyDeclaration()
+        {
+            T("<?xml version=\"1.0\" encoding=\"utf-8\"?>",
+                XmlClassificationTypes.XmlDelimiter,
+                XmlClassificationTypes.XmlName,
+                XmlClassificationTypes.XmlAttributeName,
+                XmlClassificationTypes.XmlDelimiter,
+                XmlClassificationTypes.XmlAttributeQuotes,
+                XmlClassificationTypes.XmlAttributeValue,
+                XmlClassificationTypes.XmlAttributeQuotes,
+                XmlClassificationTypes.XmlAttributeName,
+                XmlClassificationTypes.XmlDelimiter,
+                XmlClassificationTypes.XmlAttributeQuotes,
+                XmlClassificationTypes.XmlAttributeValue,
+                XmlClassificationTypes.XmlAttributeQuotes,
+                XmlClassificationTypes.XmlDelimiter);
+        }
+
+        [TestMethod]
+        public void ClassifyNamespaces()
+        {
+            T("<a:b></a:b>",
+                XmlClassificationTypes.XmlDelimiter,
+                XmlClassificationTypes.XmlName,
+                XmlClassificationTypes.XmlDelimiter,
+                XmlClassificationTypes.XmlDelimiter,
+                XmlClassificationTypes.XmlName,
+                XmlClassificationTypes.XmlDelimiter);
+        }
+
+        [TestMethod]
+        public void ClassifyEmptyElement()
+        {
+            T("<a/>",
                 XmlClassificationTypes.XmlDelimiter,
                 XmlClassificationTypes.XmlName,
                 XmlClassificationTypes.XmlDelimiter);
@@ -74,7 +115,11 @@ namespace Microsoft.Language.Xml.Test
             if (expectedClassifications != null && expectedClassifications.Length > 0)
             {
                 var equal = Enumerable.SequenceEqual(expectedClassifications, actualClassifications);
-                Assert.IsTrue(equal, "classifications differ. Actual: " + string.Join(",\r\n", actualClassifications));
+                var prefix = new string(' ', 16) + "XmlClassificationTypes.";
+                var actualText = string.Join(",\r\n", actualClassifications
+                    .Select(s => prefix + s)) + ");";
+                Clipboard.SetText(actualText);
+                Assert.IsTrue(equal, "classifications differ. Actual:\r\n" + actualText);
             }
         }
     }
