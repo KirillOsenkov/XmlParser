@@ -46,13 +46,14 @@ namespace Microsoft.Language.Xml
             public int Index;
         }
 
-        public int ComputeFullWidthIterative()
+        public int ComputeFullWidthIterative(int start = 0)
         {
-            return ComputeFullWidthIterative(this);
+            return ComputeFullWidthIterative(this, start);
         }
 
-        private static int ComputeFullWidthIterative(SyntaxNode node)
+        private static int ComputeFullWidthIterative(SyntaxNode node, int start = 0)
         {
+            node.Start = start;
             if (node.fullWidth >= 0)
             {
                 return node.fullWidth;
@@ -80,6 +81,9 @@ namespace Microsoft.Language.Xml
                         continue;
                     }
 
+                    child.Parent = node;
+                    child.Start = start;
+
                     if (child.fullWidth == -1)
                     {
                         state.Index++;
@@ -95,6 +99,7 @@ namespace Microsoft.Language.Xml
                     }
                     else
                     {
+                        start += child.fullWidth;
                         if (node.fullWidth == -1)
                         {
                             node.fullWidth = 0;

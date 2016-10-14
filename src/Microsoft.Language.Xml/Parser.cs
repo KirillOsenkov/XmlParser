@@ -59,34 +59,9 @@ namespace Microsoft.Language.Xml
                 }
             }
 
-            SetParentsAndStartPositions(result);
+            result.ComputeFullWidthIterative();
 
             return result;
-        }
-
-        private void SetParentsAndStartPositions(SyntaxNode node)
-        {
-            Stack<SyntaxNode> nodes = new Stack<SyntaxNode>();
-            nodes.Push(node);
-            int start = 0;
-
-            while (nodes.Count != 0)
-            {
-                node = nodes.Pop();
-                node.Start = start;
-                bool hasChildren = false;
-                foreach (var child in node.ChildNodes)
-                {
-                    hasChildren = true;
-                    child.Parent = node;
-                    nodes.Push(child);
-                }
-
-                if (!hasChildren)
-                {
-                    start += node.FullWidth;
-                }
-            }
         }
 
         public XmlNodeSyntax ParseXmlElements(ScannerState state)
