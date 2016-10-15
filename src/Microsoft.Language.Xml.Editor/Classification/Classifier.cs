@@ -38,7 +38,7 @@ namespace Microsoft.Language.Xml.Editor
             {
                 var root = task.Result;
                 var spans = new List<ClassificationSpan>();
-                var visitedCount = ClassifierVisitor.Visit(
+                ClassifierVisitor.Visit(
                     root,
                     span.Start,
                     span.Length,

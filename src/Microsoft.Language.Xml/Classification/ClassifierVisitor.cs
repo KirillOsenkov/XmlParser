@@ -91,7 +91,6 @@ namespace Microsoft.Language.Xml
             public SyntaxNode node;
             public int start;
             public XmlClassificationTypes[] childTypes;
-            public int visitedCount;
             public int targetOffset;
             public int offset;
             public int index;
@@ -103,7 +102,7 @@ namespace Microsoft.Language.Xml
             public bool continueInsideForLoop;
         }
 
-        public static int Visit(
+        public static void Visit(
             SyntaxNode node,
             int windowStart,
             int windowLength,
@@ -117,8 +116,6 @@ namespace Microsoft.Language.Xml
             Stack<VisitState> stateStack = new Stack<VisitState>();
             stateStack.Push(currentState);
 
-            int result = 0;
-
             while (stateStack.Count != 0)
             {
                 currentState = stateStack.Pop();
@@ -126,7 +123,6 @@ namespace Microsoft.Language.Xml
                 AfterPopCurrentState:
                 if (currentState.continueInsideForLoop)
                 {
-                    currentState.visitedCount += result;
                     currentState.continueInsideForLoop = false;
                     currentState.i++;
                     goto ForLoop;
@@ -134,13 +130,11 @@ namespace Microsoft.Language.Xml
 
                 if (currentState.node == null)
                 {
-                    result = 0;
                     continue;
                 }
 
                 kindMap.TryGetValue(currentState.node.Kind, out currentState.childTypes);
 
-                currentState.visitedCount = 0;
                 currentState.targetOffset = windowStart - currentState.start;
 
                 currentState.node.GetIndexAndOffset(currentState.targetOffset, out currentState.index, out currentState.offset);
@@ -157,7 +151,6 @@ namespace Microsoft.Language.Xml
                     }
 
                     currentState.child = currentState.node.GetSlot(currentState.i);
-                    currentState.visitedCount++;
                     if (currentState.child == null)
                     {
                         continue;
@@ -205,11 +198,7 @@ namespace Microsoft.Language.Xml
 
                     currentState.start += currentState.child.ComputeFullWidthIterative();
                 }
-
-                result = currentState.visitedCount;
             }
-
-            return result;
         }
 
         private static VisitState CreateState(SyntaxNode node, int start)
@@ -279,7 +268,7 @@ namespace Microsoft.Language.Xml
 
                     if (childType == XmlClassificationTypes.None)
                     {
-                        visitedCount += Visit(child, windowStart, windowLength, resultCollector, start);
+                        visitedCount += VisitRecursive(child, windowStart, windowLength, resultCollector, start);
                     }
                     else
                     {
