@@ -106,6 +106,11 @@ namespace Microsoft.Language.Xml
             Action<int, int, SyntaxNode, XmlClassificationTypes> resultCollector,
             int start = 0)
         {
+            if (node == null)
+            {
+                throw new ArgumentNullException(nameof(node));
+            }
+
             int windowEnd = windowStart + windowLength;
 
             VisitState currentState = CreateState(node, start);
@@ -125,11 +130,6 @@ namespace Microsoft.Language.Xml
                     goto ForLoop;
                 }
 
-                if (currentState.node == null)
-                {
-                    continue;
-                }
-
                 kindMap.TryGetValue(currentState.node.Kind, out currentState.childTypes);
 
                 currentState.i = 0;
@@ -139,7 +139,7 @@ namespace Microsoft.Language.Xml
                 {
                     if (currentState.start > windowEnd)
                     {
-                        break;
+                        return;
                     }
 
                     currentState.child = currentState.node.GetSlot(currentState.i);
