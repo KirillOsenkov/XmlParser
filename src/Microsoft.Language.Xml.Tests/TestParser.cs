@@ -8,7 +8,7 @@ namespace Microsoft.Language.Xml.Test
     [TestClass]
     public class TestParser
     {
-        private const string allXml =
+        public const string allXml =
 @"<?xml version=""1.0"" encoding=""UTF-8"" standalone=""yes""?>
 <X>
     <n:T></n:T>
