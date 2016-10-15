@@ -89,12 +89,9 @@ namespace Microsoft.Language.Xml
         private struct VisitState
         {
             public SyntaxNode node;
-            public int windowStart;
-            public int windowLength;
             public int start;
             public XmlClassificationTypes[] childTypes;
             public int visitedCount;
-            public int windowEnd;
             public int targetOffset;
             public int offset;
             public int index;
@@ -113,7 +110,9 @@ namespace Microsoft.Language.Xml
             Action<int, int, SyntaxNode, XmlClassificationTypes> resultCollector,
             int start = 0)
         {
-            VisitState currentState = CreateState(node, windowStart, windowLength, start);
+            int windowEnd = windowStart + windowLength;
+
+            VisitState currentState = CreateState(node, start);
 
             Stack<VisitState> stateStack = new Stack<VisitState>();
             stateStack.Push(currentState);
@@ -142,8 +141,7 @@ namespace Microsoft.Language.Xml
                 kindMap.TryGetValue(currentState.node.Kind, out currentState.childTypes);
 
                 currentState.visitedCount = 0;
-                currentState.windowEnd = currentState.windowStart + currentState.windowLength;
-                currentState.targetOffset = currentState.windowStart - currentState.start;
+                currentState.targetOffset = windowStart - currentState.start;
 
                 currentState.node.GetIndexAndOffset(currentState.targetOffset, out currentState.index, out currentState.offset);
                 currentState.start += currentState.offset;
@@ -153,7 +151,7 @@ namespace Microsoft.Language.Xml
                 ForLoop:
                 for (; currentState.i < currentState.node.SlotCount; currentState.i++)
                 {
-                    if (currentState.start > currentState.windowEnd)
+                    if (currentState.start > windowEnd)
                     {
                         break;
                     }
@@ -165,8 +163,8 @@ namespace Microsoft.Language.Xml
                         continue;
                     }
 
-                    currentState.currentStart = Math.Max(currentState.start, currentState.windowStart);
-                    currentState.currentLength = Math.Min(currentState.windowEnd, currentState.start + currentState.child.ComputeFullWidthIterative()) - currentState.currentStart;
+                    currentState.currentStart = Math.Max(currentState.start, windowStart);
+                    currentState.currentLength = Math.Min(windowEnd, currentState.start + currentState.child.ComputeFullWidthIterative()) - currentState.currentStart;
                     if (currentState.currentLength >= 0)
                     {
                         currentState.childType = currentState.childTypes == null ? XmlClassificationTypes.None : currentState.childTypes[currentState.i];
@@ -188,7 +186,7 @@ namespace Microsoft.Language.Xml
                             currentState.continueInsideForLoop = true;
                             stateStack.Push(currentState);
 
-                            currentState = CreateState(currentState.child, windowStart, windowLength, start);
+                            currentState = CreateState(currentState.child, start);
                             goto AfterPopCurrentState;
                         }
                         else
@@ -214,13 +212,11 @@ namespace Microsoft.Language.Xml
             return result;
         }
 
-        private static VisitState CreateState(SyntaxNode node, int windowStart, int windowLength, int start)
+        private static VisitState CreateState(SyntaxNode node, int start)
         {
             return new VisitState()
             {
                 node = node,
-                windowLength = windowLength,
-                windowStart = windowStart,
                 start = start
             };
         }
