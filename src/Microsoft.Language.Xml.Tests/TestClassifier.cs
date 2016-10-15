@@ -110,7 +110,17 @@ namespace Microsoft.Language.Xml.Test
         {
             var root = Parser.ParseText(xml);
             var actualClassifications = new List<XmlClassificationTypes>();
-            ClassifierVisitor.Visit(root, 0, xml.Length, (s, e, n, c) => actualClassifications.Add(c));
+            int start = 0;
+            int length = 0;
+            ClassifierVisitor.Visit(root, 0, xml.Length, (s, l, n, c) =>
+            {
+                Assert.IsTrue(s >= start);
+                start = s + l;
+                length += l;
+                actualClassifications.Add(c);
+            });
+
+            Assert.AreEqual(xml.Length, length);
 
             if (expectedClassifications != null && expectedClassifications.Length > 0)
             {

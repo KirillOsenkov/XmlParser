@@ -195,7 +195,12 @@ namespace Microsoft.Language.Xml
                         {
                             if (currentState.currentLength > 0)
                             {
-                                resultCollector(currentState.currentStart, currentState.currentLength, currentState.child, currentState.childType);
+                                var returnNode = currentState.child;
+                                resultCollector(
+                                    returnNode.Start,
+                                    returnNode.FullWidth,
+                                    returnNode,
+                                    currentState.childType);
                             }
                         }
                     }

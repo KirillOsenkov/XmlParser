@@ -53,11 +53,12 @@ namespace Microsoft.Language.Xml
 
         private static int ComputeFullWidthIterative(SyntaxNode node, int start = 0)
         {
-            node.Start = start;
             if (node.fullWidth >= 0)
             {
                 return node.fullWidth;
             }
+
+            node.Start = start;
 
             Stack<ComputeFullWidthState> nodes = new Stack<ComputeFullWidthState>();
             nodes.Push(new ComputeFullWidthState()
