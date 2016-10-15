@@ -149,7 +149,7 @@ namespace Microsoft.Language.Xml
                     }
 
                     currentState.currentStart = Math.Max(currentState.start, windowStart);
-                    currentState.currentLength = Math.Min(windowEnd, currentState.start + currentState.child.ComputeFullWidthIterative()) - currentState.currentStart;
+                    currentState.currentLength = Math.Min(windowEnd, currentState.start + currentState.child.FullWidth) - currentState.currentStart;
                     if (currentState.currentLength >= 0)
                     {
                         currentState.childType = currentState.childTypes == null ? XmlClassificationTypes.None : currentState.childTypes[currentState.i];
@@ -188,7 +188,7 @@ namespace Microsoft.Language.Xml
                         }
                     }
 
-                    currentState.start += currentState.child.ComputeFullWidthIterative();
+                    currentState.start += currentState.child.FullWidth;
                 }
             }
         }

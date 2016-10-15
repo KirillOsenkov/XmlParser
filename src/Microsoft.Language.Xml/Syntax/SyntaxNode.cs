@@ -26,7 +26,7 @@ namespace Microsoft.Language.Xml
             {
                 if (fullWidth == -1)
                 {
-                    fullWidth = ComputeFullWidth();
+                    fullWidth = ComputeFullWidthIterative();
                 }
 
                 return fullWidth;
