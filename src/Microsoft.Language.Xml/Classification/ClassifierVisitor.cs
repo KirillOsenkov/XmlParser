@@ -91,9 +91,6 @@ namespace Microsoft.Language.Xml
             public SyntaxNode node;
             public int start;
             public XmlClassificationTypes[] childTypes;
-            public int targetOffset;
-            public int offset;
-            public int index;
             public int currentStart;
             public int currentLength;
             public int i;
@@ -135,12 +132,7 @@ namespace Microsoft.Language.Xml
 
                 kindMap.TryGetValue(currentState.node.Kind, out currentState.childTypes);
 
-                currentState.targetOffset = windowStart - currentState.start;
-
-                currentState.node.GetIndexAndOffset(currentState.targetOffset, out currentState.index, out currentState.offset);
-                currentState.start += currentState.offset;
-
-                currentState.i = currentState.index;
+                currentState.i = 0;
 
                 ForLoop:
                 for (; currentState.i < currentState.node.SlotCount; currentState.i++)
