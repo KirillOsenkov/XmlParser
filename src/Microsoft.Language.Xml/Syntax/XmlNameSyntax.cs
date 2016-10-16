@@ -46,5 +46,10 @@ namespace Microsoft.Language.Xml
                 return LocalName.Text;
             }
         }
+
+        public override string ToString()
+        {
+            return $"XmlNameSyntax {Prefix}{Name}";
+        }
     }
 }

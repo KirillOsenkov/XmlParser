@@ -7,18 +7,18 @@ namespace Microsoft.Language.Xml
 {
     public abstract class SyntaxNode
     {
+        public SyntaxKind Kind { get; protected set; }
         public SyntaxNode Parent { get; internal set; }
         public int Start { get; internal set; }
 
         private byte slotCount;
+        private int fullWidth;
 
         public SyntaxNode(SyntaxKind kind, int fullWidth = -1)
         {
             this.Kind = kind;
             this.fullWidth = fullWidth;
         }
-
-        private int fullWidth;
 
         public int FullWidth
         {
@@ -138,7 +138,6 @@ namespace Microsoft.Language.Xml
 
             return width;
         }
-        public SyntaxKind Kind { get; protected set; }
 
         // Get the leading trivia a green array, recursively to first token.
         public virtual SyntaxNode GetLeadingTrivia()
