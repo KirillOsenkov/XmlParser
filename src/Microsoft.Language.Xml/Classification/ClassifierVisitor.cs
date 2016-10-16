@@ -89,10 +89,7 @@ namespace Microsoft.Language.Xml
         private struct VisitState
         {
             public SyntaxNode node;
-            public int start;
             public XmlClassificationTypes[] childTypes;
-            public int currentStart;
-            public int currentLength;
             public int i;
             public SyntaxNode child;
             public XmlClassificationTypes childType;
@@ -110,9 +107,10 @@ namespace Microsoft.Language.Xml
                 throw new ArgumentNullException(nameof(node));
             }
 
+            int start = 0;
             int windowEnd = windowStart + windowLength;
 
-            VisitState currentState = CreateState(node, windowStart);
+            VisitState currentState = CreateState(node);
 
             Stack<VisitState> stateStack = new Stack<VisitState>();
             stateStack.Push(currentState);
@@ -136,7 +134,7 @@ namespace Microsoft.Language.Xml
                 ForLoop:
                 for (; currentState.i < currentState.node.SlotCount; currentState.i++)
                 {
-                    if (currentState.start > windowEnd)
+                    if (start > windowEnd)
                     {
                         return;
                     }
@@ -147,9 +145,9 @@ namespace Microsoft.Language.Xml
                         continue;
                     }
 
-                    currentState.currentStart = Math.Max(currentState.start, windowStart);
-                    currentState.currentLength = Math.Min(windowEnd, currentState.start + currentState.child.FullWidth) - currentState.currentStart;
-                    if (currentState.currentLength >= 0)
+                    int currentStart = Math.Max(start, windowStart);
+                    int currentLength = Math.Min(windowEnd, start + currentState.child.FullWidth) - currentStart;
+                    if (currentLength >= 0)
                     {
                         currentState.childType = currentState.childTypes == null ? XmlClassificationTypes.None : currentState.childTypes[currentState.i];
 
@@ -171,25 +169,24 @@ namespace Microsoft.Language.Xml
                             stateStack.Push(currentState);
 
                             currentState = CreateState(
-                                currentState.child,
-                                currentState.child.Start);
+                                currentState.child);
                             goto AfterPopCurrentState;
                         }
                         else
                         {
-                            if (currentState.currentLength > 0)
+                            if (currentLength > 0)
                             {
                                 var returnNode = currentState.child;
-                                if (returnNode.Start > windowEnd)
+                                if (start > windowEnd)
                                 {
                                     return;
                                 }
 
-                                if (returnNode.Start >= windowStart)
+                                if (start + currentLength >= windowStart)
                                 {
                                     resultCollector(
-                                        currentState.currentStart,
-                                        currentState.currentLength,
+                                        currentStart,
+                                        currentLength,
                                         returnNode,
                                         currentState.childType);
                                 }
@@ -197,17 +194,16 @@ namespace Microsoft.Language.Xml
                         }
                     }
 
-                    currentState.start += currentState.child.FullWidth;
+                    start += currentState.child.FullWidth;
                 }
             }
         }
 
-        private static VisitState CreateState(SyntaxNode node, int start)
+        private static VisitState CreateState(SyntaxNode node)
         {
             return new VisitState()
             {
                 node = node,
-                start = start
             };
         }
 

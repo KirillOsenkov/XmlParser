@@ -109,10 +109,38 @@ namespace Microsoft.Language.Xml.Test
         [TestMethod]
         public void ClassifyWindow()
         {
+            T("<a/><b/>", 0, 4,
+                XmlClassificationTypes.XmlDelimiter,
+                XmlClassificationTypes.XmlName,
+                XmlClassificationTypes.XmlDelimiter);
+        }
+
+        [TestMethod]
+        public void ClassifyWindow2()
+        {
+            T("<a/><b/>", 1, 4,
+                XmlClassificationTypes.XmlName,
+                XmlClassificationTypes.XmlDelimiter,
+                XmlClassificationTypes.XmlDelimiter);
+        }
+
+        [TestMethod]
+        public void ClassifyWindow3()
+        {
             T("<a/><b/>", 4, 4,
                 XmlClassificationTypes.XmlDelimiter,
                 XmlClassificationTypes.XmlName,
                 XmlClassificationTypes.XmlDelimiter);
+        }
+
+        [TestMethod]
+        public void ClassifyWindow4()
+        {
+            T("<ab/><ab/>", 2, 5,
+                XmlClassificationTypes.XmlName,
+                XmlClassificationTypes.XmlDelimiter,
+                XmlClassificationTypes.XmlDelimiter,
+                XmlClassificationTypes.XmlName);
         }
 
         [TestMethod]
