@@ -103,8 +103,7 @@ namespace Microsoft.Language.Xml
             SyntaxNode node,
             int windowStart,
             int windowLength,
-            Action<int, int, SyntaxNode, XmlClassificationTypes> resultCollector,
-            int start = 0)
+            Action<int, int, SyntaxNode, XmlClassificationTypes> resultCollector)
         {
             if (node == null)
             {
@@ -113,7 +112,7 @@ namespace Microsoft.Language.Xml
 
             int windowEnd = windowStart + windowLength;
 
-            VisitState currentState = CreateState(node, start);
+            VisitState currentState = CreateState(node, windowStart);
 
             Stack<VisitState> stateStack = new Stack<VisitState>();
             stateStack.Push(currentState);
@@ -171,7 +170,9 @@ namespace Microsoft.Language.Xml
                             currentState.continueInsideForLoop = true;
                             stateStack.Push(currentState);
 
-                            currentState = CreateState(currentState.child, start);
+                            currentState = CreateState(
+                                currentState.child,
+                                currentState.child.Start);
                             goto AfterPopCurrentState;
                         }
                         else
@@ -179,11 +180,19 @@ namespace Microsoft.Language.Xml
                             if (currentState.currentLength > 0)
                             {
                                 var returnNode = currentState.child;
-                                resultCollector(
-                                    returnNode.Start,
-                                    returnNode.FullWidth,
-                                    returnNode,
-                                    currentState.childType);
+                                if (returnNode.Start > windowEnd)
+                                {
+                                    return;
+                                }
+
+                                if (returnNode.Start >= windowStart)
+                                {
+                                    resultCollector(
+                                        currentState.currentStart,
+                                        currentState.currentLength,
+                                        returnNode,
+                                        currentState.childType);
+                                }
                             }
                         }
                     }
