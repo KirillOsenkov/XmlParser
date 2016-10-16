@@ -716,6 +716,11 @@ namespace Microsoft.Language.Xml
                         leadingTrivia = ScanXmlTrivia(c);
                         break;
                     case '/':
+                        if (CanGetCharAtOffset(1) && PeekAheadChar(1) == '>')
+                        {
+                            return XmlMakeEndEmptyElementToken(leadingTrivia);
+                        }
+
                         return XmlMakeDivToken(leadingTrivia);
                     case '>':
                         return XmlMakeGreaterToken(leadingTrivia);
@@ -1271,6 +1276,13 @@ namespace Microsoft.Language.Xml
 
             // Note: > does not consume following trivia
             return MakePunctuationToken(SyntaxKind.GreaterThanToken, ">", precedingTrivia, null);
+        }
+
+        private SyntaxToken XmlMakeEndEmptyElementToken(SyntaxList<SyntaxNode> precedingTrivia)
+        {
+            AdvanceChar(2);
+
+            return MakePunctuationToken(SyntaxKind.SlashGreaterThanToken, "/>", precedingTrivia, null);
         }
 
         private PunctuationSyntax XmlMakeDivToken(SyntaxList<SyntaxNode> precedingTrivia)
@@ -2215,6 +2227,11 @@ namespace Microsoft.Language.Xml
             public readonly int Position;
             public readonly int EndOfTerminatorTrivia;
             public readonly ScannerState State;
+
+            public override string ToString()
+            {
+                return $"{Position} {State} {InnerTokenObject}";
+            }
         }
 
         internal static bool IsNewLine(char c)
