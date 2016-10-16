@@ -107,6 +107,15 @@ namespace Microsoft.Language.Xml.Test
         }
 
         [TestMethod]
+        public void ClassifyWindow()
+        {
+            T("<a/><b/>", 4, 4,
+                XmlClassificationTypes.XmlDelimiter,
+                XmlClassificationTypes.XmlName,
+                XmlClassificationTypes.XmlDelimiter);
+        }
+
+        [TestMethod]
         public void ClassifyAllInOne()
         {
             T(TestParser.allXml,
@@ -190,19 +199,28 @@ namespace Microsoft.Language.Xml.Test
 
         public void T(string xml, params XmlClassificationTypes[] expectedClassifications)
         {
+            T(xml, 0, xml.Length, expectedClassifications);
+        }
+
+        public void T(string xml, int windowStart, int windowLength, params XmlClassificationTypes[] expectedClassifications)
+        {
             var root = Parser.ParseText(xml);
             var actualClassifications = new List<XmlClassificationTypes>();
-            int start = 0;
+            int start = windowStart;
             int length = 0;
-            ClassifierVisitor.Visit(root, 0, xml.Length, (s, l, n, c) =>
+            ClassifierVisitor.Visit(
+                root,
+                windowStart,
+                windowLength,
+                (spanStart, spanLength, spanNode, spanClassification) =>
             {
-                Assert.IsTrue(s >= start);
-                start = s + l;
-                length += l;
-                actualClassifications.Add(c);
+                Assert.IsTrue(spanStart >= start, $"Classified span start ({spanStart}) is less than expected {start}");
+                start = spanStart + spanLength;
+                length += spanLength;
+                actualClassifications.Add(spanClassification);
             });
 
-            Assert.AreEqual(xml.Length, length);
+            Assert.AreEqual(windowLength, length);
 
             if (expectedClassifications != null && expectedClassifications.Length > 0)
             {
