@@ -182,7 +182,7 @@ namespace Microsoft.Language.Xml
                                     return;
                                 }
 
-                                if (start + currentLength >= windowStart)
+                                if (currentStart + currentLength >= windowStart)
                                 {
                                     resultCollector(
                                         currentStart,
