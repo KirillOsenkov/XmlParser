@@ -27,6 +27,12 @@ namespace Microsoft.Language.Xml.Test
             T("<abc></abc>");
         }
 
+        [TestMethod]
+        public void ParseEmptyElement()
+        {
+            T("<a/>");
+        }
+
         //[TestMethod]
         public void ParseLargeFile()
         {
