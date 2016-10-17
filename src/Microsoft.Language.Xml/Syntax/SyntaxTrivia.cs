@@ -7,7 +7,7 @@ namespace Microsoft.Language.Xml
     internal partial class SyntaxTrivia : SyntaxNode
     {
         private readonly string _text;
-        internal SyntaxTrivia(SyntaxKind kind, string text) : base(kind, text.Length)
+        internal SyntaxTrivia(SyntaxKind kind, string text) : base(kind)
         {
             this._text = text;
         }
@@ -28,6 +28,11 @@ namespace Microsoft.Language.Xml
             {
                 return this._text;
             }
+        }
+
+        protected override int GetTextWidth()
+        {
+            return Text.Length;
         }
 
         public sealed override SyntaxNode GetTrailingTrivia()

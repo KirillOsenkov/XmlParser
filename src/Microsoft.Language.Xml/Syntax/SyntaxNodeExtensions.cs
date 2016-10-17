@@ -142,7 +142,7 @@ namespace Microsoft.Language.Xml
 
         internal static bool IsMissingToken(SyntaxToken token)
         {
-            return token.FullWidth == 0;
+            return string.IsNullOrEmpty(token.Text);
         }
 
         internal static TSyntax AddLeadingSyntax<TSyntax>(this TSyntax node, SyntaxNode unexpected, ERRID errorId) where TSyntax : SyntaxNode

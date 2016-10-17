@@ -8,22 +8,18 @@ namespace Microsoft.Language.Xml
     public abstract class SyntaxToken : SyntaxNode
     {
         public SyntaxToken(SyntaxKind kind, string text, SyntaxNode leadingTrivia, SyntaxNode trailingTrivia)
-            : base(kind, text.Length)
+            : base(kind)
         {
             Text = text;
             if (trailingTrivia != null)
             {
-                AdjustWidth(trailingTrivia);
                 _trailingTriviaOrTriviaInfo = trailingTrivia;
             }
 
             if (leadingTrivia != null)
             {
-                AdjustWidth(leadingTrivia);
                 _trailingTriviaOrTriviaInfo = TriviaInfo.Create(leadingTrivia, _trailingTriviaOrTriviaInfo as SyntaxNode);
             }
-
-            ClearFlagIfMissing();
         }
 
         public override SyntaxNode GetSlot(int index)
@@ -34,10 +30,6 @@ namespace Microsoft.Language.Xml
         internal override void CollectConstituentTokensAndDiagnostics(SyntaxListBuilder<SyntaxToken> tokenListBuilder, IList<DiagnosticInfo> nonTokenDiagnostics)
         {
             tokenListBuilder.Add(this);
-        }
-
-        private void ClearFlagIfMissing()
-        {
         }
 
         internal override SyntaxNode Accept(SyntaxVisitor visitor)
@@ -55,6 +47,63 @@ namespace Microsoft.Language.Xml
 
         public string Text { get; internal set; }
         private object _trailingTriviaOrTriviaInfo = null;
+
+        protected override int GetTextWidth()
+        {
+            return Text.Length;
+        }
+
+        protected override int GetSlotCountIncludingTrivia()
+        {
+            int triviaSlots = 0;
+            var arr = _trailingTriviaOrTriviaInfo as SyntaxNode;
+            if (arr != null)
+            {
+                triviaSlots++;
+            }
+            else
+            {
+                var t = _trailingTriviaOrTriviaInfo as TriviaInfo;
+                if (t != null)
+                {
+                    triviaSlots++;
+                    if (t._trailingTrivia != null)
+                    {
+                        triviaSlots++;
+                    }
+                }
+            }
+
+            return triviaSlots;
+        }
+
+        protected override SyntaxNode GetSlotIncludingTrivia(int index)
+        {
+            if (index == 0)
+            {
+                var triviaInfo = _trailingTriviaOrTriviaInfo as TriviaInfo;
+                if (triviaInfo != null)
+                {
+                    return triviaInfo._leadingTrivia;
+                }
+
+                var trailingTrivia = _trailingTriviaOrTriviaInfo as SyntaxNode;
+                if (trailingTrivia != null)
+                {
+                    return trailingTrivia;
+                }
+            }
+            else if (index == 1)
+            {
+                var triviaInfo = _trailingTriviaOrTriviaInfo as TriviaInfo;
+                if (triviaInfo != null)
+                {
+                    return triviaInfo._trailingTrivia;
+                }
+            }
+
+            throw new IndexOutOfRangeException();
+        }
 
         public override int GetLeadingTriviaWidth()
         {

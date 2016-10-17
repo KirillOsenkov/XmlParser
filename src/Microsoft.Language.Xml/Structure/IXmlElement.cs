@@ -4,6 +4,8 @@ namespace Microsoft.Language.Xml
 {
     public interface IXmlElement
     {
+        int Start { get; }
+        int FullWidth { get; }
         string Name { get; }
         string Value { get; }
         IXmlElement Parent { get; }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -30,7 +31,10 @@ namespace Microsoft.Language.Xml.Test
         [TestMethod]
         public void ParseEmptyElement()
         {
-            T("<a/>");
+            T(" <a/>");
+            T("<a/> ");
+            T(" <a/> ");
+            T(" <a  /> ");
         }
 
         //[TestMethod]
@@ -104,14 +108,42 @@ namespace Microsoft.Language.Xml.Test
         private XmlDocumentSyntax T(string xml)
         {
             var root = Parser.ParseText(xml);
+
+            var descendantList = root.GetDescendants().Select(x =>
+                new KeyValuePair<int, IXmlElement>(x.Start, x))
+                .ToList();
+
+            int last = 0;
+            foreach (var descendantEntry in descendantList)
+            {
+                int start = descendantEntry.Key;
+                var element = (SyntaxNode)descendantEntry.Value;
+                Assert.IsTrue(last <= start);
+                VerifyText(xml, element);
+
+                foreach (var node in element.ChildNodes)
+                {
+                    VerifyText(xml, node);
+                }
+
+                last = start;
+            }
+
             var width = root.FullWidth;
             Assert.AreEqual(xml.Length, width);
-            Assert.AreEqual(width, root.ComputeFullWidthIterative());
 
             root.GetLeadingTrivia();
             root.GetTrailingTrivia();
 
             return root;
+        }
+
+        private static void VerifyText(string xml, SyntaxNode node)
+        {
+            var terminal = (SyntaxToken)(node.GetFirstTerminal() ?? node);
+            var subXml = xml.Substring(node.Start + terminal.GetLeadingTriviaWidth(),
+                terminal.Text.Length);
+            Assert.AreEqual(subXml, terminal.Text);
         }
     }
 }

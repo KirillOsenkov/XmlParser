@@ -14,10 +14,10 @@ namespace Microsoft.Language.Xml
         private byte slotCount;
         private int fullWidth;
 
-        public SyntaxNode(SyntaxKind kind, int fullWidth = -1)
+        public SyntaxNode(SyntaxKind kind)
         {
             this.Kind = kind;
-            this.fullWidth = fullWidth;
+            this.fullWidth = -1;
         }
 
         public int FullWidth
@@ -26,15 +26,21 @@ namespace Microsoft.Language.Xml
             {
                 if (fullWidth == -1)
                 {
-                    fullWidth = ComputeFullWidthIterative();
+                    throw new InvalidOperationException();
                 }
 
                 return fullWidth;
             }
-            set
-            {
-                fullWidth = value;
-            }
+        }
+        
+        protected virtual int GetSlotCountIncludingTrivia()
+        {
+            return SlotCount;
+        }
+
+        protected virtual SyntaxNode GetSlotIncludingTrivia(int index)
+        {
+            return GetSlot(index);
         }
 
         internal abstract SyntaxNode Accept(SyntaxVisitor visitor);
@@ -46,9 +52,14 @@ namespace Microsoft.Language.Xml
             public int Index;
         }
 
-        public int ComputeFullWidthIterative(int start = 0)
+        internal int ComputeFullWidthIterative(int start = 0)
         {
             return ComputeFullWidthIterative(this, start);
+        }
+
+        protected virtual int GetTextWidth()
+        {
+            return 0;
         }
 
         private static int ComputeFullWidthIterative(SyntaxNode node, int start = 0)
@@ -72,11 +83,23 @@ namespace Microsoft.Language.Xml
 
                 AfterPopState:
                 node = state.Node;
+                if (node.fullWidth == -1)
+                {
+                    node.fullWidth = node.GetTextWidth();
+
+                    // Node full width is now zero or the node is a token/trivial
+                    // and the full width represents the width of the text
+                    // for the token/trivia. Therefore, start is only incremented
+                    // for tokens and trivia.
+                    start += node.fullWidth;
+                }
+
                 var parent = state.Parent;
 
-                for (; state.Index < node.SlotCount; state.Index++)
+                var slotCount = node.GetSlotCountIncludingTrivia();
+                for (; state.Index < slotCount; state.Index++)
                 {
-                    var child = node.GetSlot(state.Index);
+                    var child = node.GetSlotIncludingTrivia(state.Index);
                     if (child == null)
                     {
                         continue;
@@ -101,11 +124,6 @@ namespace Microsoft.Language.Xml
                     else
                     {
                         start += child.fullWidth;
-                        if (node.fullWidth == -1)
-                        {
-                            node.fullWidth = 0;
-                        }
-
                         node.fullWidth += child.fullWidth;
                     }
                 }
@@ -226,11 +244,11 @@ namespace Microsoft.Language.Xml
             return result;
         }
 
-        private void AddDescendants(SyntaxNode node, List<IXmlElement> resultList)
+        private static void AddDescendants(SyntaxNode node, List<IXmlElement> resultList)
         {
             if (node is IXmlElement)
             {
-                resultList.Add((IXmlElement)this);
+                resultList.Add((IXmlElement)node);
             }
 
             foreach (var child in node.ChildNodes)
@@ -315,7 +333,7 @@ namespace Microsoft.Language.Xml
         {
             get
             {
-                return this.GetLeadingTriviaWidth() > 0;
+                return this.GetLeadingTrivia() != null;
             }
         }
 
@@ -323,7 +341,7 @@ namespace Microsoft.Language.Xml
         {
             get
             {
-                return this.GetTrailingTriviaWidth() > 0;
+                return this.GetTrailingTrivia() != null;
             }
         }
 

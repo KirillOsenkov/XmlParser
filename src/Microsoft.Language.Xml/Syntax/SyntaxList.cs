@@ -223,13 +223,12 @@ namespace Microsoft.Language.Xml
 
         internal sealed class WithLotsOfChildren : WithManyChildrenBase
         {
-            private readonly int[] _childOffsets;
+            private int[] _childOffsets;
             internal WithLotsOfChildren(ArrayElement<SyntaxNode>[] children) : base(children)
             {
-                _childOffsets = CalculateOffsets(children);
             }
 
-            private int[] CalculateOffsets(ArrayElement<SyntaxNode>[] children)
+            private static int[] CalculateOffsets(ArrayElement<SyntaxNode>[] children)
             {
                 var n = children.Length;
                 var childOffsets = new int[n];
@@ -240,13 +239,16 @@ namespace Microsoft.Language.Xml
                     offset += children[i].Value.FullWidth;
                 }
 
-                this.FullWidth = offset;
-
                 return childOffsets;
             }
 
             public override void GetIndexAndOffset(int targetOffset, out int index, out int offset)
             {
+                if (_childOffsets == null)
+                {
+                    _childOffsets = CalculateOffsets(_children);
+                }
+
                 if (targetOffset >= FullWidth)
                 {
                     index = _childOffsets.Length;
