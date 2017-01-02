@@ -32,13 +32,37 @@ namespace Microsoft.Language.Xml
                 return fullWidth;
             }
         }
-        
-        protected virtual int GetSlotCountIncludingTrivia()
+
+        public virtual int Width
+        {
+            get
+            {
+                return FullWidth - (GetLeadingTriviaWidth() + GetTrailingTriviaWidth());
+            }
+        }
+
+        public TextSpan Span
+        {
+            get
+            {
+                return new TextSpan(Start + GetLeadingTriviaWidth(), Width);
+            }
+        }
+
+        public TextSpan FullSpan
+        {
+            get
+            {
+                return new TextSpan(Start, FullWidth);
+            }
+        }
+
+        public virtual int GetSlotCountIncludingTrivia()
         {
             return SlotCount;
         }
 
-        protected virtual SyntaxNode GetSlotIncludingTrivia(int index)
+        public virtual SyntaxNode GetSlotIncludingTrivia(int index)
         {
             return GetSlot(index);
         }

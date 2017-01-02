@@ -18,6 +18,7 @@
     <Compile Include="Classification\ClassificationTypeDefinitions.cs" />
     <Compile Include="Classification\Classifier.cs" />
     <Compile Include="Classification\ClassifierProvider.cs" />
+    <Compile Include="Comments\CommentingService.cs" />
     <Compile Include="ContentType.cs" />
     <Compile Include="Outlining\OutliningTagger.cs" />
     <Compile Include="Outlining\OutliningTaggerProvider.cs" />

@@ -30,6 +30,14 @@ namespace Microsoft.Language.Xml
             }
         }
 
+        public override int Width
+        {
+            get
+            {
+                return Text.Length;
+            }
+        }
+
         protected override int GetTextWidth()
         {
             return Text.Length;

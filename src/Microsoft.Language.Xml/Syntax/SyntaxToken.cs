@@ -46,6 +46,15 @@ namespace Microsoft.Language.Xml
         }
 
         public string Text { get; internal set; }
+
+        public override int Width
+        {
+            get
+            {
+                return Text.Length;
+            }
+        }
+
         private object _trailingTriviaOrTriviaInfo = null;
 
         protected override int GetTextWidth()
@@ -53,7 +62,7 @@ namespace Microsoft.Language.Xml
             return Text.Length;
         }
 
-        protected override int GetSlotCountIncludingTrivia()
+        public override int GetSlotCountIncludingTrivia()
         {
             int triviaSlots = 0;
             var arr = _trailingTriviaOrTriviaInfo as SyntaxNode;
@@ -77,7 +86,7 @@ namespace Microsoft.Language.Xml
             return triviaSlots;
         }
 
-        protected override SyntaxNode GetSlotIncludingTrivia(int index)
+        public override SyntaxNode GetSlotIncludingTrivia(int index)
         {
             if (index == 0)
             {

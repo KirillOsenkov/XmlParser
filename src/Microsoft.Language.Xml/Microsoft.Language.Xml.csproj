@@ -15,6 +15,7 @@
     <Compile Include="Classification\ClassificationTypeNames.cs" />
     <Compile Include="Classification\ClassifierVisitor.cs" />
     <Compile Include="Classification\XmlClassificationTypes.cs" />
+    <Compile Include="Comments\CommentUtilities.cs" />
     <Compile Include="ErrorFactory.cs" />
     <Compile Include="HashFunctions.cs" />
     <Compile Include="ObjectPool.cs" />
@@ -71,6 +72,8 @@
     <Compile Include="Syntax\XmlStringSyntax.cs" />
     <Compile Include="Syntax\XmlTextSyntax.cs" />
     <Compile Include="Syntax\XmlTextTokenSyntax.cs" />
+    <Compile Include="TextSpan.cs" />
+    <Compile Include="Utilities\SyntaxLocator.cs" />
     <Compile Include="Utilities\FirstTokenReplacer.cs" />
     <Compile Include="Utilities\LastTokenReplacer.cs" />
     <Compile Include="XmlCharType.cs" />
