@@ -7,7 +7,8 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace Microsoft.Language.Xml.Editor
 {
-    [Export(typeof(CommentingService))]
+    // TODO: Finish implementing and testing logic here
+    //[Export(typeof(CommentingService))]
     public class CommentingService
     {
         [Import]
@@ -27,12 +28,26 @@ namespace Microsoft.Language.Xml.Editor
             var root = treeTask.Result;
             var selection = textView.Selection;
 
-            List<TextSpan> commentedSpans = new List<TextSpan>();
+            List<TextSpan> commentSpans = new List<TextSpan>();
 
             foreach (var selectedSpan in selection.SelectedSpans)
             {
                 var desiredCommentSpan = GetDesiredCommentSpan(snapshot, selectedSpan);
-                commentedSpans.AddRange(root.GetValidCommentSpans(desiredCommentSpan));
+                commentSpans.AddRange(root.GetValidCommentSpans(desiredCommentSpan));
+            }
+
+            var textBuffer = textView.TextBuffer;
+
+            using (var edit = textBuffer.CreateEdit())
+            {
+                for (int i = commentSpans.Count - 1; i >= 0; i--)
+                {
+                    var commentSpan = commentSpans[i];
+                    edit.Insert(commentSpan.End, "-->");
+                    edit.Insert(commentSpan.Start, "<!--");
+                }
+
+                edit.Apply();
             }
         }
 
@@ -82,6 +97,5 @@ namespace Microsoft.Language.Xml.Editor
         {
 
         }
-
     }
 }

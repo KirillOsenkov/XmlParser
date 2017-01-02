@@ -46,10 +46,14 @@ namespace Microsoft.Language.Xml.Comments
             {
             }
 
-            if (currentStart < validCommentRegion.End)
+            if (currentStart <= validCommentRegion.End)
             {
-                // Comment any remaining uncommented area
-                commentSpans.Add(TextSpan.FromBounds(currentStart, validCommentRegion.End));
+                var remainingCommentSpan = TextSpan.FromBounds(currentStart, validCommentRegion.End);
+                if (remainingCommentSpan == validCommentRegion || !remainingCommentSpan.IsEmpty)
+                {
+                    // Comment any remaining uncommented area
+                    commentSpans.Add(remainingCommentSpan);
+                }
             }
 
             return commentSpans;
