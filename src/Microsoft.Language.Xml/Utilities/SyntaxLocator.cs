@@ -107,7 +107,7 @@ namespace Microsoft.Language.Xml
                     if (!foundFirst && currentState.i == 0)
                     {
                         int offset;
-                        currentState.node.GetIndexAndOffset(span.Start, out currentState.i, out offset);
+                        currentState.node.GetIndexAndOffset(span.Start - currentState.node.Start, out currentState.i, out offset);
                         if (currentState.i > 0)
                         {
                             // The element is the first element to start after the start position. We want
@@ -124,11 +124,12 @@ namespace Microsoft.Language.Xml
 
                         if (child != null)
                         {
-                            if (child.Start > span.End)
+                            var childSpan = child.Span;
+                            if (childSpan.Start > span.End)
                             {
                                 break;
                             }
-                            else if (child.FullSpan.End < span.Start)
+                            else if (childSpan.End < span.Start)
                             {
                                 continue;
                             }

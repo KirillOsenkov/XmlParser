@@ -10,6 +10,16 @@ namespace Microsoft.Language.Xml.Comments
     {
         public static IEnumerable<TextSpan> GetValidCommentSpans(this SyntaxNode node, TextSpan commentSpan)
         {
+            return GetCommentSpans(node, commentSpan, returnComments: false);
+        }
+
+        public static IEnumerable<TextSpan> GetCommentedSpans(this SyntaxNode node, TextSpan commentSpan)
+        {
+            return GetCommentSpans(node, commentSpan, returnComments: true);
+        }
+
+        private static IEnumerable<TextSpan> GetCommentSpans(this SyntaxNode node, TextSpan commentSpan, bool returnComments)
+        {
             List<TextSpan> commentSpans = new List<TextSpan>();
 
             var validCommentRegion = node.GetValidCommentRegion(commentSpan);
@@ -27,13 +37,21 @@ namespace Microsoft.Language.Xml.Comments
                         return false;
                     case SyntaxKind.XmlComment:
                         var commentNodeSpan = n.Span;
-                        var validCommentSpan = TextSpan.FromBounds(currentStart, commentNodeSpan.Start);
-                        if (!validCommentSpan.IsEmpty)
+                        if (returnComments)
                         {
-                            commentSpans.Add(validCommentSpan);
+                            commentSpans.Add(commentNodeSpan);
+                        }
+                        else
+                        {
+                            var validCommentSpan = TextSpan.FromBounds(currentStart, commentNodeSpan.Start);
+                            if (!validCommentSpan.IsEmpty)
+                            {
+                                commentSpans.Add(validCommentSpan);
+                            }
+
+                            currentStart = commentNodeSpan.End;
                         }
 
-                        currentStart = commentNodeSpan.End;
                         return false;
                 }
 
@@ -46,13 +64,16 @@ namespace Microsoft.Language.Xml.Comments
             {
             }
 
-            if (currentStart <= validCommentRegion.End)
+            if (!returnComments)
             {
-                var remainingCommentSpan = TextSpan.FromBounds(currentStart, validCommentRegion.End);
-                if (remainingCommentSpan == validCommentRegion || !remainingCommentSpan.IsEmpty)
+                if (currentStart <= validCommentRegion.End)
                 {
-                    // Comment any remaining uncommented area
-                    commentSpans.Add(remainingCommentSpan);
+                    var remainingCommentSpan = TextSpan.FromBounds(currentStart, validCommentRegion.End);
+                    if (remainingCommentSpan == validCommentRegion || !remainingCommentSpan.IsEmpty)
+                    {
+                        // Comment any remaining uncommented area
+                        commentSpans.Add(remainingCommentSpan);
+                    }
                 }
             }
 
@@ -61,31 +82,31 @@ namespace Microsoft.Language.Xml.Comments
 
         public static TextSpan GetValidCommentRegion(this SyntaxNode node, TextSpan commentSpan)
         {
-            var commentSpanStart = GetCommentStartRegion(node, commentSpan.Start);
+            var commentSpanStart = GetCommentStartRegion(node, commentSpan.Start, commentSpan);
 
-            if (commentSpan.Length <= 1)
+            if (commentSpan.Length == 0)
             {
                 return commentSpanStart;
             }
 
-            var commentSpanEnd = GetCommentEndRegion(node, commentSpan.End - 1);
+            var commentSpanEnd = GetCommentEndRegion(node, commentSpan.End - 1, commentSpan);
 
             return TextSpan.FromBounds(
                 start: Math.Min(commentSpanStart.Start, commentSpanEnd.Start), 
                 end: Math.Max(Math.Max(commentSpanStart.End, commentSpanEnd.End), commentSpan.End));
         }
 
-        private static TextSpan GetCommentStartRegion(this SyntaxNode node, int position)
+        private static TextSpan GetCommentStartRegion(this SyntaxNode node, int position, TextSpan span)
         {
-            return GetCommentRegion(node, position, isStart: true);
+            return GetCommentRegion(node, position, span, isStart: true);
         }
 
-        private static TextSpan GetCommentEndRegion(this SyntaxNode node, int position)
+        private static TextSpan GetCommentEndRegion(this SyntaxNode node, int position, TextSpan span)
         {
-            return GetCommentRegion(node, position, isStart: false);
+            return GetCommentRegion(node, position, span, isStart: false);
         }
 
-        private static TextSpan GetCommentRegion(this SyntaxNode node, int position, bool isStart)
+        private static TextSpan GetCommentRegion(this SyntaxNode node, int position, TextSpan span, bool isStart)
         {
             var commentNode = node.FindNode(position,
                 n =>
@@ -94,15 +115,18 @@ namespace Microsoft.Language.Xml.Comments
                     {
                         case SyntaxKind.XmlDocument:
                         case SyntaxKind.List:
-                        case SyntaxKind.XmlElement:
                             return true;
+                        case SyntaxKind.XmlElement:
+                            XmlElementSyntax element = (XmlElementSyntax)n;
+                            var innerSpan = TextSpan.FromBounds(element.StartTag.Span.End, element.EndTag.Span.Start);
+                            return innerSpan.Contains(span);
                     }
 
                     return false;
                 });
 
-            if (commentNode.GetLeadingTriviaSpan().Contains(position) || 
-                commentNode.GetTrailingTriviaSpan().Contains(position))
+            if ((commentNode.GetLeadingTriviaSpan().Contains(position) && isStart) ||
+                (commentNode.GetTrailingTriviaSpan().Contains(position) && !isStart))
             {
                 return new TextSpan(position, 0);
             }
@@ -110,6 +134,8 @@ namespace Microsoft.Language.Xml.Comments
             switch (commentNode.Kind)
             {
                 case SyntaxKind.XmlComment:
+                case SyntaxKind.XmlEmptyElement:
+                case SyntaxKind.XmlElement:
                     return commentNode.Span;
                     //if (isStart)
                     //{
@@ -126,12 +152,9 @@ namespace Microsoft.Language.Xml.Comments
                     //break;
                 case SyntaxKind.XmlElementStartTag:
                 case SyntaxKind.XmlElementEndTag:
-                case SyntaxKind.XmlEmptyElement:
-
-
                     return commentNode.Parent.Span;
                 case SyntaxKind.WhitespaceTrivia:
-                    // TODO: what to do about this case?
+                // TODO: what to do about this case?
                 default:
                     //position = commentNode.GetFirstTerminal().Start;
                     break;

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Linq;
 using Microsoft.Language.Xml.Comments;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
@@ -8,7 +9,7 @@ using Microsoft.VisualStudio.Utilities;
 namespace Microsoft.Language.Xml.Editor
 {
     // TODO: Finish implementing and testing logic here
-    //[Export(typeof(CommentingService))]
+    [Export(typeof(CommentingService))]
     public class CommentingService
     {
         [Import]
@@ -40,11 +41,10 @@ namespace Microsoft.Language.Xml.Editor
 
             using (var edit = textBuffer.CreateEdit())
             {
-                for (int i = commentSpans.Count - 1; i >= 0; i--)
+                foreach (var commentSpan in commentSpans)
                 {
-                    var commentSpan = commentSpans[i];
-                    edit.Insert(commentSpan.End, "-->");
                     edit.Insert(commentSpan.Start, "<!--");
+                    edit.Insert(commentSpan.End, "-->");
                 }
 
                 edit.Apply();
@@ -79,12 +79,13 @@ namespace Microsoft.Language.Xml.Editor
                     {
                         if (!Scanner.IsWhitespace(snapshot[i]))
                         {
-                            end = i;
+                            // need to add 1 since end is exclusive
+                            end = i + 1;
                             break;
                         }
                     }
 
-                    return new TextSpan(start.Value, end);
+                    return TextSpan.FromBounds(start.Value, end);
                 }
             }
             else
@@ -93,9 +94,69 @@ namespace Microsoft.Language.Xml.Editor
             }
         }
 
-        public void UncommentSelection()
+        public void UncommentSelection(ITextView textView)
         {
+            var snapshot = textView.TextSnapshot;
+            var treeTask = parserService.GetSyntaxTree(snapshot);
+            treeTask.Wait(100);
 
+            if (!treeTask.IsCompleted)
+            {
+                return;
+            }
+
+            var root = treeTask.Result;
+            var selection = textView.Selection;
+
+            List<TextSpan> commentedSpans = new List<TextSpan>();
+
+            int priorCount = 0;
+            foreach (var selectedSpan in selection.SelectedSpans)
+            {
+                bool allowLineUncomment = true;
+                if (selectedSpan.IsEmpty)
+                {
+                    // For point selection, first see which comments are returned for the point span
+                    // If the strictly inside a commented node, just uncommented that node
+                    // otherwise, allow line uncomment
+                    var selectionCommentedSpans = root.GetCommentedSpans(new TextSpan(selectedSpan.Start, 0)).ToList();
+                    foreach (var selectionCommentedSpan in selectionCommentedSpans)
+                    {
+                        if (selectionCommentedSpan.Contains(selectedSpan.Start) &&
+                            selectionCommentedSpan.Start != selectedSpan.Start &&
+                            selectionCommentedSpan.End != selectedSpan.Start)
+                        {
+                            commentedSpans.Add(selectionCommentedSpan);
+                            allowLineUncomment = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (allowLineUncomment)
+                {
+                    var desiredCommentSpan = GetDesiredCommentSpan(snapshot, selectedSpan);
+
+                    priorCount = commentedSpans.Count;
+                    commentedSpans.AddRange(root.GetCommentedSpans(desiredCommentSpan));
+                }
+            }
+
+            var textBuffer = textView.TextBuffer;
+
+            int beginCommentLength = "<!--".Length;
+            int endCommentLength = "-->".Length;
+
+            using (var edit = textBuffer.CreateEdit())
+            {
+                foreach (var commentSpan in commentedSpans)
+                {
+                    edit.Delete(commentSpan.Start, beginCommentLength);
+                    edit.Delete(commentSpan.End - endCommentLength, endCommentLength);
+                }
+
+                edit.Apply();
+            }
         }
     }
 }
