@@ -45,9 +45,24 @@ namespace Microsoft.Language.Xml.Tests
         }
 
         [TestMethod]
+        public void CommentDeclaration()
+        {
+            TC(Resources.TestXml, TextSpan.FromBounds(22, 25),
+                TextSpan.FromBounds(0, 39));
+        }
+
+        [TestMethod]
+        public void CommentedDeclaration()
+        {
+            TU(Resources.TestXml.Insert(39, "-->").Insert(0, "<!--"), new TextSpan(22, 25),
+                TextSpan.FromBounds(0, 46));
+        }
+
+        [TestMethod]
         public void CommentedEdge()
         {
-            TU(Resources.TestXml, new TextSpan(436, 0));
+            TU(Resources.TestXml, new TextSpan(436, 0),
+                TextSpan.FromBounds(411, 436));
         }
 
         [TestMethod]

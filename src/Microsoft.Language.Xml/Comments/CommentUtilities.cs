@@ -118,6 +118,11 @@ namespace Microsoft.Language.Xml.Comments
                             return true;
                         case SyntaxKind.XmlElement:
                             XmlElementSyntax element = (XmlElementSyntax)n;
+                            if (element.StartTag == null || element.EndTag == null)
+                            {
+                                return true;
+                            }
+
                             var innerSpan = TextSpan.FromBounds(element.StartTag.Span.End, element.EndTag.Span.Start);
                             return innerSpan.Contains(span);
                     }
@@ -125,8 +130,8 @@ namespace Microsoft.Language.Xml.Comments
                     return false;
                 });
 
-            if ((commentNode.GetLeadingTriviaSpan().Contains(position) && isStart) ||
-                (commentNode.GetTrailingTriviaSpan().Contains(position) && !isStart))
+            if ((commentNode.GetLeadingTriviaSpan().Contains(position)) ||
+                (commentNode.GetTrailingTriviaSpan().Contains(position)))
             {
                 return new TextSpan(position, 0);
             }
@@ -135,6 +140,7 @@ namespace Microsoft.Language.Xml.Comments
             {
                 case SyntaxKind.XmlComment:
                 case SyntaxKind.XmlEmptyElement:
+                case SyntaxKind.XmlDeclaration:
                 case SyntaxKind.XmlElement:
                     return commentNode.Span;
                     //if (isStart)

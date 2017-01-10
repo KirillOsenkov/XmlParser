@@ -8,7 +8,6 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace Microsoft.Language.Xml.Editor
 {
-    // TODO: Finish implementing and testing logic here
     [Export(typeof(CommentingService))]
     public class CommentingService
     {
