@@ -10,28 +10,28 @@ namespace Microsoft.Language.Xml.Test
         public void TestIndent1()
         {
             T(@"<x>
-    |
+  |
 </x>");
             T(@"<x>
-    |
+  |
 </x>
 ");
             T(@"<x>
-    <x>
-        |
-    </x>
+  <x>
+    |
+  </x>
 </x>");
             T(@"<x>
+  <x>
     <x>
-        <x>
-            |
-        </x>
+      |
     </x>
+  </x>
 </x>");
             T(@"<X>
-    |
-    <a/>
-    <a/>
+  |
+  <a/>
+  <a/>
 </X>");
             T(@"<x>
 </x>
@@ -46,6 +46,21 @@ namespace Microsoft.Language.Xml.Test
 </x>
 |
 ");
+        }
+
+        [TestMethod]
+        public void TestIndent3()
+        {
+            T(@"<x>
+|</x>");
+            T(@"<x>
+  <x>
+  |</x>
+</x>");
+            T(@"<x>
+  <x a=""b"">
+  </x>
+|</x>");
         }
 
         private void T(string xmlWithCaret)

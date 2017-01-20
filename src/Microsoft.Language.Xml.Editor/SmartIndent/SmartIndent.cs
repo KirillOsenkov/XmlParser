@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.Text;
+﻿using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace Microsoft.Language.Xml.Editor
@@ -12,6 +7,7 @@ namespace Microsoft.Language.Xml.Editor
     {
         private ITextView textView;
         private readonly ParserService parserService;
+        private int indentSize;
 
         public SmartIndent(ITextView textView, ParserService parserService)
         {
@@ -23,6 +19,9 @@ namespace Microsoft.Language.Xml.Editor
         {
             var snapshot = line.Snapshot;
             var treeTask = parserService.GetSyntaxTree(snapshot);
+
+            indentSize = textView.Options.GetOptionValue(DefaultOptions.IndentSizeOptionId);
+
             treeTask.Wait(100);
 
             if (!treeTask.IsCompleted)
@@ -32,11 +31,16 @@ namespace Microsoft.Language.Xml.Editor
 
             var root = treeTask.Result;
             var lineStartPosition = line.Start.Position;
-            var indent = FindTotalParentChainIndent(root, lineStartPosition, 0, 0);
+            var indent = FindTotalParentChainIndent(
+                root, 
+                lineStartPosition, 
+                currentPosition: 0, 
+                indent: 0, 
+                indentSize: indentSize);
             return indent;
         }
 
-        public static int FindTotalParentChainIndent(SyntaxNode node, int position, int currentPosition, int indent)
+        public static int FindTotalParentChainIndent(SyntaxNode node, int position, int currentPosition, int indent, int indentSize = 2)
         {
             var leading = node.GetLeadingTriviaWidth();
             var trailing = node.GetTrailingTriviaWidth();
@@ -47,11 +51,18 @@ namespace Microsoft.Language.Xml.Editor
                 return indent;
             }
 
-            if (node is IXmlElement &&
-                !(node is XmlDocumentSyntax) &&
-                !string.IsNullOrEmpty(((IXmlElement)node).Name))
+            bool isClosingTag = node is XmlElementEndTagSyntax;
+            if (isClosingTag && indent >= indentSize)
             {
-                indent += 4;
+                return indent - indentSize;
+            }
+
+            bool isElementWithAName = node is IXmlElement &&
+                !(node is XmlDocumentSyntax) &&
+                !string.IsNullOrEmpty(((IXmlElement)node).Name);
+            if (isElementWithAName)
+            {
+                indent += indentSize;
             }
 
             foreach (var child in node.ChildNodes)
@@ -60,7 +71,7 @@ namespace Microsoft.Language.Xml.Editor
                 if (position < currentPosition + childWidth)
                 {
                     int result = indent;
-                    result = FindTotalParentChainIndent(child, position, currentPosition, indent);
+                    result = FindTotalParentChainIndent(child, position, currentPosition, indent, indentSize);
 
                     return result;
                 }

@@ -4,7 +4,6 @@ using System.Linq;
 using Microsoft.Language.Xml.Comments;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Utilities;
 
 namespace Microsoft.Language.Xml.Editor
 {
