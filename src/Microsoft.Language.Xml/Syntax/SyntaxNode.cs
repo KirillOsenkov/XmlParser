@@ -57,6 +57,8 @@ namespace Microsoft.Language.Xml
             }
         }
 
+        public int End => Start + FullWidth;
+
         public virtual int GetSlotCountIncludingTrivia()
         {
             return SlotCount;

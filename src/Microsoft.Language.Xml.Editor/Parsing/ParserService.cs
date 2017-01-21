@@ -34,6 +34,17 @@ namespace Microsoft.Language.Xml.Editor
             }
         }
 
+        public XmlNodeSyntax TryGetSyntaxTree(ITextSnapshot textSnapshot, int timeoutInMilliseconds = 100)
+        {
+            var task = GetSyntaxTree(textSnapshot);
+            if (!task.Wait(timeoutInMilliseconds))
+            {
+                return null;
+            }
+
+            return task.Result;
+        }
+
         private static XmlNodeSyntax Parse(ITextSnapshot snapshot)
         {
             var parser = new Parser(new TextSnapshotBuffer(snapshot));

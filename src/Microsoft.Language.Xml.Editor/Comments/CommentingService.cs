@@ -16,15 +16,12 @@ namespace Microsoft.Language.Xml.Editor
         public void CommentSelection(ITextView textView)
         {
             var snapshot = textView.TextSnapshot;
-            var treeTask = parserService.GetSyntaxTree(snapshot);
-            treeTask.Wait(100);
-
-            if (!treeTask.IsCompleted)
+            var root = parserService.TryGetSyntaxTree(snapshot);
+            if (root == null)
             {
                 return;
             }
 
-            var root = treeTask.Result;
             var selection = textView.Selection;
 
             List<TextSpan> commentSpans = new List<TextSpan>();

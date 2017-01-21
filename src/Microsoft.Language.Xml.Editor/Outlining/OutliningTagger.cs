@@ -85,11 +85,10 @@ namespace Microsoft.Language.Xml.Editor
 
         private void RaiseTagsChanged(ITextSnapshot snapshot)
         {
-            var handler = TagsChanged;
-            if (handler != null)
-            {
-                handler(this, new SnapshotSpanEventArgs(new SnapshotSpan(snapshot, 0, snapshot.Length)));
-            }
+            TagsChanged?.Invoke(
+                this, 
+                new SnapshotSpanEventArgs(
+                    new SnapshotSpan(snapshot, 0, snapshot.Length)));
         }
     }
 }
