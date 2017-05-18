@@ -32,3 +32,12 @@ public interface IXmlElement
     string this[string attributeName] { get; }
 }
 ```
+
+## FAQ:
+
+### How to find a node in the tree given a position in the source text?
+https://github.com/KirillOsenkov/XmlParser/blob/master/src/Microsoft.Language.Xml/Utilities/SyntaxLocator.cs#L24
+
+```
+SyntaxLocator.FindNode(SyntaxNode node, int position);
+```
