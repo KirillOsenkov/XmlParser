@@ -255,7 +255,7 @@ namespace Microsoft.Language.Xml.Test
                 var prefix = new string(' ', 16) + "XmlClassificationTypes.";
                 var actualText = string.Join(",\r\n", actualClassifications
                     .Select(s => prefix + s)) + ");";
-                Clipboard.SetText(actualText);
+                // Clipboard.SetText(actualText);
                 Assert.True(equal, "classifications differ. Actual:\r\n" + actualText);
             }
         }
