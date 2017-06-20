@@ -2,14 +2,13 @@
 using System.Linq;
 using Microsoft.Language.Xml.Comments;
 using Microsoft.Language.Xml.Tests.Properties;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace Microsoft.Language.Xml.Tests
 {
-    [TestClass]
     public class TestComments
     {
-        [TestMethod]
+        [Fact]
         public void CommentElementContent()
         {
             TC(Resources.TestXml, TextSpan.FromBounds(199, 209),
@@ -20,21 +19,21 @@ namespace Microsoft.Language.Xml.Tests
                 TextSpan.FromBounds(276, 350));
         }
 
-        [TestMethod]
+        [Fact]
         public void CommentSingleCharacter()
         {
             TC(Resources.TestXml, TextSpan.FromBounds(722, 723),
                 TextSpan.FromBounds(722, 723));
         }
 
-        [TestMethod]
+        [Fact]
         public void CommentExpandsExcludingElementWhitespace()
         {
             TC(Resources.TestXml, TextSpan.FromBounds(451, 453),
                 TextSpan.FromBounds(444, 513));
         }
 
-        [TestMethod]
+        [Fact]
         public void CommentMultipleElements()
         {
             TC(Resources.TestXml, TextSpan.FromBounds(753, 912),
@@ -44,28 +43,28 @@ namespace Microsoft.Language.Xml.Tests
                 TextSpan.FromBounds(818, 919));
         }
 
-        [TestMethod]
+        [Fact]
         public void CommentDeclaration()
         {
             TC(Resources.TestXml, TextSpan.FromBounds(22, 25),
                 TextSpan.FromBounds(0, 39));
         }
 
-        [TestMethod]
+        [Fact]
         public void CommentedDeclaration()
         {
             TU(Resources.TestXml.Insert(39, "-->").Insert(0, "<!--"), new TextSpan(22, 25),
                 TextSpan.FromBounds(0, 46));
         }
 
-        [TestMethod]
+        [Fact]
         public void CommentedEdge()
         {
             TU(Resources.TestXml, new TextSpan(436, 0),
                 TextSpan.FromBounds(411, 436));
         }
 
-        [TestMethod]
+        [Fact]
         public void CommentExcludesComments()
         {
             // Selection inside comment
@@ -101,10 +100,10 @@ namespace Microsoft.Language.Xml.Tests
 
             for (int i = 0; i < Math.Min(expectedSpans.Length, actualSpans.Count); i++)
             {
-                Assert.AreEqual(expectedSpans[i], actualSpans[i]);
+                Assert.Equal(expectedSpans[i], actualSpans[i]);
             }
 
-            Assert.AreEqual(expectedSpans.Length, actualSpans.Count);
+            Assert.Equal(expectedSpans.Length, actualSpans.Count);
         }
     }
 }

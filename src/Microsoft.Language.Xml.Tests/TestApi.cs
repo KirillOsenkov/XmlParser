@@ -1,25 +1,24 @@
 ﻿using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace Microsoft.Language.Xml.Tests
 {
-    [TestClass]
     public class TestApi
     {
-        [TestMethod]
+        [Fact]
         public void TestAttributeValue()
         {
             var root = Parser.ParseText("<e a=\"\"/>");
             var attributeValue = root.Attributes.First().Value;
-            Assert.AreEqual("", attributeValue);
+            Assert.Equal("", attributeValue);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestContent()
         {
             var root = Parser.ParseText("<e>Content</e>");
             var value = root.Value;
-            Assert.AreEqual("Content", value);
+            Assert.Equal("Content", value);
         }
     }
 }

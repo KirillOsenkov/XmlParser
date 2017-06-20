@@ -1,13 +1,18 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <SrcRoot>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildProjectDirectory), Common.props))</SrcRoot>
-    <ProjectGuid>{20B89FC2-53BD-41AF-BFE9-A029362FE49C}</ProjectGuid>
     <AssemblyName>Microsoft.Language.Xml.Tests</AssemblyName>
+    <TargetFramework>net46</TargetFramework>
   </PropertyGroup>
-  <Import Project="$(SrcRoot)\Common.props" />
   <ItemGroup>
-    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
+    <PackageReference Include="xunit" Version="2.3.0-beta3-build3705" />
+    <PackageReference Include="xunit.abstractions" Version="2.0.1" />
+    <PackageReference Include="xunit.assert" Version="2.3.0-beta3-build3705" />
+    <PackageReference Include="xunit.core" Version="2.3.0-beta3-build3705" />
+    <PackageReference Include="xunit.extensibility.core" Version="2.3.0-beta3-build3705" />
+    <PackageReference Include="xunit.extensibility.execution" Version="2.3.0-beta3-build3705" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.3.0-beta3-build3705" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
@@ -16,40 +21,10 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="TestComments.cs" />
-    <Compile Include="TestApi.cs" />
-    <Compile Include="TestClassifier.cs" />
-    <Compile Include="TestParser.cs" />
-    <Compile Include="TestSmartIndent.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Microsoft.Language.Xml.Editor\Microsoft.Language.Xml.Editor.csproj">
-      <Project>{c432b014-61dd-4f97-9d6f-966c1021f535}</Project>
-      <Name>Microsoft.Language.Xml.Editor</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Microsoft.Language.Xml\Microsoft.Language.Xml.csproj">
-      <Project>{2989fbe6-194f-46c9-8ef4-022f62519c9a}</Project>
-      <Name>Microsoft.Language.Xml</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+    <ProjectReference Include="..\Microsoft.Language.Xml\Microsoft.Language.Xml.csproj" />
+    <ProjectReference Include="..\Microsoft.Language.Xml.Editor\Microsoft.Language.Xml.Editor.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="TestXml.xml" />
   </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-  <Import Project="$(SrcRoot)\Common.targets" />
-  <Import Project="$(SrcRoot)\ReferencesEditor.targets" />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

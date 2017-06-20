@@ -2,14 +2,13 @@
 using System.Linq;
 using System.Text;
 using System.Windows;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace Microsoft.Language.Xml.Test
 {
-    [TestClass]
     public class TestClassifier
     {
-        [TestMethod]
+        [Fact]
         public void TestClassifierBasic()
         {
             T("<a></a>",
@@ -21,7 +20,7 @@ namespace Microsoft.Language.Xml.Test
                 XmlClassificationTypes.XmlDelimiter);
         }
 
-        [TestMethod]
+        [Fact]
         public void ClassifyDeclaration()
         {
             T("<?xml version=\"1.0\" encoding=\"utf-8\"?>",
@@ -40,7 +39,7 @@ namespace Microsoft.Language.Xml.Test
                 XmlClassificationTypes.XmlDelimiter);
         }
 
-        [TestMethod]
+        [Fact]
         public void ClassifyNamespaces()
         {
             T("<a:b></a:b>",
@@ -52,7 +51,7 @@ namespace Microsoft.Language.Xml.Test
                 XmlClassificationTypes.XmlDelimiter);
         }
 
-        [TestMethod]
+        [Fact]
         public void ClassifyEmptyElement()
         {
             T("<a/>",
@@ -61,7 +60,7 @@ namespace Microsoft.Language.Xml.Test
                 XmlClassificationTypes.XmlDelimiter);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestClassifierAttribute()
         {
             T("<a b=\"c\">t</a>",
@@ -79,7 +78,7 @@ namespace Microsoft.Language.Xml.Test
                 XmlClassificationTypes.XmlDelimiter);
         }
 
-        [TestMethod]
+        [Fact]
         public void ClassifierErrorTolerance()
         {
             T("<a><!</a>",
@@ -93,7 +92,7 @@ namespace Microsoft.Language.Xml.Test
                 XmlClassificationTypes.XmlDelimiter);
         }
 
-        [TestMethod]
+        [Fact]
         public void ClassifierDeepTree()
         {
             var sb = new StringBuilder();
@@ -106,7 +105,7 @@ namespace Microsoft.Language.Xml.Test
             T(xml);
         }
 
-        [TestMethod]
+        [Fact]
         public void ClassifyWindow()
         {
             T("<a/><b/>", 0, 4,
@@ -115,7 +114,7 @@ namespace Microsoft.Language.Xml.Test
                 XmlClassificationTypes.XmlDelimiter);
         }
 
-        [TestMethod]
+        [Fact]
         public void ClassifyWindow2()
         {
             T("<a/><b/>", 1, 4,
@@ -124,7 +123,7 @@ namespace Microsoft.Language.Xml.Test
                 XmlClassificationTypes.XmlDelimiter);
         }
 
-        [TestMethod]
+        [Fact]
         public void ClassifyWindow3()
         {
             T("<a/><b/>", 4, 4,
@@ -133,7 +132,7 @@ namespace Microsoft.Language.Xml.Test
                 XmlClassificationTypes.XmlDelimiter);
         }
 
-        [TestMethod]
+        [Fact]
         public void ClassifyWindow4()
         {
             T("<ab/><ab/>", 2, 5,
@@ -143,7 +142,7 @@ namespace Microsoft.Language.Xml.Test
                 XmlClassificationTypes.XmlName);
         }
 
-        [TestMethod]
+        [Fact]
         public void ClassifyAllInOne()
         {
             T(TestParser.allXml,
@@ -242,13 +241,13 @@ namespace Microsoft.Language.Xml.Test
                 windowLength,
                 (spanStart, spanLength, spanNode, spanClassification) =>
             {
-                Assert.IsTrue(spanStart >= start, $"Classified span start ({spanStart}) is less than expected {start}");
+                Assert.True(spanStart >= start, $"Classified span start ({spanStart}) is less than expected {start}");
                 start = spanStart + spanLength;
                 length += spanLength;
                 actualClassifications.Add(spanClassification);
             });
 
-            Assert.AreEqual(windowLength, length);
+            Assert.Equal(windowLength, length);
 
             if (expectedClassifications != null && expectedClassifications.Length > 0)
             {
@@ -257,7 +256,7 @@ namespace Microsoft.Language.Xml.Test
                 var actualText = string.Join(",\r\n", actualClassifications
                     .Select(s => prefix + s)) + ");";
                 Clipboard.SetText(actualText);
-                Assert.IsTrue(equal, "classifications differ. Actual:\r\n" + actualText);
+                Assert.True(equal, "classifications differ. Actual:\r\n" + actualText);
             }
         }
     }

@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace Microsoft.Language.Xml.Test
 {
-    [TestClass]
     public class TestParser
     {
         public const string allXml =
@@ -22,13 +21,13 @@ namespace Microsoft.Language.Xml.Test
     <!-- comment -->
 </X>";
 
-        [TestMethod]
+        [Fact]
         public void ParserErrorTolerance2()
         {
             T("<abc></abc>");
         }
 
-        [TestMethod]
+        [Fact]
         public void ParseEmptyElement()
         {
             T(" <a/>");
@@ -44,15 +43,15 @@ namespace Microsoft.Language.Xml.Test
             T(text);
         }
 
-        [TestMethod]
+        [Fact]
         public void ParserAttributeOnNonEmptyElement()
         {
             var document = T("<a b='bval' d='dval'><c /></a>");
-            Assert.AreEqual(2, document.Root.Attributes.Count());
-            Assert.AreEqual("bval", document.Root["b"]);
+            Assert.Equal(2, document.Root.Attributes.Count());
+            Assert.Equal("bval", document.Root["b"]);
         }
 
-        [TestMethod]
+        [Fact]
         public void ParserErrorTolerance()
         {
             T("");
@@ -74,7 +73,7 @@ namespace Microsoft.Language.Xml.Test
             T("<a/ >");
         }
 
-        [TestMethod]
+        [Fact]
         public void ExhaustiveSubstring()
         {
             for (int start = 0; start < allXml.Length; start++)
@@ -118,7 +117,7 @@ namespace Microsoft.Language.Xml.Test
             {
                 int start = descendantEntry.Key;
                 var element = (SyntaxNode)descendantEntry.Value;
-                Assert.IsTrue(last <= start);
+                Assert.True(last <= start);
                 VerifyText(xml, element);
 
                 foreach (var node in element.ChildNodes)
@@ -130,7 +129,7 @@ namespace Microsoft.Language.Xml.Test
             }
 
             var width = root.FullWidth;
-            Assert.AreEqual(xml.Length, width);
+            Assert.Equal(xml.Length, width);
 
             root.GetLeadingTrivia();
             root.GetTrailingTrivia();
@@ -143,7 +142,7 @@ namespace Microsoft.Language.Xml.Test
             var terminal = (SyntaxToken)(node.GetFirstTerminal() ?? node);
             var subXml = xml.Substring(node.Start + terminal.GetLeadingTriviaWidth(),
                 terminal.Text.Length);
-            Assert.AreEqual(subXml, terminal.Text);
+            Assert.Equal(subXml, terminal.Text);
         }
     }
 }

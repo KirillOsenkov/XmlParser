@@ -1,12 +1,11 @@
 ﻿using Microsoft.Language.Xml.Editor;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace Microsoft.Language.Xml.Test
 {
-    [TestClass]
     public class TestSmartIndent
     {
-        [TestMethod]
+        [Fact]
         public void TestIndent1()
         {
             T(@"<x>
@@ -39,7 +38,7 @@ namespace Microsoft.Language.Xml.Test
 ");
         }
 
-        [TestMethod]
+        [Fact]
         public void TestIndent2()
         {
             T(@"<x>
@@ -48,7 +47,7 @@ namespace Microsoft.Language.Xml.Test
 ");
         }
 
-        [TestMethod]
+        [Fact]
         public void TestIndent3()
         {
             T(@"<x>
@@ -75,7 +74,7 @@ namespace Microsoft.Language.Xml.Test
             var xml = xmlWithCaret.Remove(caret, 1);
             var root = Parser.ParseText(xml);
             var actualIndent = SmartIndent.FindTotalParentChainIndent(root, caret, 0, 0);
-            Assert.AreEqual(expectedIndent, actualIndent);
+            Assert.Equal(expectedIndent, actualIndent);
         }
     }
 }
