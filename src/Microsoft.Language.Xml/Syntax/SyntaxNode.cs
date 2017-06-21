@@ -69,7 +69,7 @@ namespace Microsoft.Language.Xml
             return GetSlot(index);
         }
 
-        internal abstract SyntaxNode Accept(SyntaxVisitor visitor);
+        public abstract SyntaxNode Accept(SyntaxVisitor visitor);
 
         private struct ComputeFullWidthState
         {

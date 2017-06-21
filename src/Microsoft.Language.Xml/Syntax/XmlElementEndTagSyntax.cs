@@ -28,7 +28,7 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        internal override SyntaxNode Accept(SyntaxVisitor visitor)
+        public override SyntaxNode Accept(SyntaxVisitor visitor)
         {
             return visitor.VisitXmlElementEndTag(this);
         }
@@ -44,6 +44,22 @@ namespace Microsoft.Language.Xml
 
                 return NameNode.Name;
             }
+        }
+
+        public override SyntaxNode WithLeadingTrivia(SyntaxNode trivia)
+        {
+            return new XmlElementEndTagSyntax(Kind,
+                                              (PunctuationSyntax)LessThanSlashToken.WithLeadingTrivia(trivia),
+                                              NameNode,
+                                              GreaterThanToken);
+        }
+
+        public override SyntaxNode WithTrailingTrivia(SyntaxNode trivia)
+        {
+            return new XmlElementEndTagSyntax(Kind,
+                                              LessThanSlashToken,
+                                              NameNode,
+                                              (PunctuationSyntax)GreaterThanToken.WithTrailingTrivia(trivia));
         }
     }
 }

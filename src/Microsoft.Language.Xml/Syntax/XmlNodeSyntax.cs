@@ -6,7 +6,7 @@
         {
         }
 
-        internal override SyntaxNode Accept(SyntaxVisitor visitor)
+        public override SyntaxNode Accept(SyntaxVisitor visitor)
         {
             return visitor.VisitXmlNode(this);
         }

@@ -4,7 +4,7 @@ using System.IO;
 
 namespace Microsoft.Language.Xml
 {
-    internal partial class SyntaxTrivia : SyntaxNode
+    public partial class SyntaxTrivia : SyntaxNode
     {
         private readonly string _text;
         internal SyntaxTrivia(SyntaxKind kind, string text) : base(kind)
@@ -12,7 +12,7 @@ namespace Microsoft.Language.Xml
             this._text = text;
         }
 
-        internal override SyntaxNode Accept(SyntaxVisitor visitor)
+        public override SyntaxNode Accept(SyntaxVisitor visitor)
         {
             return visitor.VisitSyntaxTrivia(this);
         }

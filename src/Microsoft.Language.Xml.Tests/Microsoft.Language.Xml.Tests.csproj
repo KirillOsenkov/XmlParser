@@ -11,6 +11,7 @@
     <PackageReference Include="xunit.extensibility.core" Version="2.3.0-beta3-build3705" />
     <PackageReference Include="xunit.extensibility.execution" Version="2.3.0-beta3-build3705" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.3.0-beta3-build3705" />
+    <PackageReference Include="xunit.runner.msbuild" Version="2.3.0-beta3-build3705" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -20,5 +21,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="TestXml.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <XunitTest_Xml Include="$(OutputPath)\TestResult.xml" />
   </ItemGroup>
 </Project>

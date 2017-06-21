@@ -31,7 +31,7 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        internal override SyntaxNode Accept(SyntaxVisitor visitor)
+        public override SyntaxNode Accept(SyntaxVisitor visitor)
         {
             return visitor.VisitXmlElement(this);
         }
@@ -51,6 +51,20 @@ namespace Microsoft.Language.Xml
 
                 return Enumerable.Empty<IXmlElementSyntax>();
             }
+        }
+
+        public override SyntaxNode WithLeadingTrivia(SyntaxNode trivia)
+        {
+            return new XmlElementSyntax((XmlElementStartTagSyntax)StartTag.WithLeadingTrivia(trivia),
+                                        Content,
+                                        EndTag);
+        }
+
+        public override SyntaxNode WithTrailingTrivia(SyntaxNode trivia)
+        {
+            return new XmlElementSyntax(StartTag,
+                                        Content,
+                                        (XmlElementEndTagSyntax)EndTag.WithTrailingTrivia(trivia));
         }
     }
 }

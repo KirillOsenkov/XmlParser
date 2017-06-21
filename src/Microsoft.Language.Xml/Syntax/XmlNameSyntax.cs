@@ -29,7 +29,7 @@ namespace Microsoft.Language.Xml
             throw new InvalidOperationException();
         }
 
-        internal override SyntaxNode Accept(SyntaxVisitor visitor)
+        public override SyntaxNode Accept(SyntaxVisitor visitor)
         {
             return visitor.VisitXmlName(this);
         }

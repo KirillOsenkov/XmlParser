@@ -24,7 +24,7 @@
             throw null;
         }
 
-        internal override SyntaxNode Accept(SyntaxVisitor visitor)
+        public override SyntaxNode Accept(SyntaxVisitor visitor)
         {
             return visitor.VisitSkippedTokensTrivia(this);
         }

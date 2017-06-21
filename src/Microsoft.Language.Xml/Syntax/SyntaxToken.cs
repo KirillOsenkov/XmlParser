@@ -32,7 +32,7 @@ namespace Microsoft.Language.Xml
             tokenListBuilder.Add(this);
         }
 
-        internal override SyntaxNode Accept(SyntaxVisitor visitor)
+        public override SyntaxNode Accept(SyntaxVisitor visitor)
         {
             return visitor.VisitSyntaxToken(this);
         }

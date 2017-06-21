@@ -86,7 +86,7 @@ namespace Microsoft.Language.Xml
             return new XmlElementStartTagSyntax(SyntaxKind.XmlElementStartTag, lessThanToken, name, attributes, greaterThanToken);
         }
 
-        internal static XmlElementEndTagSyntax XmlElementEndTag(PunctuationSyntax lessThanSlashToken, XmlNameSyntax name, PunctuationSyntax greaterThanToken)
+        public static XmlElementEndTagSyntax XmlElementEndTag(PunctuationSyntax lessThanSlashToken, XmlNameSyntax name, PunctuationSyntax greaterThanToken)
         {
             Debug.Assert(lessThanSlashToken != null && lessThanSlashToken.Kind == SyntaxKind.LessThanSlashToken);
             Debug.Assert(greaterThanToken != null && greaterThanToken.Kind == SyntaxKind.GreaterThanToken);
@@ -127,7 +127,7 @@ namespace Microsoft.Language.Xml
         ''' Represents an empty XML element of the form &lt;element /&gt;
         ''' </summary>
         */
-        internal static XmlEmptyElementSyntax XmlEmptyElement(
+        public static XmlEmptyElementSyntax XmlEmptyElement(
             PunctuationSyntax lessThanToken,
             XmlNameSyntax name,
             SyntaxList<SyntaxNode> attributes,
@@ -144,7 +144,7 @@ namespace Microsoft.Language.Xml
         ''' element.
         ''' </summary>
         */
-        internal static XmlStringSyntax XmlString(PunctuationSyntax startQuoteToken, SyntaxList<XmlTextTokenSyntax> textTokens, PunctuationSyntax endQuoteToken)
+        public static XmlStringSyntax XmlString(PunctuationSyntax startQuoteToken, SyntaxList<XmlTextTokenSyntax> textTokens, PunctuationSyntax endQuoteToken)
         {
             //Debug.Assert(startQuoteToken != null && SyntaxFacts.IsXmlStringStartQuoteToken(startQuoteToken.Kind));
             //Debug.Assert(endQuoteToken != null && SyntaxFacts.IsXmlStringEndQuoteToken(endQuoteToken.Kind));
@@ -159,7 +159,7 @@ namespace Microsoft.Language.Xml
         ''' whitespace in an XML literal expression.
         ''' </summary>
         */
-        internal static XmlDeclarationOptionSyntax XmlDeclarationOption(XmlNameTokenSyntax name, PunctuationSyntax equals, XmlStringSyntax value)
+        public static XmlDeclarationOptionSyntax XmlDeclarationOption(XmlNameTokenSyntax name, PunctuationSyntax equals, XmlStringSyntax value)
         {
             Debug.Assert(name != null && name.Kind == SyntaxKind.XmlNameToken);
             Debug.Assert(equals != null && equals.Kind == SyntaxKind.EqualsToken);
@@ -184,7 +184,7 @@ namespace Microsoft.Language.Xml
         ''' Represents the XML declaration prologue in an XML literal expression.
         ''' </summary>
         */
-        internal static XmlDeclarationSyntax XmlDeclaration(PunctuationSyntax lessThanQuestionToken, SyntaxToken xmlKeyword, XmlDeclarationOptionSyntax version, XmlDeclarationOptionSyntax encoding, XmlDeclarationOptionSyntax standalone, PunctuationSyntax questionGreaterThanToken)
+        public static XmlDeclarationSyntax XmlDeclaration(PunctuationSyntax lessThanQuestionToken, SyntaxToken xmlKeyword, XmlDeclarationOptionSyntax version, XmlDeclarationOptionSyntax encoding, XmlDeclarationOptionSyntax standalone, PunctuationSyntax questionGreaterThanToken)
         {
             Debug.Assert(lessThanQuestionToken != null && lessThanQuestionToken.Kind == SyntaxKind.LessThanQuestionToken);
             //Debug.Assert(xmlKeyword != null && xmlKeyword.Kind == SyntaxKind.XmlKeyword);
@@ -203,7 +203,7 @@ namespace Microsoft.Language.Xml
             return new XmlPrefixSyntax(localName, colon);
         }
 
-        internal static XmlProcessingInstructionSyntax XmlProcessingInstruction(
+        public static XmlProcessingInstructionSyntax XmlProcessingInstruction(
             PunctuationSyntax beginProcessingInstruction,
             XmlNameTokenSyntax name,
             SyntaxList<SyntaxNode> toList,
@@ -212,7 +212,7 @@ namespace Microsoft.Language.Xml
             return new XmlProcessingInstructionSyntax(beginProcessingInstruction, name, toList, endProcessingInstruction);
         }
 
-        internal static XmlTextTokenSyntax XmlTextLiteralToken(string text, string value, SyntaxNode leadingTrivia, SyntaxNode trailingTrivia)
+        public static XmlTextTokenSyntax XmlTextLiteralToken(string text, string value, SyntaxNode leadingTrivia, SyntaxNode trailingTrivia)
         {
             return new XmlTextTokenSyntax(SyntaxKind.XmlTextLiteralToken, text, leadingTrivia, trailingTrivia, value);
         }
@@ -226,24 +226,24 @@ namespace Microsoft.Language.Xml
           ''' The actual text of this token.
           ''' </param>
         */
-        internal static XmlTextTokenSyntax XmlEntityLiteralToken(string text, string value, SyntaxNode leadingTrivia, SyntaxNode trailingTrivia)
+        public static XmlTextTokenSyntax XmlEntityLiteralToken(string text, string value, SyntaxNode leadingTrivia, SyntaxNode trailingTrivia)
         {
             Debug.Assert(text != null);
             return new XmlTextTokenSyntax(SyntaxKind.XmlEntityLiteralToken, text, leadingTrivia, trailingTrivia, value);
         }
 
-        internal static SyntaxNode WhitespaceTrivia(string text)
+        public static SyntaxTrivia WhitespaceTrivia(string text)
         {
             Debug.Assert(text != null);
             return new SyntaxTrivia(SyntaxKind.WhitespaceTrivia, text);
         }
 
-        internal static SyntaxTrivia EndOfLineTrivia(string text)
+        public static SyntaxTrivia EndOfLineTrivia(string text)
         {
             return new SyntaxTrivia(SyntaxKind.EndOfLineTrivia, text);
         }
 
-        internal static XmlCDataSectionSyntax XmlCDataSection(
+        public static XmlCDataSectionSyntax XmlCDataSection(
             PunctuationSyntax beginCData,
             SyntaxList<XmlTextTokenSyntax> result,
             PunctuationSyntax endCData)
@@ -251,7 +251,7 @@ namespace Microsoft.Language.Xml
             return new XmlCDataSectionSyntax(SyntaxKind.XmlCDataSection, beginCData, result.Node, endCData);
         }
 
-        internal static XmlNodeSyntax XmlComment(
+        public static XmlNodeSyntax XmlComment(
             PunctuationSyntax beginComment,
             SyntaxList<XmlTextTokenSyntax> result,
             PunctuationSyntax endComment)
