@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <AssemblyName>Microsoft.Language.Xml.Tests</AssemblyName>
+    <AssemblyName>Microsoft.Language.Xml.Editor.Tests</AssemblyName>
     <TargetFramework>net46</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
@@ -13,12 +13,15 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="2.3.0-beta3-build3705" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.Language.Xml\Microsoft.Language.Xml.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="TestXml.xml" />
+    <ProjectReference Include="..\Microsoft.Language.Xml.Editor\Microsoft.Language.Xml.Editor.csproj" />
   </ItemGroup>
 </Project>

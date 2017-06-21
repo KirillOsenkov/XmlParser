@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Language.Xml.Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Language.Xml.ConsoleTestHost", "src\Microsoft.Language.Xml.ConsoleTestHost\Microsoft.Language.Xml.ConsoleTestHost.csproj", "{547C369D-8FB1-407E-BB0F-319373171E28}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Language.Xml.Editor.Tests", "src\Microsoft.Language.Xml.Editor.Tests\Microsoft.Language.Xml.Editor.Tests.csproj", "{E3CEC50E-40AF-4E53-93AF-D7E2F2C9FF10}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,14 @@ Global
 		{547C369D-8FB1-407E-BB0F-319373171E28}.Release|Any CPU.Build.0 = Release|Any CPU
 		{547C369D-8FB1-407E-BB0F-319373171E28}.ReleaseMono|Any CPU.ActiveCfg = Release|Any CPU
 		{547C369D-8FB1-407E-BB0F-319373171E28}.ReleaseMono|Any CPU.Build.0 = Release|Any CPU
+		{E3CEC50E-40AF-4E53-93AF-D7E2F2C9FF10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3CEC50E-40AF-4E53-93AF-D7E2F2C9FF10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3CEC50E-40AF-4E53-93AF-D7E2F2C9FF10}.DebugMono|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3CEC50E-40AF-4E53-93AF-D7E2F2C9FF10}.DebugMono|Any CPU.Build.0 = Debug|Any CPU
+		{E3CEC50E-40AF-4E53-93AF-D7E2F2C9FF10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3CEC50E-40AF-4E53-93AF-D7E2F2C9FF10}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3CEC50E-40AF-4E53-93AF-D7E2F2C9FF10}.ReleaseMono|Any CPU.ActiveCfg = Release|Any CPU
+		{E3CEC50E-40AF-4E53-93AF-D7E2F2C9FF10}.ReleaseMono|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
