@@ -5,7 +5,7 @@
     <NBGV_DoNotEmitNonVersionCustomAttributes>true</NBGV_DoNotEmitNonVersionCustomAttributes>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Nerdbank.GitVersioning" Version="1.5.62" />
+    <PackageReference Include="Nerdbank.GitVersioning" Version="1.6.35" />
     <PackageReference Include="Microsoft.VisualStudio.CoreUtility" Version="15.0.26606" />
     <PackageReference Include="Microsoft.VisualStudio.Language.StandardClassification" Version="15.0.26606" />
     <PackageReference Include="Microsoft.VisualStudio.Text.Data" Version="15.0.26606" />
