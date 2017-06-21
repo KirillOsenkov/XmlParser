@@ -80,12 +80,12 @@ namespace Microsoft.Language.Xml.Tests
                 );
         }
 
-        public void TC(string xml, TextSpan commentSpan, params TextSpan[] expectedSpans)
+        private void TC(string xml, TextSpan commentSpan, params TextSpan[] expectedSpans)
         {
             TestCore(xml, commentSpan, expectedSpans, commented: false);
         }
 
-        public void TU(string xml, TextSpan commentSpan, params TextSpan[] expectedSpans)
+        private void TU(string xml, TextSpan commentSpan, params TextSpan[] expectedSpans)
         {
             TestCore(xml, commentSpan, expectedSpans, commented: true);
         }

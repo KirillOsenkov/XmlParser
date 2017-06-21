@@ -37,7 +37,7 @@ namespace Microsoft.Language.Xml.Test
         }
 
         //[TestMethod]
-        public void ParseLargeFile()
+        private void ParseLargeFile()
         {
             var text = File.ReadAllText(@"D:\1.xml");
             T(text);

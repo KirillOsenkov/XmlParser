@@ -224,12 +224,12 @@ namespace Microsoft.Language.Xml.Test
                 XmlClassificationTypes.XmlDelimiter);
         }
 
-        public void T(string xml, params XmlClassificationTypes[] expectedClassifications)
+        private void T(string xml, params XmlClassificationTypes[] expectedClassifications)
         {
             T(xml, 0, xml.Length, expectedClassifications);
         }
 
-        public void T(string xml, int windowStart, int windowLength, params XmlClassificationTypes[] expectedClassifications)
+        private void T(string xml, int windowStart, int windowLength, params XmlClassificationTypes[] expectedClassifications)
         {
             var root = Parser.ParseText(xml);
             var actualClassifications = new List<XmlClassificationTypes>();
