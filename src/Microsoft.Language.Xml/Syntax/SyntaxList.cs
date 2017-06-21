@@ -59,7 +59,7 @@ namespace Microsoft.Language.Xml
             return List(array);
         }
 
-        internal override SyntaxNode Accept(SyntaxVisitor visitor)
+        public override SyntaxNode Accept(SyntaxVisitor visitor)
         {
             return visitor.Visit(this);
         }

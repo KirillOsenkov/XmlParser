@@ -2,7 +2,7 @@
 
 namespace Microsoft.Language.Xml
 {
-    internal class SyntaxRewriter : SyntaxVisitor
+    public class SyntaxRewriter : SyntaxVisitor
     {
         public SyntaxList<TNode> VisitList<TNode>(SyntaxList<TNode> list) where TNode : SyntaxNode
         {

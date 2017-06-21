@@ -12,7 +12,7 @@ namespace Microsoft.Language.Xml
             this._text = text;
         }
 
-        internal override SyntaxNode Accept(SyntaxVisitor visitor)
+        public override SyntaxNode Accept(SyntaxVisitor visitor)
         {
             return visitor.VisitSyntaxTrivia(this);
         }
