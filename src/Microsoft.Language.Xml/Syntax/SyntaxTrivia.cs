@@ -4,7 +4,7 @@ using System.IO;
 
 namespace Microsoft.Language.Xml
 {
-    internal partial class SyntaxTrivia : SyntaxNode
+    public partial class SyntaxTrivia : SyntaxNode
     {
         private readonly string _text;
         internal SyntaxTrivia(SyntaxKind kind, string text) : base(kind)
