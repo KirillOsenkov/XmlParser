@@ -20,5 +20,26 @@ namespace Microsoft.Language.Xml.Tests
             var value = root.Value;
             Assert.Equal("Content", value);
         }
+
+        [Fact]
+        public void TestRootLevel()
+        {
+            var root = Parser.ParseText("<Root></Root>");
+            Assert.Equal("Root", root.Name);
+        }
+
+        [Fact(Skip = "https://github.com/KirillOsenkov/XmlParser/issues/8")]
+        public void TestRootLevelTrivia()
+        {
+            var root = Parser.ParseText("<!-- C --><Root></Root>");
+            Assert.Equal("Root", root.Name);
+        }
+
+        [Fact]
+        public void TestRootLevelTriviaWithDeclaration()
+        {
+            var root = Parser.ParseText("<?xml version=\"1.0\" encoding=\"utf-8\"?><!-- C --><Root></Root>");
+            Assert.Equal("Root", root.Name);
+        }
     }
 }
