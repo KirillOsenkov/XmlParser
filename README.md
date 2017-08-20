@@ -1,4 +1,9 @@
 # XmlParser
+
+[![Build status](https://ci.appveyor.com/api/projects/status/5ur9sv9bp4nr7a3n?svg=true)](https://ci.appveyor.com/project/KirillOsenkov/xmlparser)
+[![NuGet package](https://img.shields.io/nuget/v/Microsoft.Language.Xml.svg)](https://nuget.org/packages/Microsoft.Language.Xml)
+[![NuGet package for VS Editor](https://img.shields.io/nuget/v/Microsoft.Language.Xml.Editor.svg)](https://nuget.org/packages/Microsoft.Language.Xml.Editor)
+
 A Roslyn-inspired full-fidelity XML parser with no dependencies and a simple Visual Studio XML language service.
 
  * The parser produces a **full-fidelity** syntax tree, meaning every character of the source text is represented in the tree. The tree covers the entire source text.
