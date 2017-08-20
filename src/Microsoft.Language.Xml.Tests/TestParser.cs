@@ -140,8 +140,14 @@ namespace Microsoft.Language.Xml.Test
         private static void VerifyText(string xml, SyntaxNode node)
         {
             var terminal = (SyntaxToken)(node.GetFirstTerminal() ?? node);
-            var subXml = xml.Substring(node.Start + terminal.GetLeadingTriviaWidth(),
-                terminal.Text.Length);
+            int start = node.Start + terminal.GetLeadingTriviaWidth();
+            int length = terminal.Text.Length;
+            if (start + length > xml.Length)
+            {
+                throw new Exception($"String out of bounds. Start={start} Length={length} xml.Length={xml.Length}\nxml={xml}node={node}\nterminal={terminal}");
+            }
+
+            var subXml = xml.Substring(start, length);
             Assert.Equal(subXml, terminal.Text);
         }
     }
