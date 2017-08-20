@@ -2185,7 +2185,7 @@ namespace Microsoft.Language.Xml
             return MakeEndOfLineTrivia(GetNextChar());
         }
 
-        private static readonly SyntaxTrivia _crLfTrivia = SyntaxFactory.EndOfLineTrivia(Environment.NewLine);
+        private static readonly SyntaxTrivia _crLfTrivia = SyntaxFactory.EndOfLineTrivia("\r\n");
 
         private SyntaxTrivia MakeEndOfLineTriviaCRLF()
         {
