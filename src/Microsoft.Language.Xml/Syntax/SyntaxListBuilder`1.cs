@@ -7,29 +7,31 @@ using System.Threading.Tasks;
 
 namespace Microsoft.Language.Xml
 {
-    public struct SyntaxListBuilder<TNode>
+    internal struct SyntaxListBuilder<TNode>
         where TNode : SyntaxNode
     {
-        private SyntaxListBuilder builder;
+        private readonly SyntaxListBuilder _builder;
+
+        public SyntaxListBuilder(int size)
+            : this(new SyntaxListBuilder(size))
+        {
+        }
+
         public static SyntaxListBuilder<TNode> Create()
         {
             return new SyntaxListBuilder<TNode>(8);
         }
 
-        public SyntaxListBuilder(int size) : this(new SyntaxListBuilder(size))
+        internal SyntaxListBuilder(SyntaxListBuilder builder)
         {
-        }
-
-        public SyntaxListBuilder(SyntaxListBuilder builder)
-        {
-            this.builder = builder;
+            _builder = builder;
         }
 
         public bool IsNull
         {
             get
             {
-                return (this.builder == null);
+                return _builder == null;
             }
         }
 
@@ -37,73 +39,59 @@ namespace Microsoft.Language.Xml
         {
             get
             {
-                return this.builder.Count;
+                return _builder.Count;
             }
-        }
-
-        public TNode this[int index]
-        {
-            get
-            {
-                return (TNode)this.builder[index];
-            }
-
-            set
-            {
-                this.builder[index] = value;
-            }
-        }
-
-        public void RemoveLast()
-        {
-            this.builder.RemoveLast();
         }
 
         public void Clear()
         {
-            this.builder.Clear();
+            _builder.Clear();
         }
 
-        public void Add(TNode node)
+        public SyntaxListBuilder<TNode> Add(TNode node)
         {
-            this.builder.Add(node);
+            _builder.Add(node);
+            return this;
+        }
+
+        public void AddRange(TNode[] items, int offset, int length)
+        {
+            _builder.AddRange(items, offset, length);
         }
 
         public void AddRange(SyntaxList<TNode> nodes)
         {
-            this.builder.AddRange<TNode>(nodes);
+            _builder.AddRange(nodes);
         }
 
         public void AddRange(SyntaxList<TNode> nodes, int offset, int length)
         {
-            this.builder.AddRange<TNode>(nodes, offset, length);
+            _builder.AddRange(nodes, offset, length);
         }
 
         public bool Any(SyntaxKind kind)
         {
-            return this.builder.Any(kind);
+            return _builder.Any(kind);
         }
 
         public SyntaxList<TNode> ToList()
         {
-            Debug.Assert(this.builder != null);
-            return this.builder.ToList<TNode>();
-        }
-
-        public SyntaxList<TDerivedNode> ToList<TDerivedNode>() where TDerivedNode : TNode
-        {
-            Debug.Assert(this.builder != null);
-            return this.builder.ToList<TDerivedNode>();
+            return _builder.ToList();
         }
 
         public static implicit operator SyntaxListBuilder(SyntaxListBuilder<TNode> builder)
         {
-            return builder.builder;
+            return builder._builder;
         }
 
         public static implicit operator SyntaxList<TNode>(SyntaxListBuilder<TNode> builder)
         {
-            return builder.ToList();
+            if (builder._builder != null)
+            {
+                return builder.ToList();
+            }
+
+            return default(SyntaxList<TNode>);
         }
     }
 }

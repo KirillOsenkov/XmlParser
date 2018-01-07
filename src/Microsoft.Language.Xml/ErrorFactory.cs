@@ -2,6 +2,10 @@
 
 namespace Microsoft.Language.Xml
 {
+    public class DiagnosticInfo
+    {
+    }
+
     public class ErrorFactory
     {
         internal static DiagnosticInfo ErrorInfo(ERRID eRR_ExpectedSColon)

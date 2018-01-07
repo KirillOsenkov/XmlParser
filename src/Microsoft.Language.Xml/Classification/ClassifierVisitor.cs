@@ -119,7 +119,7 @@ namespace Microsoft.Language.Xml
             {
                 currentState = stateStack.Pop();
 
-                AfterPopCurrentState:
+            AfterPopCurrentState:
                 if (currentState.continueInsideForLoop)
                 {
                     currentState.continueInsideForLoop = false;
@@ -131,7 +131,7 @@ namespace Microsoft.Language.Xml
 
                 currentState.i = 0;
 
-                ForLoop:
+            ForLoop:
                 for (; currentState.i < currentState.node.SlotCount; currentState.i++)
                 {
                     if (start > windowEnd)
@@ -139,7 +139,7 @@ namespace Microsoft.Language.Xml
                         return;
                     }
 
-                    currentState.child = currentState.node.GetSlot(currentState.i);
+                    currentState.child = currentState.node.GetNodeSlot(currentState.i);
                     if (currentState.child == null)
                     {
                         continue;
@@ -238,7 +238,7 @@ namespace Microsoft.Language.Xml
                     break;
                 }
 
-                var child = node.GetSlot(i);
+                var child = node.GetNodeSlot(i);
                 visitedCount++;
                 if (child == null)
                 {

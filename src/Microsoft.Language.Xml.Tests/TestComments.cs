@@ -14,7 +14,7 @@ namespace Microsoft.Language.Xml.Tests
             TC(Resources.TestXml, TextSpan.FromBounds(199, 209),
                 TextSpan.FromBounds(199, 209));
 
-            // Test at edges xml element content 
+            // Test at edges xml element content
             TC(Resources.TestXml, TextSpan.FromBounds(276, 350),
                 TextSpan.FromBounds(276, 350));
         }
@@ -94,8 +94,8 @@ namespace Microsoft.Language.Xml.Tests
         {
             var root = Parser.ParseText(xml);
 
-            var actualSpans = commented ? 
-                root.GetCommentedSpans(commentSpan).ToList() : 
+            var actualSpans = commented ?
+                root.GetCommentedSpans(commentSpan).ToList() :
                 root.GetValidCommentSpans(commentSpan).ToList();
 
             for (int i = 0; i < Math.Min(expectedSpans.Length, actualSpans.Count); i++)

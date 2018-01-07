@@ -7,6 +7,12 @@
   <ItemGroup>
     <PackageReference Include="Nerdbank.GitVersioning" Version="1.6.35" PrivateAssets="all" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Syntax\InternalSyntax\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Syntax\XmlElementSyntaxBase.cs" />
+  </ItemGroup>
   <PropertyGroup>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>Microsoft.Language.Xml</PackageId>

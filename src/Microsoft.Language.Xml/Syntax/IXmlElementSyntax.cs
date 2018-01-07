@@ -4,8 +4,8 @@ namespace Microsoft.Language.Xml
 {
     public interface IXmlElementSyntax
     {
-        XmlNameSyntax Name { get; }
-        SyntaxNode Content { get; }
+        XmlNameSyntax NameNode { get; }
+        SyntaxList<SyntaxNode> Content { get; }
         IXmlElementSyntax Parent { get; }
         IEnumerable<IXmlElementSyntax> Elements { get; }
         IEnumerable<XmlAttributeSyntax> Attributes { get; }

@@ -2,30 +2,64 @@
 
 namespace Microsoft.Language.Xml
 {
-    public class XmlElementEndTagSyntax : XmlNodeSyntax
-    {
-        public PunctuationSyntax GreaterThanToken { get; set; }
-        public PunctuationSyntax LessThanSlashToken { get; set; }
-        public XmlNameSyntax NameNode { get; set; }
+    using InternalSyntax;
 
-        public XmlElementEndTagSyntax(SyntaxKind kind, PunctuationSyntax lessThanSlashToken, XmlNameSyntax name, PunctuationSyntax greaterThanToken) : base(kind)
+    public class XmlElementEndTagSyntax : XmlNodeSyntax, INamedXmlNode
+    {
+        internal new class Green : XmlNodeSyntax.Green
         {
-            this.LessThanSlashToken = lessThanSlashToken;
-            this.NameNode = name;
-            this.GreaterThanToken = greaterThanToken;
-            this.SlotCount = 3;
+            readonly SyntaxToken.Green lessThanToken;
+            readonly XmlNameSyntax.Green name;
+            readonly SyntaxToken.Green slashGreaterThanToken;
+
+            internal XmlNameSyntax.Green NameNode => name;
+            internal SyntaxToken.Green LessThanSlashToken => lessThanToken;
+            internal SyntaxToken.Green GreaterThanToken => slashGreaterThanToken;
+
+            internal Green(SyntaxToken.Green lessThanToken, XmlNameSyntax.Green name, SyntaxToken.Green slashGreaterThanToken)
+                : base(SyntaxKind.XmlElementEndTag)
+            {
+                this.SlotCount = 3;
+                this.lessThanToken = lessThanToken;
+                AdjustWidth(lessThanToken);
+                this.name = name;
+                AdjustWidth(name);
+                this.slashGreaterThanToken = slashGreaterThanToken;
+                AdjustWidth(slashGreaterThanToken);
+            }
+
+            internal override SyntaxNode CreateRed(SyntaxNode parent, int position) => new XmlElementEndTagSyntax(this, parent, position);
+
+            internal override GreenNode GetSlot(int index)
+            {
+                switch (index)
+                {
+                    case 0: return lessThanToken;
+                    case 1: return name;
+                    case 2: return slashGreaterThanToken;
+                }
+                throw new InvalidOperationException();
+            }
+
+            internal override GreenNode Accept(InternalSyntax.SyntaxVisitor visitor)
+            {
+                return visitor.VisitXmlElementEndTag(this);
+            }
         }
 
-        public override SyntaxNode GetSlot(int index)
+        internal new Green GreenNode => (Green)base.GreenNode;
+
+        PunctuationSyntax lessThanToken;
+        XmlNameSyntax nameNode;
+        PunctuationSyntax slashGreaterThanToken;
+
+        public PunctuationSyntax LessThanSlashToken => GetRed(ref lessThanToken, 0);
+        public XmlNameSyntax NameNode => GetRed(ref nameNode, 1);
+        public PunctuationSyntax GreaterThanToken => GetRed(ref slashGreaterThanToken, 2);
+
+        internal XmlElementEndTagSyntax(Green green, SyntaxNode parent, int position)
+            : base(green, parent, position)
         {
-            switch (index)
-            {
-                case 0: return LessThanSlashToken;
-                case 1: return NameNode;
-                case 2: return GreaterThanToken;
-                default:
-                    throw new InvalidOperationException();
-            }
         }
 
         public override SyntaxNode Accept(SyntaxVisitor visitor)
@@ -33,20 +67,31 @@ namespace Microsoft.Language.Xml
             return visitor.VisitXmlElementEndTag(this);
         }
 
-        public string Name
+        internal override SyntaxNode GetCachedSlot(int index)
         {
-            get
+            switch (index)
             {
-                if (NameNode == null)
-                {
-                    return null;
-                }
-
-                return NameNode.Name;
+                case 0: return lessThanToken;
+                case 1: return nameNode;
+                case 2: return slashGreaterThanToken;
+                default: return null;
             }
         }
 
-        public override SyntaxNode WithLeadingTrivia(SyntaxNode trivia)
+        internal override SyntaxNode GetNodeSlot(int slot)
+        {
+            switch (slot)
+            {
+                case 0: return LessThanSlashToken;
+                case 1: return NameNode;
+                case 2: return GreaterThanToken;
+                default: return null;
+            }
+        }
+
+        public string Name => NameNode?.Name;
+
+        /*public override SyntaxNode WithLeadingTrivia(SyntaxNode trivia)
         {
             return new XmlElementEndTagSyntax(Kind,
                                               (PunctuationSyntax)LessThanSlashToken.WithLeadingTrivia(trivia),
@@ -60,6 +105,6 @@ namespace Microsoft.Language.Xml
                                               LessThanSlashToken,
                                               NameNode,
                                               (PunctuationSyntax)GreaterThanToken.WithTrailingTrivia(trivia));
-        }
+        }*/
     }
 }

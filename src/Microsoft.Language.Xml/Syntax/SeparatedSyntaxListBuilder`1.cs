@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Microsoft.Language.Xml
 {
-    public struct SeparatedSyntaxListBuilder<TNode>
+    internal struct SeparatedSyntaxListBuilder<TNode>
         where TNode : SyntaxNode
     {
         private SyntaxListBuilder builder;
@@ -68,12 +68,12 @@ namespace Microsoft.Language.Xml
 
         public SeparatedSyntaxList<TNode> ToList()
         {
-            return new SeparatedSyntaxList<TNode>(new SyntaxList<SyntaxNode>(this.builder.ToListNode()));
+            return new SeparatedSyntaxList<TNode>(this.builder.ToList());
         }
 
         public SeparatedSyntaxList<TDerivedNode> ToList<TDerivedNode>() where TDerivedNode : TNode
         {
-            return new SeparatedSyntaxList<TDerivedNode>(new SyntaxList<SyntaxNode>(this.builder.ToListNode()));
+            return new SeparatedSyntaxList<TDerivedNode>(this.builder.ToList());
         }
 
         public static implicit operator SyntaxListBuilder(SeparatedSyntaxListBuilder<TNode> builder)

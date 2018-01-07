@@ -16,6 +16,7 @@ namespace Microsoft.Language.Xml.Test
         {
             var element = GetElementSyntax(XmlElementWithAttributeAndContent);
             var elementWithTrivia = element.WithLeadingTrivia(SyntaxFactory.WhitespaceTrivia(ThreeSpaces));
+            Assert.NotSame(elementWithTrivia, element);
             Assert.IsType<XmlElementSyntax>(elementWithTrivia);
             Assert.StartsWith(ThreeSpaces, elementWithTrivia.ToFullString());
         }
@@ -25,6 +26,7 @@ namespace Microsoft.Language.Xml.Test
         {
             var element = GetElementSyntax(XmlElementWithAttributeAndContent);
             var elementWithTrivia = element.WithTrailingTrivia(SyntaxFactory.WhitespaceTrivia(ThreeSpaces));
+            Assert.NotSame(elementWithTrivia, element);
             Assert.IsType<XmlElementSyntax>(elementWithTrivia);
             Assert.EndsWith(ThreeSpaces, elementWithTrivia.ToFullString());
         }

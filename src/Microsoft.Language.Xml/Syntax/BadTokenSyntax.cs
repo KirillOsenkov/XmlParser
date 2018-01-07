@@ -1,12 +1,32 @@
-﻿namespace Microsoft.Language.Xml
+﻿using System;
+
+namespace Microsoft.Language.Xml
 {
+    using InternalSyntax;
+
     public class BadTokenSyntax : PunctuationSyntax
     {
-        public BadTokenSyntax(SyntaxKind subkind, string text, SyntaxNode leading, SyntaxNode trailing)
-            : base(subkind, text, leading, trailing)
+        internal new class Green : PunctuationSyntax.Green
         {
+            public SyntaxSubKind SubKind { get; }
+
+            internal Green(SyntaxSubKind subKind, string name, GreenNode leadingTrivia, GreenNode trailingTrivia)
+                : base(SyntaxKind.BadToken, name, leadingTrivia, trailingTrivia)
+            {
+                SubKind = subKind;
+            }
+
+            internal override SyntaxNode CreateRed(SyntaxNode parent, int position) => new BadTokenSyntax(this, parent, position);
         }
 
-        public SyntaxSubKind SubKind { get; set; }
+        internal new Green GreenNode => (Green)base.GreenNode;
+
+        public SyntaxSubKind SubKind => GreenNode.SubKind;
+
+        internal BadTokenSyntax(Green green, SyntaxNode parent, int position)
+            : base(green, parent, position)
+        {
+
+        }
     }
 }

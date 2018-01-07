@@ -140,7 +140,7 @@ namespace Microsoft.Language.Xml.Test
         private static void VerifyText(string xml, SyntaxNode node)
         {
             var terminal = (SyntaxToken)(node.GetFirstTerminal() ?? node);
-            int start = node.Start + terminal.GetLeadingTriviaWidth();
+            int start = node.Start + terminal.GetLeadingTriviaSpan().Length;
             int length = terminal.Text.Length;
             if (start + length > xml.Length)
             {

@@ -1,24 +1,47 @@
 ﻿namespace Microsoft.Language.Xml
 {
-    internal class KeywordSyntax : SyntaxToken
+    using InternalSyntax;
+
+    public class KeywordSyntax : SyntaxToken
     {
-        public KeywordSyntax(
-            SyntaxKind kind,
-            string text,
-            SyntaxNode leadingTrivia,
-            SyntaxNode trailingTrivia)
-            : base(kind, text, leadingTrivia, trailingTrivia)
+        internal new class Green : SyntaxToken.Green
         {
+            internal Green(string name, GreenNode leadingTrivia, GreenNode trailingTrivia)
+                : base(SyntaxKind.XmlKeyword, name, leadingTrivia, trailingTrivia)
+            {
+            }
+
+            internal override SyntaxNode CreateRed(SyntaxNode parent, int position) => new KeywordSyntax(this, parent, position);
+
+            public override GreenNode WithLeadingTrivia(GreenNode trivia)
+            {
+                return new Green(Text, trivia, TrailingTrivia);
+            }
+
+            public override GreenNode WithTrailingTrivia(GreenNode trivia)
+            {
+                return new Green(Text, LeadingTrivia, trivia);
+            }
         }
 
-        public override SyntaxNode WithLeadingTrivia(SyntaxNode trivia)
+        internal new Green GreenNode => (Green)base.GreenNode;
+
+        public string Keyword => Text;
+
+        internal KeywordSyntax(Green green, SyntaxNode parent, int position)
+            : base(green, parent, position)
         {
-            return new KeywordSyntax(Kind, Text, trivia, GetTrailingTrivia());
+
         }
 
-        public override SyntaxNode WithTrailingTrivia(SyntaxNode trivia)
+        public override SyntaxToken WithLeadingTrivia(SyntaxNode trivia)
         {
-            return new KeywordSyntax(Kind, Text, GetLeadingTrivia(), trivia);
+            return (KeywordSyntax)new Green(Text, trivia.GreenNode, GetTrailingTrivia()?.GreenNode).CreateRed(Parent, Start);
+        }
+
+        public override SyntaxToken WithTrailingTrivia(SyntaxNode trivia)
+        {
+            return (KeywordSyntax)new Green(Text, GetLeadingTrivia()?.GreenNode, trivia.GreenNode).CreateRed(Parent, Start);
         }
     }
 }

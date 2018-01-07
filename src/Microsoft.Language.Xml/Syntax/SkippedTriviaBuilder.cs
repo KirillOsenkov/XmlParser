@@ -6,20 +6,22 @@ using System.Threading.Tasks;
 
 namespace Microsoft.Language.Xml
 {
+    using InternalSyntax;
+
     // Simple class to create the best representation of skipped trivia as a combination of "regular" trivia
     // and SkippedNode trivia. The initial trivia and trailing trivia are preserved as regular trivia, as well
     // as any structured trivia. We also remove any missing tokens and promote their trivia. Otherwise we try to put
     // as many consecutive tokens as possible into a SkippedTokens trivia node.
     internal class SkippedTriviaBuilder
     {
-        private SyntaxListBuilder<SyntaxNode> triviaListBuilder = SyntaxListBuilder<SyntaxNode>.Create();
-        private SyntaxListBuilder<SyntaxToken> skippedTokensBuilder = SyntaxListBuilder<SyntaxToken>.Create();
+        private InternalSyntax.SyntaxListBuilder<GreenNode> triviaListBuilder = InternalSyntax.SyntaxListBuilder<GreenNode>.Create();
+        private InternalSyntax.SyntaxListBuilder<GreenNode> skippedTokensBuilder = InternalSyntax.SyntaxListBuilder<GreenNode>.Create();
         private bool preserveExistingDiagnostics;
         private bool addDiagnosticsToFirstTokenOnly;
         private IEnumerable<DiagnosticInfo> diagnosticsToAdd;
 
         // Add a trivia to the triva we are accumulating.
-        private void AddTrivia(SyntaxNode trivia)
+        private void AddTrivia(GreenNode trivia)
         {
             FinishInProgressTokens();
             triviaListBuilder.AddRange(trivia);
@@ -31,7 +33,7 @@ namespace Microsoft.Language.Xml
         {
             if (skippedTokensBuilder.Count > 0)
             {
-                var skippedTokensTrivia = SyntaxFactory.SkippedTokensTrivia(skippedTokensBuilder.ToList());
+                var skippedTokensTrivia = InternalSyntax.SyntaxFactory.SkippedTokensTrivia(skippedTokensBuilder.ToList());
                 if (diagnosticsToAdd != null)
                 {
                     foreach (var d in diagnosticsToAdd)
@@ -55,14 +57,14 @@ namespace Microsoft.Language.Xml
         }
 
         // Process a token. and add to the list of triva/tokens we're accumulating.
-        public void AddToken(SyntaxToken token, bool isFirst, bool isLast)
+        public void AddToken(SyntaxToken.Green token, bool isFirst, bool isLast)
         {
             bool isMissing = token.IsMissing;
             if (token.HasLeadingTrivia && (isFirst || isMissing || token.GetLeadingTrivia().TriviaListContainsStructuredTrivia()))
             {
                 FinishInProgressTokens();
                 AddTrivia(token.GetLeadingTrivia());
-                token = ((SyntaxToken)token.WithLeadingTrivia(null));
+                token = ((SyntaxToken.Green)token.WithLeadingTrivia(null));
             }
 
             ////if (!preserveExistingDiagnostics)
@@ -70,11 +72,11 @@ namespace Microsoft.Language.Xml
             ////    token = token.WithoutDiagnostics();
             ////}
 
-            SyntaxNode trailingTrivia = null;
+            GreenNode trailingTrivia = null;
             if (token.HasTrailingTrivia && (isLast || isMissing || token.GetTrailingTrivia().TriviaListContainsStructuredTrivia()))
             {
                 trailingTrivia = token.GetTrailingTrivia();
-                token = ((SyntaxToken)token.WithTrailingTrivia(null));
+                token = ((SyntaxToken.Green)token.WithTrailingTrivia(null));
             }
 
             if (isMissing)
@@ -113,7 +115,7 @@ namespace Microsoft.Language.Xml
         }
 
         // Get the final list of trivia nodes we should attached.
-        public SyntaxList<SyntaxNode> GetTriviaList()
+        public InternalSyntax.SyntaxList<GreenNode> GetTriviaList()
         {
             FinishInProgressTokens();
             if (diagnosticsToAdd != null && diagnosticsToAdd.Any())

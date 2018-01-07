@@ -6,57 +6,123 @@ using System.Text;
 
 namespace Microsoft.Language.Xml
 {
-    public class SyntaxListBuilder
+    using InternalSyntax;
+
+    class SyntaxListBuilder
     {
-        private int _count;
-        private ArrayElement<SyntaxNode>[] _nodes;
-        public static SyntaxListBuilder Create()
-        {
-            return new SyntaxListBuilder(8);
-        }
+        private ArrayElement<GreenNode>[] _nodes;
+        public int Count { get; private set; }
 
         public SyntaxListBuilder(int size)
         {
-            this._nodes = new ArrayElement<SyntaxNode>[size];
+            _nodes = new ArrayElement<GreenNode>[size];
         }
 
-        public SyntaxListBuilder Add(SyntaxNode item)
+        public void Clear()
         {
-            EnsureAdditionalCapacity(1);
-            return this.AddUnsafe(item);
+            this.Count = 0;
         }
 
-        private SyntaxListBuilder AddUnsafe(SyntaxNode item)
+        public void Add(SyntaxNode item)
         {
-            Debug.Assert(item != null);
-            this._nodes[this._count].Value = ((SyntaxNode)item);
-            this._count += 1;
-            return this;
+            AddInternal(item.GreenNode);
         }
 
-        public SyntaxListBuilder AddRange<TNode>(SyntaxList<TNode> list) where TNode : SyntaxNode
+        internal void AddInternal(GreenNode item)
         {
-            return this.AddRange<TNode>(list, 0, list.Count);
-        }
-
-        public SyntaxListBuilder AddRange<TNode>(SyntaxList<TNode> list, int offset, int length) where TNode : SyntaxNode
-        {
-            EnsureAdditionalCapacity(length - offset);
-            var oldCount = this._count;
-            for (var i = offset; i < offset + length; i++)
+            if (item == null)
             {
-                AddUnsafe(list.ItemUntyped(i));
+                throw new ArgumentNullException();
             }
 
-            this.Validate(oldCount, this._count);
-            return this;
+            if (_nodes == null || Count >= _nodes.Length)
+            {
+                this.Grow(Count == 0 ? 8 : _nodes.Length * 2);
+            }
+
+            _nodes[Count++].Value = item;
+        }
+
+        public void AddRange(SyntaxNode[] items)
+        {
+            this.AddRange(items, 0, items.Length);
+        }
+
+        public void AddRange(SyntaxNode[] items, int offset, int length)
+        {
+            if (_nodes == null || Count + length > _nodes.Length)
+            {
+                this.Grow(Count + length);
+            }
+
+            for (int i = offset, j = Count; i < offset + length; ++i, ++j)
+            {
+                _nodes[j].Value = items[i].GreenNode;
+            }
+
+            int start = Count;
+            Count += length;
+            Validate(start, Count);
+        }
+
+        [Conditional("DEBUG")]
+        private void Validate(int start, int end)
+        {
+            for (int i = start; i < end; i++)
+            {
+                if (_nodes[i].Value == null)
+                {
+                    throw new ArgumentException("Cannot add a null node.");
+                }
+            }
+        }
+
+        public void AddRange(SyntaxList<SyntaxNode> list)
+        {
+            this.AddRange(list, 0, list.Count);
+        }
+
+        public void AddRange(SyntaxList<SyntaxNode> list, int offset, int count)
+        {
+            if (_nodes == null || this.Count + count > _nodes.Length)
+            {
+                this.Grow(Count + count);
+            }
+
+            var dst = this.Count;
+            for (int i = offset, limit = offset + count; i < limit; i++)
+            {
+                _nodes[dst].Value = list.ItemInternal(i).GreenNode;
+                dst++;
+            }
+
+            int start = Count;
+            Count += count;
+            Validate(start, Count);
+        }
+
+        public void AddRange<TNode>(SyntaxList<TNode> list) where TNode : SyntaxNode
+        {
+            this.AddRange(list, 0, list.Count);
+        }
+
+        public void AddRange<TNode>(SyntaxList<TNode> list, int offset, int count) where TNode : SyntaxNode
+        {
+            this.AddRange(new SyntaxList<SyntaxNode>(list.Node), offset, count);
+        }
+
+        private void Grow(int size)
+        {
+            var tmp = new ArrayElement<GreenNode>[size];
+            Array.Copy(_nodes, tmp, _nodes.Length);
+            _nodes = tmp;
         }
 
         public bool Any(SyntaxKind kind)
         {
-            for (var i = 0; i < this._count; i++)
+            for (int i = 0; i < Count; i++)
             {
-                if ((this._nodes[i].Value.Kind == kind))
+                if (_nodes[i].Value.Kind == kind)
                 {
                     return true;
                 }
@@ -65,98 +131,43 @@ namespace Microsoft.Language.Xml
             return false;
         }
 
-        public void RemoveLast()
+        internal GreenNode ToListNode()
         {
-            this._count = 1;
-            this._nodes[this._count] = default(ArrayElement<SyntaxNode>);
-        }
-
-        public void Clear()
-        {
-            this._count = 0;
-        }
-
-        private void EnsureAdditionalCapacity(int additionalCount)
-        {
-            int currentSize = this._nodes.Length;
-            int requiredSize = this._count + additionalCount;
-            if (requiredSize <= currentSize)
-            {
-                return;
-            }
-
-            int newSize = requiredSize < 8 ? 8 : requiredSize >= int.MaxValue / 2 ? int.MaxValue : Math.Max(requiredSize, currentSize * 2);
-            Debug.Assert(newSize >= requiredSize);
-            Array.Resize(ref this._nodes, newSize);
-        }
-
-        public ArrayElement<SyntaxNode>[] ToArray()
-        {
-            ArrayElement<SyntaxNode>[] dst = new ArrayElement<SyntaxNode>[this._count];
-
-            int i = 0;
-            while (i < dst.Length)
-            {
-                dst[i] = this._nodes[i];
-                i++;
-            }
-
-            return dst;
-        }
-
-        public SyntaxNode ToListNode()
-        {
-            switch (this._count)
+            switch (this.Count)
             {
                 case 0:
                     return null;
                 case 1:
-                    return this._nodes[0];
+                    return _nodes[0].Value;
                 case 2:
-                    return SyntaxList.List(this._nodes[0], this._nodes[1]);
-            }
+                    return InternalSyntax.SyntaxList.List(_nodes[0].Value, _nodes[1].Value);
+                case 3:
+                    return InternalSyntax.SyntaxList.List(_nodes[0].Value, _nodes[1].Value, _nodes[2].Value);
+                default:
+                    var tmp = new ArrayElement<GreenNode>[this.Count];
+                    for (int i = 0; i < this.Count; i++)
+                    {
+                        tmp[i].Value = _nodes[i].Value;
+                    }
 
-            return SyntaxList.List(this.ToArray());
+                    return InternalSyntax.SyntaxList.List(tmp);
+            }
         }
 
-        [Conditional("DEBUG")]
-        private void Validate(int start, int end)
+        public static implicit operator SyntaxList<SyntaxNode>(SyntaxListBuilder builder)
         {
-            for (var i = start; i < end; i++)
+            if (builder == null)
             {
-                Debug.Assert(this._nodes[i].Value != null);
-            }
-        }
-
-        public int Count
-        {
-            get
-            {
-                return this._count;
-            }
-        }
-
-        public SyntaxNode this[int index]
-        {
-            get
-            {
-                return _nodes[index];
+                return default(SyntaxList<SyntaxNode>);
             }
 
-            set
-            {
-                _nodes[index].Value = value;
-            }
+            return builder.ToList();
         }
 
-        public SyntaxList<SyntaxNode> ToList()
+        internal void RemoveLast()
         {
-            return new SyntaxList<SyntaxNode>(ToListNode());
-        }
-
-        public SyntaxList<TDerived> ToList<TDerived>() where TDerived : SyntaxNode
-        {
-            return new SyntaxList<TDerived>(ToListNode());
+            this.Count -= 1;
+            this._nodes[Count] = default(ArrayElement<GreenNode>);
         }
     }
 }

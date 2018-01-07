@@ -28,7 +28,7 @@ namespace Microsoft.Language.Xml
             return @this[last - i];
         }
 
-        internal static int MatchEndElement(this List<XmlContext> @this, XmlNameSyntax name)
+        internal static int MatchEndElement(this List<XmlContext> @this, XmlNameSyntax.Green name)
         {
             Debug.Assert(name == null || name.Kind == SyntaxKind.XmlName);
             var last = @this.Count - 1;
@@ -44,7 +44,7 @@ namespace Microsoft.Language.Xml
                 var nameExpr = context.StartElement.NameNode;
                 if (nameExpr.Kind == SyntaxKind.XmlName)
                 {
-                    var startName = ((XmlNameSyntax)nameExpr);
+                    var startName = ((XmlNameSyntax.Green)nameExpr);
                     if (startName.LocalName.Text == name.LocalName.Text)
                     {
                         var startPrefix = startName.Prefix;

@@ -59,7 +59,7 @@ namespace Microsoft.Language.Xml.Comments
             });
 
             // Enumerate in order to force descendIntoChildren anonymous function to be
-            // invoked to create text spans 
+            // invoked to create text spans
             foreach (var token in tokens)
             {
             }
@@ -92,7 +92,7 @@ namespace Microsoft.Language.Xml.Comments
             var commentSpanEnd = GetCommentEndRegion(node, commentSpan.End - 1, commentSpan);
 
             return TextSpan.FromBounds(
-                start: Math.Min(commentSpanStart.Start, commentSpanEnd.Start), 
+                start: Math.Min(commentSpanStart.Start, commentSpanEnd.Start),
                 end: Math.Max(Math.Max(commentSpanStart.End, commentSpanEnd.End), commentSpan.End));
         }
 
@@ -143,19 +143,19 @@ namespace Microsoft.Language.Xml.Comments
                 case SyntaxKind.XmlDeclaration:
                 case SyntaxKind.XmlElement:
                     return commentNode.Span;
-                    //if (isStart)
-                    //{
-                    //    // If position is inside or starting on comment node, the comment should end before the comment
-                    //    var beginComment = ((XmlCommentSyntax)commentNode).BeginComment;
-                    //    position = beginComment.Start;
-                    //}
-                    //else
-                    //{
-                    //    // If position is inside or starting on comment node, the comment should start after the comment
-                    //    var endComment = ((XmlCommentSyntax)commentNode).EndComment;
-                    //    position = endComment.Start + endComment.Text.Length;
-                    //}
-                    //break;
+                //if (isStart)
+                //{
+                //    // If position is inside or starting on comment node, the comment should end before the comment
+                //    var beginComment = ((XmlCommentSyntax)commentNode).BeginComment;
+                //    position = beginComment.Start;
+                //}
+                //else
+                //{
+                //    // If position is inside or starting on comment node, the comment should start after the comment
+                //    var endComment = ((XmlCommentSyntax)commentNode).EndComment;
+                //    position = endComment.Start + endComment.Text.Length;
+                //}
+                //break;
                 case SyntaxKind.XmlElementStartTag:
                 case SyntaxKind.XmlElementEndTag:
                     return commentNode.Parent.Span;

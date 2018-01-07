@@ -2,21 +2,23 @@
 
 namespace Microsoft.Language.Xml
 {
-    internal class LastTokenReplacer : SyntaxRewriter
+    using InternalSyntax;
+
+    internal class LastTokenReplacer : InternalSyntax.SyntaxRewriter
     {
-        private readonly Func<SyntaxToken, SyntaxToken> _newItem;
+        private readonly Func<SyntaxToken.Green, SyntaxToken.Green> _newItem;
         private int _skipCnt;
-        private LastTokenReplacer(Func<SyntaxToken, SyntaxToken> newItem)
+        private LastTokenReplacer(Func<SyntaxToken.Green, SyntaxToken.Green> newItem)
         {
             _newItem = newItem;
         }
 
-        internal static TTree Replace<TTree>(TTree root, Func<SyntaxToken, SyntaxToken> newItem) where TTree : SyntaxNode
+        internal static TTree Replace<TTree>(TTree root, Func<SyntaxToken.Green, SyntaxToken.Green> newItem) where TTree : GreenNode
         {
             return (TTree)new LastTokenReplacer(newItem).Visit(root);
         }
 
-        public override SyntaxNode Visit(SyntaxNode node)
+        public override GreenNode Visit(GreenNode node)
         {
             if (node == null)
             {
@@ -59,10 +61,10 @@ namespace Microsoft.Language.Xml
 
                 var prevIdx = _skipCnt;
                 _skipCnt = allChildrenCnt - 1;
-                SyntaxNode result;
+                GreenNode result;
                 if (node.IsList)
                 {
-                    result = VisitList<SyntaxNode>(node).Node;
+                    result = VisitList<GreenNode>(new InternalSyntax.SyntaxList<GreenNode>(node)).Node;
                 }
                 else
                 {
@@ -78,7 +80,7 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        public override SyntaxToken VisitSyntaxToken(SyntaxToken token)
+        public override SyntaxToken.Green VisitSyntaxToken(SyntaxToken.Green token)
         {
             return _newItem(token);
         }

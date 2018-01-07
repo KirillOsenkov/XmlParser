@@ -7,6 +7,9 @@ using System.Text;
 
 namespace Microsoft.Language.Xml
 {
+    using InternalSyntax;
+    using static InternalSyntax.SyntaxFactory;
+
     public class Scanner
     {
         private ScannerToken _prevToken;
@@ -21,7 +24,7 @@ namespace Microsoft.Language.Xml
         private readonly PooledStringBuilder _sbPooled;
         private readonly StringBuilder _sb;
         private readonly char[] _internBuffer = new char[256];
-        private ConditionalWeakTable<string, SyntaxNode> _triviaCache = new ConditionalWeakTable<string, SyntaxNode>();
+        private ConditionalWeakTable<string, GreenNode> _triviaCache = new ConditionalWeakTable<string, GreenNode>();
 
         public Scanner(Buffer buffer)
         {
@@ -31,7 +34,7 @@ namespace Microsoft.Language.Xml
             _sb = _sbPooled.Builder;
         }
 
-        public SyntaxToken GetCurrentToken()
+        internal SyntaxToken.Green GetCurrentToken()
         {
             var tk = _currentToken.InnerTokenObject;
             if (tk == null)
@@ -45,7 +48,7 @@ namespace Microsoft.Language.Xml
             return tk;
         }
 
-        public SyntaxToken PrevToken
+        internal SyntaxToken.Green PrevToken
         {
             get
             {
@@ -86,7 +89,7 @@ namespace Microsoft.Language.Xml
             _currentToken = _currentToken.With(ScannerState.Content, null);
         }
 
-        public SyntaxToken PeekNextToken(ScannerState state)
+        internal SyntaxToken.Green PeekNextToken(ScannerState state)
         {
             if (_tokens.Count > 0)
             {
@@ -106,7 +109,7 @@ namespace Microsoft.Language.Xml
             return GetTokenAndAddToQueue(state);
         }
 
-        private SyntaxToken GetTokenAndAddToQueue(ScannerState state)
+        private SyntaxToken.Green GetTokenAndAddToQueue(ScannerState state)
         {
             var lineBufferOffset = _lineBufferOffset;
             var endOfTerminatorTrivia = _endOfTerminatorTrivia;
@@ -132,9 +135,9 @@ namespace Microsoft.Language.Xml
             _endOfTerminatorTrivia = revertTo.EndOfTerminatorTrivia;
         }
 
-        private SyntaxToken GetScannerToken(ScannerState state)
+        private SyntaxToken.Green GetScannerToken(ScannerState state)
         {
-            SyntaxToken token = null;
+            SyntaxToken.Green token = null;
 
             switch (state)
             {
@@ -181,11 +184,11 @@ namespace Microsoft.Language.Xml
             return token;
         }
 
-        internal SyntaxToken ScanXmlStringUnQuoted()
+        internal SyntaxToken.Green ScanXmlStringUnQuoted()
         {
             if (!CanGetChar())
             {
-                return MakeEofToken();
+                return Eof;
             }
 
             var Here = 0;
@@ -225,7 +228,7 @@ namespace Microsoft.Language.Xml
                         }
                         else
                         {
-                            return MakeMissingToken(null, SyntaxKind.SingleQuoteToken);
+                            return MissingToken(null, SyntaxKind.SingleQuoteToken);
                         }
                     case '<':
                     case '>':
@@ -237,7 +240,7 @@ namespace Microsoft.Language.Xml
                         }
                         else
                         {
-                            return MakeMissingToken(null, SyntaxKind.SingleQuoteToken);
+                            return MissingToken(null, SyntaxKind.SingleQuoteToken);
                         }
                     case '&':
                         if (Here > 0)
@@ -257,7 +260,7 @@ namespace Microsoft.Language.Xml
                             }
                             else
                             {
-                                return MakeMissingToken(null, SyntaxKind.SingleQuoteToken);
+                                return MissingToken(null, SyntaxKind.SingleQuoteToken);
                             }
                         }
 
@@ -286,15 +289,15 @@ namespace Microsoft.Language.Xml
             return XmlMakeAttributeDataToken(null, Here, scratch);
         }
 
-        private SyntaxToken ScanXmlStringSmartDouble()
+        private SyntaxToken.Green ScanXmlStringSmartDouble()
         {
             return ScanXmlString(DWCH_RSMART_DQ, DWCH_LSMART_DQ, false);
         }
 
-        internal SyntaxToken ScanXmlString(char terminatingChar, char altTerminatingChar, bool isSingle)
+        internal SyntaxToken.Green ScanXmlString(char terminatingChar, char altTerminatingChar, bool isSingle)
         {
-            var precedingTrivia = triviaListPool.Allocate<SyntaxNode>();
-            SyntaxToken result;
+            var precedingTrivia = triviaListPool.Allocate<GreenNode>();
+            SyntaxToken.Green result;
             var Here = 0;
             var scratch = GetScratch();
             while (CanGetCharAtOffset(Here))
@@ -343,10 +346,10 @@ namespace Microsoft.Language.Xml
                         }
                         else
                         {
-                            var data = SyntaxFactory.MissingToken(SyntaxKind.SingleQuoteToken);
+                            var data = MissingToken(null, SyntaxKind.SingleQuoteToken);
                             if (precedingTrivia.Count > 0)
                             {
-                                data = ((SyntaxToken)data.WithLeadingTrivia(precedingTrivia.ToList().Node));
+                                data = (SyntaxToken.Green)data.WithLeadingTrivia(precedingTrivia.ToListNode());
                             }
 
                             var errInfo = ErrorFactory.ErrorInfo(isSingle ? ERRID.ERR_ExpectedSQuote : ERRID.ERR_ExpectedQuote);
@@ -365,7 +368,7 @@ namespace Microsoft.Language.Xml
                         }
                         else
                         {
-                            result = ScanXmlReference(precedingTrivia);
+                            result = ScanXmlReference(precedingTrivia.ToList());
                             goto CleanUp;
                         }
 
@@ -400,11 +403,11 @@ namespace Microsoft.Language.Xml
             }
             else
             {
-                result = MakeEofToken(precedingTrivia);
+                result = EofToken(precedingTrivia);
                 goto CleanUp;
             }
 
-            CleanUp:
+        CleanUp:
             triviaListPool.Free(precedingTrivia);
             return result;
         }
@@ -414,29 +417,29 @@ namespace Microsoft.Language.Xml
             return _sb;
         }
 
-        private XmlTextTokenSyntax XmlMakeAttributeDataToken(SyntaxList<SyntaxNode> precedingTrivia, int tokenWidth, StringBuilder scratch)
+        private XmlTextTokenSyntax.Green XmlMakeAttributeDataToken(InternalSyntax.SyntaxList<GreenNode> precedingTrivia, int tokenWidth, StringBuilder scratch)
         {
             return XmlMakeTextLiteralToken(precedingTrivia, tokenWidth, scratch);
         }
 
-        private SyntaxToken ScanXmlStringDouble()
+        private SyntaxToken.Green ScanXmlStringDouble()
         {
             return ScanXmlString('"', '"', false);
         }
 
-        private SyntaxToken ScanXmlStringSmartSingle()
+        private SyntaxToken.Green ScanXmlStringSmartSingle()
         {
             return ScanXmlString(DWCH_RSMART_Q, DWCH_LSMART_Q, true);
         }
 
-        private SyntaxToken ScanXmlStringSingle()
+        private SyntaxToken.Green ScanXmlStringSingle()
         {
             return ScanXmlString('\'', '\'', false);
         }
 
-        internal SyntaxToken ScanXmlComment()
+        internal SyntaxToken.Green ScanXmlComment()
         {
-            SyntaxList<SyntaxNode> precedingTrivia = null;
+            InternalSyntax.SyntaxList<GreenNode> precedingTrivia = null;
             var Here = 0;
             while (CanGetCharAtOffset(Here))
             {
@@ -476,7 +479,7 @@ namespace Microsoft.Language.Xml
 
                         goto ScanChars;
                     default:
-                        ScanChars:
+                    ScanChars:
                         var xmlCh = ScanXmlChar(Here);
                         if (xmlCh.Length != 0)
                         {
@@ -503,35 +506,35 @@ namespace Microsoft.Language.Xml
             }
             else
             {
-                return MakeEofToken(precedingTrivia);
+                return EofToken(precedingTrivia);
             }
         }
 
-        private PunctuationSyntax XmlMakeEndCommentToken(SyntaxList<SyntaxNode> precedingTrivia)
+        private PunctuationSyntax.Green XmlMakeEndCommentToken(InternalSyntax.SyntaxList<GreenNode> precedingTrivia)
         {
             Debug.Assert(PeekChar() == '-');
             Debug.Assert(PeekAheadChar(1) == '-');
             Debug.Assert(PeekAheadChar(2) == '>');
             AdvanceChar(3);
-            return MakePunctuationToken(SyntaxKind.MinusMinusGreaterThanToken, "-->", precedingTrivia, null);
+            return Punctuation(SyntaxKind.MinusMinusGreaterThanToken, "-->", precedingTrivia, null);
         }
 
-        private XmlTextTokenSyntax XmlMakeCommentToken(SyntaxList<SyntaxNode> precedingTrivia, int TokenWidth)
+        private XmlTextTokenSyntax.Green XmlMakeCommentToken(InternalSyntax.SyntaxList<GreenNode> precedingTrivia, int TokenWidth)
         {
             Debug.Assert(TokenWidth > 0);
             var text = GetText(TokenWidth); // GetTextNotInterned() in the original
-            return SyntaxFactory.XmlTextLiteralToken(text, text, precedingTrivia.Node, null);
+            return XmlTextToken(text, precedingTrivia.Node, null);
         }
 
-        internal SyntaxToken ScanXmlPIData(ScannerState state)
+        internal SyntaxToken.Green ScanXmlPIData(ScannerState state)
         {
             // // Scan the PI data after the white space
             // // [16]    PI    ::=    '<?' PITarget (S (Char* - (Char* '?>' Char*)))? '?>'
             // // [17]    PITarget    ::=    Name - (('X' | 'x') ('M' | 'm') ('L' | 'l'))
             Debug.Assert(state == ScannerState.StartProcessingInstruction || state == ScannerState.ProcessingInstruction);
 
-            var precedingTrivia = triviaListPool.Allocate<SyntaxNode>();
-            SyntaxToken result;
+            var precedingTrivia = triviaListPool.Allocate<GreenNode>();
+            SyntaxToken.Green result;
 
             if (state == ScannerState.StartProcessingInstruction && CanGetChar())
             {
@@ -603,24 +606,24 @@ namespace Microsoft.Language.Xml
             }
             else
             {
-                result = MakeEofToken(precedingTrivia.ToList());
+                result = EofToken(precedingTrivia.ToList());
             }
 
-            CleanUp:
+        CleanUp:
             triviaListPool.Free(precedingTrivia);
             return result;
         }
 
-        private XmlTextTokenSyntax XmlMakeProcessingInstructionToken(SyntaxList<SyntaxNode> precedingTrivia, int TokenWidth)
+        private XmlTextTokenSyntax.Green XmlMakeProcessingInstructionToken(InternalSyntax.SyntaxList<GreenNode> precedingTrivia, int TokenWidth)
         {
             Debug.Assert(TokenWidth > 0);
             var text = GetText(TokenWidth); // was GetTextNotInterned
-            return SyntaxFactory.XmlTextLiteralToken(text, text, precedingTrivia.Node, null);
+            return XmlTextToken(text, precedingTrivia.Node, null);
         }
 
-        internal SyntaxToken ScanXmlCData()
+        internal SyntaxToken.Green ScanXmlCData()
         {
-            SyntaxList<SyntaxNode> precedingTrivia = null;
+            InternalSyntax.SyntaxList<GreenNode> precedingTrivia = null;
 
             var scratch = GetScratch();
             var Here = 0;
@@ -649,7 +652,7 @@ namespace Microsoft.Language.Xml
                         goto ScanChars;
 
                     default:
-                        ScanChars:
+                    ScanChars:
                         var xmlCh = ScanXmlChar(Here);
                         if (xmlCh.Length == 0)
                         {
@@ -677,29 +680,29 @@ namespace Microsoft.Language.Xml
             }
             else
             {
-                return MakeEofToken(precedingTrivia);
+                return EofToken(precedingTrivia);
             }
         }
 
-        private PunctuationSyntax XmlMakeEndCDataToken(SyntaxList<SyntaxNode> precedingTrivia)
+        private PunctuationSyntax.Green XmlMakeEndCDataToken(InternalSyntax.SyntaxList<GreenNode> precedingTrivia)
         {
             Debug.Assert(PeekChar() == ']');
             Debug.Assert(PeekAheadChar(1) == ']');
             Debug.Assert(PeekAheadChar(2) == '>');
             AdvanceChar(3);
-            return MakePunctuationToken(SyntaxKind.EndCDataToken, "]]>", precedingTrivia, null);
+            return Punctuation(SyntaxKind.EndCDataToken, "]]>", precedingTrivia, null);
         }
 
-        private XmlTextTokenSyntax XmlMakeCDataToken(SyntaxList<SyntaxNode> precedingTrivia, int TokenWidth, StringBuilder scratch)
+        private XmlTextTokenSyntax.Green XmlMakeCDataToken(InternalSyntax.SyntaxList<GreenNode> precedingTrivia, int TokenWidth, StringBuilder scratch)
         {
             return XmlMakeTextLiteralToken(precedingTrivia, TokenWidth, scratch);
         }
 
-        private SyntaxToken ScanXmlElement(ScannerState state)
+        private SyntaxToken.Green ScanXmlElement(ScannerState state)
         {
             Debug.Assert(state == ScannerState.Element || state == ScannerState.EndElement || state == ScannerState.DocType);
 
-            SyntaxList<SyntaxNode> leadingTrivia = null;
+            InternalSyntax.SyntaxList<GreenNode> leadingTrivia = null;
             while (CanGetChar())
             {
                 char c = PeekChar();
@@ -818,10 +821,10 @@ namespace Microsoft.Language.Xml
                 }
             }
 
-            return MakeEofToken(leadingTrivia);
+            return EofToken(leadingTrivia);
         }
 
-        private SyntaxToken ScanXmlNcName(SyntaxList<SyntaxNode> precedingTrivia)
+        private SyntaxToken.Green ScanXmlNcName(InternalSyntax.SyntaxList<GreenNode> precedingTrivia)
         {
             int Here = 0;
             bool IsIllegalChar = false;
@@ -907,7 +910,7 @@ namespace Microsoft.Language.Xml
                 }
             }
 
-            CreateNCNameToken:
+        CreateNCNameToken:
             if (Here != 0)
             {
                 var name = XmlMakeXmlNCNameToken(precedingTrivia.Node, Here);
@@ -924,21 +927,15 @@ namespace Microsoft.Language.Xml
                 return XmlMakeBadToken(precedingTrivia, 1, ERRID.ERR_IllegalChar);
             }
 
-            return MakeMissingToken(precedingTrivia, SyntaxKind.XmlNameToken);
+            return MissingToken(precedingTrivia, SyntaxKind.XmlNameToken);
         }
 
-        private SyntaxToken MakeMissingToken(SyntaxList<SyntaxNode> precedingTrivia, SyntaxKind kind)
-        {
-            SyntaxToken missing = SyntaxFactory.MissingToken(kind, precedingTrivia);
-            return missing;
-        }
-
-        private XmlNameTokenSyntax XmlMakeXmlNCNameToken(SyntaxNode precedingTrivia, int tokenWidth)
+        private XmlNameTokenSyntax.Green XmlMakeXmlNCNameToken(GreenNode precedingTrivia, int tokenWidth)
         {
             Debug.Assert(tokenWidth > 0);
             var text = GetText(tokenWidth);
             var followingTrivia = ScanXmlWhitespace();
-            return SyntaxFactory.XmlNameToken(text, precedingTrivia, followingTrivia);
+            return new XmlNameTokenSyntax.Green(text, precedingTrivia, followingTrivia);
         }
 
         public int UTF16ToUnicode(Scanner.XmlCharResult ch)
@@ -1020,22 +1017,6 @@ namespace Microsoft.Language.Xml
             return ScanSurrogatePair(c, Here);
         }
 
-        internal SyntaxNode MakeKeyword(XmlNameTokenSyntax xmlName)
-        {
-            //Debug.Assert(xmlName.PossibleKeywordKind != SyntaxKind.XmlNameToken);
-            return MakeKeyword(SyntaxKind.XmlNameToken, xmlName.Text, xmlName.GetLeadingTrivia(), xmlName.GetTrailingTrivia());
-        }
-
-        private SyntaxNode MakeKeyword(
-            SyntaxKind tokenType,
-            string spelling,
-            SyntaxList<SyntaxNode> precedingTrivia,
-            SyntaxList<SyntaxNode> followingTrivia)
-        {
-            SyntaxToken kw = new KeywordSyntax(tokenType, spelling, precedingTrivia.Node, followingTrivia.Node);
-            return kw;
-        }
-
         /*  <summary>
         ''' 0 - not a surrogate, 2 - is valid surrogate
         ''' 1 is an error
@@ -1058,14 +1039,14 @@ namespace Microsoft.Language.Xml
             return default(XmlCharResult);
         }
 
-        private PunctuationSyntax XmlMakeColonToken(SyntaxList<SyntaxNode> precedingTrivia)
+        private PunctuationSyntax.Green XmlMakeColonToken(InternalSyntax.SyntaxList<GreenNode> precedingTrivia)
         {
             AdvanceChar();
             var followingTrivia = ScanXmlWhitespace();
-            return MakePunctuationToken(SyntaxKind.ColonToken, ":", precedingTrivia, followingTrivia);
+            return Punctuation(SyntaxKind.ColonToken, ":", precedingTrivia, followingTrivia);
         }
 
-        private BadTokenSyntax XmlMakeOpenBracketToken(ScannerState state, SyntaxList<SyntaxNode> precedingTrivia)
+        private BadTokenSyntax.Green XmlMakeOpenBracketToken(ScannerState state, InternalSyntax.SyntaxList<GreenNode> precedingTrivia)
         {
             Debug.Assert(PeekChar() == '[');
             return XmlMakeBadToken(
@@ -1077,7 +1058,7 @@ namespace Microsoft.Language.Xml
                     ERRID.ERR_IllegalXmlNameChar);
         }
 
-        private BadTokenSyntax XmlMakeCloseBracketToken(ScannerState state, SyntaxList<SyntaxNode> precedingTrivia)
+        private BadTokenSyntax.Green XmlMakeCloseBracketToken(ScannerState state, InternalSyntax.SyntaxList<GreenNode> precedingTrivia)
         {
             Debug.Assert(PeekChar() == ']');
             return XmlMakeBadToken(
@@ -1089,56 +1070,56 @@ namespace Microsoft.Language.Xml
                     ERRID.ERR_IllegalXmlNameChar);
         }
 
-        private PunctuationSyntax XmlMakeLeftParenToken(SyntaxList<SyntaxNode> precedingTrivia)
+        private PunctuationSyntax.Green XmlMakeLeftParenToken(InternalSyntax.SyntaxList<GreenNode> precedingTrivia)
         {
             AdvanceChar();
             var followingTrivia = ScanXmlWhitespace();
-            return MakePunctuationToken(SyntaxKind.OpenParenToken, "(", precedingTrivia, followingTrivia);
+            return Punctuation(SyntaxKind.OpenParenToken, "(", precedingTrivia, followingTrivia);
         }
 
-        private PunctuationSyntax XmlMakeRightParenToken(SyntaxList<SyntaxNode> precedingTrivia)
+        private PunctuationSyntax.Green XmlMakeRightParenToken(InternalSyntax.SyntaxList<GreenNode> precedingTrivia)
         {
             AdvanceChar();
             var followingTrivia = ScanXmlWhitespace();
-            return MakePunctuationToken(SyntaxKind.CloseParenToken, ")", precedingTrivia, followingTrivia);
+            return Punctuation(SyntaxKind.CloseParenToken, ")", precedingTrivia, followingTrivia);
         }
 
-        private BadTokenSyntax XmlMakeBadToken(SyntaxList<SyntaxNode> precedingTrivia, int length, ERRID id)
+        private BadTokenSyntax.Green XmlMakeBadToken(InternalSyntax.SyntaxList<GreenNode> precedingTrivia, int length, ERRID id)
         {
             return XmlMakeBadToken(SyntaxSubKind.None, precedingTrivia, length, id);
         }
 
-        private PunctuationSyntax XmlMakeEndProcessingInstructionToken(
-            SyntaxList<SyntaxNode> precedingTrivia)
+        private PunctuationSyntax.Green XmlMakeEndProcessingInstructionToken(
+            InternalSyntax.SyntaxList<GreenNode> precedingTrivia)
         {
             Debug.Assert(PeekChar() == '?');
             Debug.Assert(PeekAheadChar(1) == '>');
             AdvanceChar(2);
-            return MakePunctuationToken(
+            return Punctuation(
                 SyntaxKind.QuestionGreaterThanToken,
                 "?>",
                 precedingTrivia,
                 null);
         }
 
-        private PunctuationSyntax XmlMakeBeginEndElementToken(
-            SyntaxList<SyntaxNode> precedingTrivia,
-            Func<SyntaxList<SyntaxNode>> scanTrailingTrivia)
+        private PunctuationSyntax.Green XmlMakeBeginEndElementToken(
+            InternalSyntax.SyntaxList<GreenNode> precedingTrivia,
+            Func<InternalSyntax.SyntaxList<GreenNode>> scanTrailingTrivia)
         {
             Debug.Assert(PeekChar() == '<');
             Debug.Assert(PeekAheadChar(1) == '/');
             AdvanceChar(2);
             var followingTrivia = scanTrailingTrivia();
-            return MakePunctuationToken(
+            return Punctuation(
                 SyntaxKind.LessThanSlashToken,
                 "</",
                 precedingTrivia,
                 followingTrivia);
         }
 
-        private SyntaxToken XmlLessThanExclamationToken(
+        private SyntaxToken.Green XmlLessThanExclamationToken(
             ScannerState state,
-            SyntaxList<SyntaxNode> leadingTrivia)
+            InternalSyntax.SyntaxList<GreenNode> leadingTrivia)
         {
             Debug.Assert(PeekChar() == '<');
             Debug.Assert(PeekAheadChar(1) == '!');
@@ -1151,11 +1132,11 @@ namespace Microsoft.Language.Xml
                     ERRID.ERR_Syntax);
         }
 
-        private BadTokenSyntax XmlMakeBadToken(SyntaxSubKind subkind, SyntaxList<SyntaxNode> precedingTrivia, int length, ERRID id)
+        private BadTokenSyntax.Green XmlMakeBadToken(SyntaxSubKind subkind, InternalSyntax.SyntaxList<GreenNode> precedingTrivia, int length, ERRID id)
         {
             var spelling = GetText(length);
             var followingTrivia = ScanXmlWhitespace();
-            var result1 = SyntaxFactory.BadToken(subkind, spelling, precedingTrivia.Node, followingTrivia);
+            var result1 = BadToken(subkind, spelling, precedingTrivia.Node, followingTrivia);
             DiagnosticInfo diagnostic;
             switch (id)
             {
@@ -1176,7 +1157,7 @@ namespace Microsoft.Language.Xml
                     break;
             }
 
-            var errResult1 = ((BadTokenSyntax)result1.SetDiagnostics(new[]
+            var errResult1 = ((BadTokenSyntax.Green)result1.SetDiagnostics(new[]
             {
                 diagnostic
             }));
@@ -1185,9 +1166,9 @@ namespace Microsoft.Language.Xml
             return errResult1;
         }
 
-        private SyntaxToken XmlMakeBeginCDataToken(
-            SyntaxList<SyntaxNode> leadingTrivia,
-            Func<SyntaxList<SyntaxNode>> scanTrailingTrivia)
+        private SyntaxToken.Green XmlMakeBeginCDataToken(
+            InternalSyntax.SyntaxList<GreenNode> leadingTrivia,
+            Func<InternalSyntax.SyntaxList<GreenNode>> scanTrailingTrivia)
         {
             Debug.Assert(PeekChar() == '<');
             Debug.Assert(PeekAheadChar(1) == '!');
@@ -1200,15 +1181,15 @@ namespace Microsoft.Language.Xml
             Debug.Assert(PeekAheadChar(8) == '[');
             AdvanceChar(9);
             var followingTrivia = scanTrailingTrivia();
-            return MakePunctuationToken(
+            return Punctuation(
                 SyntaxKind.BeginCDataToken,
                 "<![CDATA[",
                 leadingTrivia,
                 followingTrivia);
         }
 
-        private SyntaxToken XmlMakeDoubleQuoteToken(
-            SyntaxList<SyntaxNode> leadingTrivia,
+        private SyntaxToken.Green XmlMakeDoubleQuoteToken(
+            InternalSyntax.SyntaxList<GreenNode> leadingTrivia,
             char spelling,
             bool isOpening)
         {
@@ -1216,22 +1197,22 @@ namespace Microsoft.Language.Xml
 
             AdvanceChar();
 
-            SyntaxNode followingTrivia = null;
+            GreenNode followingTrivia = null;
             if (!isOpening)
             {
                 var ws = ScanXmlWhitespace();
                 followingTrivia = ws;
             }
 
-            return MakePunctuationToken(
+            return Punctuation(
                 SyntaxKind.DoubleQuoteToken,
                 "\"",
                 leadingTrivia,
                 followingTrivia);
         }
 
-        private SyntaxToken XmlMakeSingleQuoteToken(
-            SyntaxList<SyntaxNode> leadingTrivia,
+        private SyntaxToken.Green XmlMakeSingleQuoteToken(
+            InternalSyntax.SyntaxList<GreenNode> leadingTrivia,
             char spelling,
             bool isOpening)
         {
@@ -1239,18 +1220,18 @@ namespace Microsoft.Language.Xml
 
             AdvanceChar();
 
-            SyntaxNode followingTrivia = null;
+            GreenNode followingTrivia = null;
             if (!isOpening)
             {
                 var ws = ScanXmlWhitespace();
                 followingTrivia = ws;
             }
 
-            return MakePunctuationToken(
+            return Punctuation(
                 SyntaxKind.SingleQuoteToken,
                 Intern(spelling),
                 leadingTrivia,
-                followingTrivia);
+                new InternalSyntax.SyntaxList<GreenNode>(followingTrivia));
         }
 
         private string Intern(char spelling)
@@ -1263,45 +1244,45 @@ namespace Microsoft.Language.Xml
             return _stringTable.Add(spelling, 0, spelling.Length);
         }
 
-        private SyntaxToken XmlMakeEqualsToken(SyntaxList<SyntaxNode> leadingTrivia)
+        private SyntaxToken.Green XmlMakeEqualsToken(InternalSyntax.SyntaxList<GreenNode> leadingTrivia)
         {
             AdvanceChar();
             var followingTrivia = ScanXmlWhitespace();
-            return MakePunctuationToken(SyntaxKind.EqualsToken, "=", leadingTrivia, followingTrivia);
+            return Punctuation(SyntaxKind.EqualsToken, "=", leadingTrivia, followingTrivia);
         }
 
-        private SyntaxToken XmlMakeGreaterToken(SyntaxList<SyntaxNode> precedingTrivia)
+        private SyntaxToken.Green XmlMakeGreaterToken(InternalSyntax.SyntaxList<GreenNode> precedingTrivia)
         {
             AdvanceChar();
 
             // Note: > does not consume following trivia
-            return MakePunctuationToken(SyntaxKind.GreaterThanToken, ">", precedingTrivia, null);
+            return Punctuation(SyntaxKind.GreaterThanToken, ">", precedingTrivia, null);
         }
 
-        private SyntaxToken XmlMakeEndEmptyElementToken(SyntaxList<SyntaxNode> precedingTrivia)
+        private SyntaxToken.Green XmlMakeEndEmptyElementToken(InternalSyntax.SyntaxList<GreenNode> precedingTrivia)
         {
             AdvanceChar(2);
 
-            return MakePunctuationToken(SyntaxKind.SlashGreaterThanToken, "/>", precedingTrivia, null);
+            return Punctuation(SyntaxKind.SlashGreaterThanToken, "/>", precedingTrivia, null);
         }
 
-        private PunctuationSyntax XmlMakeDivToken(SyntaxList<SyntaxNode> precedingTrivia)
+        private PunctuationSyntax.Green XmlMakeDivToken(InternalSyntax.SyntaxList<GreenNode> precedingTrivia)
         {
             AdvanceChar();
             var followingTrivia = ScanXmlWhitespace();
-            return MakePunctuationToken(SyntaxKind.SlashToken, "/", precedingTrivia, followingTrivia);
+            return Punctuation(SyntaxKind.SlashToken, "/", precedingTrivia, followingTrivia);
         }
 
-        private XmlTextTokenSyntax XmlMakeTextLiteralToken(SyntaxList<SyntaxNode> precedingTrivia, int TokenWidth, StringBuilder Scratch)
+        private XmlTextTokenSyntax.Green XmlMakeTextLiteralToken(InternalSyntax.SyntaxList<GreenNode> precedingTrivia, int TokenWidth, StringBuilder Scratch)
         {
             Debug.Assert(TokenWidth > 0);
             var text = GetText(TokenWidth);
             var value = _stringTable.Add(Scratch);
             Scratch.Clear();
-            return SyntaxFactory.XmlTextLiteralToken(text, value, precedingTrivia.Node, null);
+            return XmlTextToken(text, precedingTrivia.Node, null);
         }
 
-        internal SyntaxToken ScanXmlContent()
+        internal SyntaxToken.Green ScanXmlContent()
         {
             int Here = 0;
             bool IsAllWhitespace = true;
@@ -1339,7 +1320,7 @@ namespace Microsoft.Language.Xml
 
                         return ScanXmlReference(null);
                     case '<':
-                        SyntaxList<SyntaxNode> precedingTrivia = null;
+                        InternalSyntax.SyntaxList<GreenNode> precedingTrivia = null;
                         if (Here != 0)
                         {
                             if (!IsAllWhitespace)
@@ -1473,7 +1454,7 @@ namespace Microsoft.Language.Xml
                         //Continue While
                         goto ScanChars;
                     default:
-                        ScanChars:
+                    ScanChars:
                         ;
                         // // Check characters are valid
                         IsAllWhitespace = false;
@@ -1504,22 +1485,21 @@ namespace Microsoft.Language.Xml
             }
             else
             {
-                return MakeEofToken();
+                return Eof;
             }
         }
 
-        private SyntaxToken XmlMakeTextLiteralToken(
-            SyntaxList<SyntaxNode> leadingTrivia,
+        private SyntaxToken.Green XmlMakeTextLiteralToken(
+            InternalSyntax.SyntaxList<GreenNode> leadingTrivia,
             int tokenWidth,
             ERRID eRR_XmlEndCDataNotAllowedInContent)
         {
             var text = GetText(tokenWidth);
-            return (SyntaxToken)SyntaxFactory
-                .XmlTextLiteralToken(text, text, leadingTrivia.Node, null)
-                .SetDiagnostics(ErrorFactory.ErrorInfo(eRR_XmlEndCDataNotAllowedInContent));
+            return (SyntaxToken.Green)new XmlTextTokenSyntax.Green(text, leadingTrivia.Node, null)
+                                                            .SetDiagnostic(ErrorFactory.ErrorInfo(eRR_XmlEndCDataNotAllowedInContent));
         }
 
-        private XmlTextTokenSyntax ScanXmlReference(SyntaxList<SyntaxNode> precedingTrivia)
+        private XmlTextTokenSyntax.Green ScanXmlReference(InternalSyntax.SyntaxList<GreenNode> precedingTrivia)
         {
             Debug.Assert(CanGetChar());
             Debug.Assert(PeekChar() == '&');
@@ -1555,7 +1535,7 @@ namespace Microsoft.Language.Xml
                             {
                                 var noSemicolon = XmlMakeEntityLiteralToken(precedingTrivia, Here, value);
                                 var noSemicolonError = ErrorFactory.ErrorInfo(ERRID.ERR_ExpectedSColon);
-                                return ((XmlTextTokenSyntax)noSemicolon.SetDiagnostics(new[]
+                                return ((XmlTextTokenSyntax.Green)noSemicolon.SetDiagnostics(new[]
                                 {
                                     noSemicolonError
                                 }));
@@ -1576,7 +1556,7 @@ namespace Microsoft.Language.Xml
                             {
                                 var noSemicolon = XmlMakeEntityLiteralToken(precedingTrivia, 4, "&");
                                 var noSemicolonError = ErrorFactory.ErrorInfo(ERRID.ERR_ExpectedSColon);
-                                return ((XmlTextTokenSyntax)noSemicolon.SetDiagnostics(new[]
+                                return ((XmlTextTokenSyntax.Green)noSemicolon.SetDiagnostics(new[]
                                 {
                                 noSemicolonError
                                 }));
@@ -1592,7 +1572,7 @@ namespace Microsoft.Language.Xml
                             {
                                 var noSemicolon = XmlMakeEntityLiteralToken(precedingTrivia, 5, "'");
                                 var noSemicolonError = ErrorFactory.ErrorInfo(ERRID.ERR_ExpectedSColon);
-                                return ((XmlTextTokenSyntax)noSemicolon.SetDiagnostics(new[]
+                                return ((XmlTextTokenSyntax.Green)noSemicolon.SetDiagnostics(new[]
                                 {
                                     noSemicolonError
                                 }));
@@ -1612,7 +1592,7 @@ namespace Microsoft.Language.Xml
                             {
                                 var noSemicolon = XmlMakeEntityLiteralToken(precedingTrivia, 3, "<");
                                 var noSemicolonError = ErrorFactory.ErrorInfo(ERRID.ERR_ExpectedSColon);
-                                return ((XmlTextTokenSyntax)noSemicolon.SetDiagnostics(new[]
+                                return ((XmlTextTokenSyntax.Green)noSemicolon.SetDiagnostics(new[]
                                 {
                                     noSemicolonError
                                 }));
@@ -1632,7 +1612,7 @@ namespace Microsoft.Language.Xml
                             {
                                 var noSemicolon = XmlMakeEntityLiteralToken(precedingTrivia, 3, ">");
                                 var noSemicolonError = ErrorFactory.ErrorInfo(ERRID.ERR_ExpectedSColon);
-                                return ((XmlTextTokenSyntax)noSemicolon.SetDiagnostics(new[]
+                                return ((XmlTextTokenSyntax.Green)noSemicolon.SetDiagnostics(new[]
                                 {
                                     noSemicolonError
                                 }));
@@ -1655,7 +1635,7 @@ namespace Microsoft.Language.Xml
                             {
                                 var noSemicolon = XmlMakeEntityLiteralToken(precedingTrivia, 5, "\"");
                                 var noSemicolonError = ErrorFactory.ErrorInfo(ERRID.ERR_ExpectedSColon);
-                                return ((XmlTextTokenSyntax)noSemicolon.SetDiagnostics(new[]
+                                return ((XmlTextTokenSyntax.Green)noSemicolon.SetDiagnostics(new[]
                                 {
                                     noSemicolonError
                                 }));
@@ -1668,50 +1648,50 @@ namespace Microsoft.Language.Xml
 
             var badEntity = XmlMakeEntityLiteralToken(precedingTrivia, 1, "");
             var errInfo = ErrorFactory.ErrorInfo(ERRID.ERR_XmlEntityReference);
-            return ((XmlTextTokenSyntax)badEntity.SetDiagnostics(new[]
+            return ((XmlTextTokenSyntax.Green)badEntity.SetDiagnostics(new[]
             {
                 errInfo
             }));
         }
 
-        private static readonly XmlTextTokenSyntax _xmlAmpToken = SyntaxFactory.XmlEntityLiteralToken("&amp;", "&", null, null);
-        private XmlTextTokenSyntax XmlMakeAmpLiteralToken(SyntaxList<SyntaxNode> precedingTrivia)
+        private static readonly XmlEntityTokenSyntax.Green _xmlAmpToken = XmlEntityToken("&amp;", "&", null, null);
+        private XmlEntityTokenSyntax.Green XmlMakeAmpLiteralToken(InternalSyntax.SyntaxList<GreenNode> precedingTrivia)
         {
             AdvanceChar(5); // "&amp;".Length
-            return precedingTrivia.Node == null ? _xmlAmpToken : SyntaxFactory.XmlEntityLiteralToken("&amp;", "&", precedingTrivia.Node, null);
+            return precedingTrivia.Node == null ? _xmlAmpToken : XmlEntityToken("&amp;", "&", precedingTrivia.Node, null);
         }
 
-        private static readonly XmlTextTokenSyntax _xmlAposToken = SyntaxFactory.XmlEntityLiteralToken("&apos;", "'", null, null);
-        private XmlTextTokenSyntax XmlMakeAposLiteralToken(SyntaxList<SyntaxNode> precedingTrivia)
+        private static readonly XmlEntityTokenSyntax.Green _xmlAposToken = XmlEntityToken("&apos;", "'", null, null);
+        private XmlEntityTokenSyntax.Green XmlMakeAposLiteralToken(InternalSyntax.SyntaxList<GreenNode> precedingTrivia)
         {
             AdvanceChar(6); // "&apos;".Length
-            return precedingTrivia.Node == null ? _xmlAposToken : SyntaxFactory.XmlEntityLiteralToken("&apos;", "'", precedingTrivia.Node, null);
+            return precedingTrivia.Node == null ? _xmlAposToken : XmlEntityToken("&apos;", "'", precedingTrivia.Node, null);
         }
 
-        private static readonly XmlTextTokenSyntax _xmlGtToken = SyntaxFactory.XmlEntityLiteralToken("&gt;", ">", null, null);
-        private XmlTextTokenSyntax XmlMakeGtLiteralToken(SyntaxList<SyntaxNode> precedingTrivia)
+        private static readonly XmlEntityTokenSyntax.Green _xmlGtToken = XmlEntityToken("&gt;", ">", null, null);
+        private XmlEntityTokenSyntax.Green XmlMakeGtLiteralToken(InternalSyntax.SyntaxList<GreenNode> precedingTrivia)
         {
             AdvanceChar(4); // "&gt;".Length
-            return precedingTrivia.Node == null ? _xmlGtToken : SyntaxFactory.XmlEntityLiteralToken("&gt;", "&", precedingTrivia.Node, null);
+            return precedingTrivia.Node == null ? _xmlGtToken : XmlEntityToken("&gt;", ">", precedingTrivia.Node, null);
         }
 
-        private static readonly XmlTextTokenSyntax _xmlLtToken = SyntaxFactory.XmlEntityLiteralToken("&lt;", "<", null, null);
-        private XmlTextTokenSyntax XmlMakeLtLiteralToken(SyntaxList<SyntaxNode> precedingTrivia)
+        private static readonly XmlEntityTokenSyntax.Green _xmlLtToken = XmlEntityToken("&lt;", "<", null, null);
+        private XmlEntityTokenSyntax.Green XmlMakeLtLiteralToken(InternalSyntax.SyntaxList<GreenNode> precedingTrivia)
         {
             AdvanceChar(4); // "&lt;".Length
-            return precedingTrivia.Node == null ? _xmlLtToken : SyntaxFactory.XmlEntityLiteralToken("&lt;", "<", precedingTrivia.Node, null);
+            return precedingTrivia.Node == null ? _xmlLtToken : XmlEntityToken("&lt;", "<", precedingTrivia.Node, null);
         }
 
-        private static readonly XmlTextTokenSyntax _xmlQuotToken = SyntaxFactory.XmlEntityLiteralToken("&quot;", "\"", null, null);
-        private XmlTextTokenSyntax XmlMakeQuotLiteralToken(SyntaxList<SyntaxNode> precedingTrivia)
+        private static readonly XmlEntityTokenSyntax.Green _xmlQuotToken = XmlEntityToken("&quot;", "\"", null, null);
+        private XmlEntityTokenSyntax.Green XmlMakeQuotLiteralToken(InternalSyntax.SyntaxList<GreenNode> precedingTrivia)
         {
             AdvanceChar(6); // "&quot;".Length
-            return precedingTrivia.Node == null ? _xmlQuotToken : SyntaxFactory.XmlEntityLiteralToken("&quot;", "\"", precedingTrivia.Node, null);
+            return precedingTrivia.Node == null ? _xmlQuotToken : XmlEntityToken("&quot;", "\"", precedingTrivia.Node, null);
         }
 
-        private XmlTextTokenSyntax XmlMakeEntityLiteralToken(SyntaxList<SyntaxNode> precedingTrivia, int tokenWidth, string value)
+        private XmlEntityTokenSyntax.Green XmlMakeEntityLiteralToken(InternalSyntax.SyntaxList<GreenNode> precedingTrivia, int tokenWidth, string value)
         {
-            return SyntaxFactory.XmlEntityLiteralToken(GetText(tokenWidth), value, precedingTrivia.Node, null);
+            return XmlEntityToken(GetText(tokenWidth), value, precedingTrivia.Node, null);
         }
 
         private XmlCharResult ScanXmlCharRef(ref int index)
@@ -1902,11 +1882,6 @@ namespace Microsoft.Language.Xml
             return true;
         }
 
-        private SyntaxToken MakeEofToken()
-        {
-            return SyntaxFactory.EofToken;
-        }
-
         private int SkipLineBreak(char StartCharacter, int index)
         {
             return index + LengthOfLineBreak(StartCharacter, index);
@@ -1925,11 +1900,11 @@ namespace Microsoft.Language.Xml
             return 1;
         }
 
-        private static readonly Func<SyntaxList<SyntaxNode>> _scanNoTriviaFunc = () => null;
+        private static readonly Func<InternalSyntax.SyntaxList<GreenNode>> _scanNoTriviaFunc = () => default(InternalSyntax.SyntaxList<GreenNode>);
 
-        private SyntaxToken ScanXmlMisc()
+        private SyntaxToken.Green ScanXmlMisc()
         {
-            SyntaxList<SyntaxNode> precedingTrivia = null;
+            InternalSyntax.SyntaxList<GreenNode> precedingTrivia = null;
             while (CanGetChar())
             {
                 char c = PeekChar();
@@ -1975,36 +1950,22 @@ namespace Microsoft.Language.Xml
 
                         return XmlMakeLessToken(precedingTrivia);
                     default:
-                        return SyntaxFactory.Token(precedingTrivia.Node, SyntaxKind.EndOfXmlToken, null, string.Empty);
+                        return EndOfXml(precedingTrivia);
                 }
             }
 
-            return MakeEofToken(precedingTrivia);
+            return EofToken(precedingTrivia);
         }
 
-        private SyntaxToken MakeEofToken(SyntaxList<SyntaxNode> precedingTrivia)
-        {
-            return SyntaxFactory.Token(precedingTrivia.Node, SyntaxKind.EndOfFileToken, null, "");
-        }
-
-        private SyntaxToken XmlMakeLessToken(SyntaxList<SyntaxNode> precedingTrivia)
+        private SyntaxToken.Green XmlMakeLessToken(InternalSyntax.SyntaxList<GreenNode> precedingTrivia)
         {
             AdvanceChar();
 
             var followingTrivia = ScanXmlWhitespace();
-            return MakePunctuationToken(SyntaxKind.LessThanToken, "<", precedingTrivia, followingTrivia);
+            return Punctuation(SyntaxKind.LessThanToken, "<", precedingTrivia, followingTrivia);
         }
 
-        private PunctuationSyntax MakePunctuationToken(
-            SyntaxKind kind,
-            string spelling,
-            SyntaxList<SyntaxNode> precedingTrivia,
-            SyntaxList<SyntaxNode> followingTrivia)
-        {
-            return new PunctuationSyntax(kind, spelling, precedingTrivia.Node, followingTrivia.Node);
-        }
-
-        private SyntaxNode ScanXmlWhitespace()
+        private GreenNode ScanXmlWhitespace()
         {
             int length = GetXmlWhitespaceLength();
             if (length > 0)
@@ -2034,11 +1995,11 @@ namespace Microsoft.Language.Xml
                 ch > 128 && XmlCharType.IsWhiteSpace(ch);
         }
 
-        internal SyntaxNode MakeWhiteSpaceTrivia(string text)
+        internal GreenNode MakeWhiteSpaceTrivia(string text)
         {
             Debug.Assert(text.Length > 0);
             Debug.Assert(text.All(IsWhitespace));
-            SyntaxNode ws = _triviaCache.GetValue(text, key => SyntaxFactory.WhitespaceTrivia(key));
+            GreenNode ws = _triviaCache.GetValue(text, key => new SyntaxTrivia.Green(SyntaxKind.WhitespaceTrivia, text));
             return ws;
         }
 
@@ -2086,21 +2047,21 @@ namespace Microsoft.Language.Xml
             return Intern(PeekChar());
         }
 
-        private PunctuationSyntax XmlMakeBeginProcessingInstructionToken(SyntaxList<SyntaxNode> precedingTrivia, Func<SyntaxList<SyntaxNode>> scanTrailingTrivia)
+        private PunctuationSyntax.Green XmlMakeBeginProcessingInstructionToken(InternalSyntax.SyntaxList<GreenNode> precedingTrivia, Func<InternalSyntax.SyntaxList<GreenNode>> scanTrailingTrivia)
         {
             Debug.Assert(PeekChar() == '<');
             Debug.Assert(PeekAheadChar(1) == '?');
             AdvanceChar(2);
             var followingTrivia = scanTrailingTrivia();
-            return MakePunctuationToken(SyntaxKind.LessThanQuestionToken, "<?", precedingTrivia, followingTrivia);
+            return Punctuation(SyntaxKind.LessThanQuestionToken, "<?", precedingTrivia, followingTrivia);
         }
 
-        private SyntaxToken XmlMakeBeginDTDToken(SyntaxList<SyntaxNode> precedingTrivia)
+        private SyntaxToken.Green XmlMakeBeginDTDToken(InternalSyntax.SyntaxList<GreenNode> precedingTrivia)
         {
             return XmlMakeBadToken(SyntaxSubKind.BeginDocTypeToken, precedingTrivia, 9, ERRID.ERR_DTDNotSupported);
         }
 
-        private PunctuationSyntax XmlMakeBeginCommentToken(SyntaxList<SyntaxNode> precedingTrivia, Func<SyntaxList<SyntaxNode>> scanTrailingTrivia)
+        private PunctuationSyntax.Green XmlMakeBeginCommentToken(InternalSyntax.SyntaxList<GreenNode> precedingTrivia, Func<InternalSyntax.SyntaxList<GreenNode>> scanTrailingTrivia)
         {
             Debug.Assert(PeekChar() == '<');
             Debug.Assert(PeekAheadChar(1) == '!');
@@ -2108,7 +2069,7 @@ namespace Microsoft.Language.Xml
             Debug.Assert(PeekAheadChar(3) == '-');
             AdvanceChar(4);
             var followingTrivia = scanTrailingTrivia();
-            return MakePunctuationToken(SyntaxKind.LessThanExclamationMinusMinusToken, "<!--", precedingTrivia, followingTrivia);
+            return Punctuation(SyntaxKind.LessThanExclamationMinusMinusToken, "<!--", precedingTrivia, followingTrivia);
         }
 
         private char PeekAheadChar(int offset)
@@ -2121,7 +2082,7 @@ namespace Microsoft.Language.Xml
             return _lineBufferOffset + offset < _bufferLen;
         }
 
-        private SyntaxList<SyntaxNode> ScanXmlTrivia(char c)
+        private InternalSyntax.SyntaxList<GreenNode> ScanXmlTrivia(char c)
         {
             Debug.Assert(c == UCH_CR || c == UCH_LF || c == ' ' || c == UCH_TAB);
             var builder = triviaListPool.Allocate();
@@ -2175,27 +2136,20 @@ namespace Microsoft.Language.Xml
         ''' Make it a whitespace
         ''' </summary>
         */
-        private SyntaxTrivia ScanNewlineAsTrivia(char startCharacter)
+        private SyntaxTrivia.Green ScanNewlineAsTrivia(char startCharacter)
         {
             if (LengthOfLineBreak(startCharacter) == 2)
             {
                 return MakeEndOfLineTriviaCRLF();
             }
 
-            return MakeEndOfLineTrivia(GetNextChar());
+            return EndOfLine(GetNextChar());
         }
 
-        private static readonly SyntaxTrivia _crLfTrivia = SyntaxFactory.EndOfLineTrivia("\r\n");
-
-        private SyntaxTrivia MakeEndOfLineTriviaCRLF()
+        private SyntaxTrivia.Green MakeEndOfLineTriviaCRLF()
         {
             AdvanceChar(2);
-            return _crLfTrivia;
-        }
-
-        internal SyntaxTrivia MakeEndOfLineTrivia(string text)
-        {
-            return SyntaxFactory.EndOfLineTrivia(text);
+            return CrLfEndOfLine;
         }
 
         private char PeekChar()
@@ -2210,7 +2164,7 @@ namespace Microsoft.Language.Xml
 
         protected struct ScannerToken
         {
-            public ScannerToken(int lineBufferOffset, int endOfTerminatorTrivia, SyntaxToken token, ScannerState state)
+            internal ScannerToken(int lineBufferOffset, int endOfTerminatorTrivia, SyntaxToken.Green token, ScannerState state)
             {
                 this.Position = lineBufferOffset;
                 this.EndOfTerminatorTrivia = endOfTerminatorTrivia;
@@ -2218,15 +2172,15 @@ namespace Microsoft.Language.Xml
                 this.State = state;
             }
 
-            public ScannerToken With(ScannerState state, SyntaxToken token)
+            internal ScannerToken With(ScannerState state, SyntaxToken.Green token)
             {
                 return new ScannerToken(this.Position, this.EndOfTerminatorTrivia, token, state);
             }
 
-            public readonly SyntaxToken InnerTokenObject;
-            public readonly int Position;
-            public readonly int EndOfTerminatorTrivia;
-            public readonly ScannerState State;
+            internal readonly SyntaxToken.Green InnerTokenObject;
+            internal readonly int Position;
+            internal readonly int EndOfTerminatorTrivia;
+            internal readonly ScannerState State;
 
             public override string ToString()
             {

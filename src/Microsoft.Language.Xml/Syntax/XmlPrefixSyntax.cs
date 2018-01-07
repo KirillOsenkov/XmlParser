@@ -2,36 +2,82 @@
 
 namespace Microsoft.Language.Xml
 {
+    using InternalSyntax;
+
     public class XmlPrefixSyntax : SyntaxNode
     {
-        public XmlNameTokenSyntax Name { get; private set; }
-        public PunctuationSyntax ColonToken { get; private set; }
-
-        public XmlPrefixSyntax(
-            XmlNameTokenSyntax nameToken,
-            PunctuationSyntax colonToken) : base(SyntaxKind.XmlPrefix)
+        internal class Green : GreenNode
         {
-            Name = nameToken;
-            ColonToken = colonToken;
-            SlotCount = 2;
+            readonly XmlNameTokenSyntax.Green name;
+            readonly PunctuationSyntax.Green colonToken;
+
+            internal XmlNameTokenSyntax.Green Name => name;
+
+            internal Green(XmlNameTokenSyntax.Green name, PunctuationSyntax.Green colonToken)
+                : base(SyntaxKind.XmlPrefix)
+            {
+                this.SlotCount = 2;
+                this.name = name;
+                AdjustWidth(name);
+                this.colonToken = colonToken;
+                AdjustWidth(colonToken);
+            }
+
+            internal override SyntaxNode CreateRed(SyntaxNode parent, int position) => new XmlPrefixSyntax(this, parent, position);
+
+            internal override GreenNode GetSlot(int index)
+            {
+                switch (index)
+                {
+                    case 0: return name;
+                    case 1: return colonToken;
+                }
+
+                throw new InvalidOperationException();
+            }
+
+            internal override GreenNode Accept(InternalSyntax.SyntaxVisitor visitor)
+            {
+                return visitor.VisitXmlPrefix(this);
+            }
         }
 
-        public override SyntaxNode GetSlot(int index)
+        internal new Green GreenNode => (Green)base.GreenNode;
+
+        XmlNameTokenSyntax name;
+        PunctuationSyntax colonToken;
+
+        public XmlNameTokenSyntax Name => GetRed(ref name, 0);
+        public PunctuationSyntax ColonToken => GetRed(ref colonToken, 1);
+
+        internal XmlPrefixSyntax(Green green, SyntaxNode parent, int position)
+            : base(green, parent, position)
+        {
+        }
+
+        public override SyntaxNode Accept(SyntaxVisitor visitor)
+        {
+            return visitor.VisitXmlPrefix(this);
+        }
+
+        internal override SyntaxNode GetCachedSlot(int index)
         {
             switch (index)
             {
-                case 0:
-                    return Name;
-                case 1:
-                    return ColonToken;
+                case 0: return name;
+                case 1: return colonToken;
+                default: return null;
             }
-
-            throw new InvalidOperationException();
         }
 
-	public override SyntaxNode Accept(SyntaxVisitor visitor)
+        internal override SyntaxNode GetNodeSlot(int slot)
         {
-            return visitor.VisitXmlPrefix(this);
+            switch (slot)
+            {
+                case 0: return Name;
+                case 1: return ColonToken;
+                default: return null;
+            }
         }
     }
 }

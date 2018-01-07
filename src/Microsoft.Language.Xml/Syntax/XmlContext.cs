@@ -6,24 +6,28 @@ using System.Text;
 
 namespace Microsoft.Language.Xml
 {
-    public struct XmlContext
+    using InternalSyntax;
+    using static InternalSyntax.SyntaxFactory;
+
+    internal struct XmlContext
     {
-        private XmlElementStartTagSyntax _start;
-        private SyntaxListBuilder<XmlNodeSyntax> _content;
+        private XmlElementStartTagSyntax.Green _start;
+        private InternalSyntax.SyntaxListBuilder<XmlNodeSyntax.Green> _content;
         private SyntaxListPool _pool;
-        public XmlContext(SyntaxListPool pool, XmlElementStartTagSyntax start)
+
+        public XmlContext(SyntaxListPool pool, XmlElementStartTagSyntax.Green start)
         {
             _pool = pool;
             _start = start;
-            _content = _pool.Allocate<XmlNodeSyntax>();
+            _content = _pool.Allocate<XmlNodeSyntax.Green>();
         }
 
-        public void Add(XmlNodeSyntax xml)
+        public void Add(XmlNodeSyntax.Green xml)
         {
             _content.Add(xml);
         }
 
-        public XmlElementStartTagSyntax StartElement
+        public XmlElementStartTagSyntax.Green StartElement
         {
             get
             {
@@ -31,15 +35,15 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        public XmlNodeSyntax CreateElement(XmlElementEndTagSyntax endElement)
+        public XmlNodeSyntax.Green CreateElement(XmlElementEndTagSyntax.Green endElement)
         {
             Debug.Assert(endElement != null);
             var contentList = _content.ToList();
             _pool.Free(_content);
-            return SyntaxFactory.XmlElement(_start, contentList, endElement);
+            return XmlElement(_start, contentList.Node, endElement);
         }
 
-        internal XmlNodeSyntax CreateElement(XmlElementEndTagSyntax missingEndElement, object v)
+        internal XmlNodeSyntax.Green CreateElement(XmlElementEndTagSyntax.Green missingEndElement, object v)
         {
             return CreateElement(missingEndElement);
         }

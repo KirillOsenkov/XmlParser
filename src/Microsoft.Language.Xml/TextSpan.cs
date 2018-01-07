@@ -55,7 +55,7 @@ namespace Microsoft.Language.Xml
         /// The position to check.
         /// </param>
         /// <returns>
-        /// <c>true</c> if the position is greater than or equal to Start and strictly less 
+        /// <c>true</c> if the position is greater than or equal to Start and strictly less
         /// than End, otherwise <c>false</c>.
         /// </returns>
         public bool Contains(int position)
@@ -78,8 +78,8 @@ namespace Microsoft.Language.Xml
         }
 
         /// <summary>
-        /// Determines whether <paramref name="span"/> overlaps this span. Two spans are considered to overlap 
-        /// if they have positions in common and neither is empty. Empty spans do not overlap with any 
+        /// Determines whether <paramref name="span"/> overlaps this span. Two spans are considered to overlap
+        /// if they have positions in common and neither is empty. Empty spans do not overlap with any
         /// other span.
         /// </summary>
         /// <param name="span">
@@ -116,8 +116,8 @@ namespace Microsoft.Language.Xml
         }
 
         /// <summary>
-        /// Determines whether <paramref name="span"/> intersects this span. Two spans are considered to 
-        /// intersect if they have positions in common or the end of one span 
+        /// Determines whether <paramref name="span"/> intersects this span. Two spans are considered to
+        /// intersect if they have positions in common or the end of one span
         /// coincides with the start of the other span.
         /// </summary>
         /// <param name="span">
@@ -132,7 +132,7 @@ namespace Microsoft.Language.Xml
         }
 
         /// <summary>
-        /// Determines whether <paramref name="position"/> intersects this span. 
+        /// Determines whether <paramref name="position"/> intersects this span.
         /// A position is considered to intersect if it is between the start and
         /// end positions (inclusive) of this span.
         /// </summary>
@@ -169,8 +169,8 @@ namespace Microsoft.Language.Xml
         /// <summary>
         /// Creates a new <see cref="TextSpan"/> from <paramref name="start" /> and <paramref
         /// name="end"/> positions as opposed to a position and length.
-        /// 
-        /// The returned TextSpan contains the range with <paramref name="start"/> inclusive, 
+        ///
+        /// The returned TextSpan contains the range with <paramref name="start"/> inclusive,
         /// and <paramref name="end"/> exclusive.
         /// </summary>
         public static TextSpan FromBounds(int start, int end)

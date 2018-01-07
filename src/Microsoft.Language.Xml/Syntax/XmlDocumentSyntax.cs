@@ -3,149 +3,113 @@ using System.Collections.Generic;
 
 namespace Microsoft.Language.Xml
 {
-    public class XmlDocumentSyntax : XmlNodeSyntax, IXmlElement
+    using InternalSyntax;
+
+    public class XmlDocumentSyntax : XmlNodeSyntax
     {
-        public XmlNodeSyntax Body { get; private set; }
-        public SyntaxNode PrecedingMisc { get; private set; }
-        public SyntaxNode FollowingMisc { get; private set; }
-        public XmlDeclarationSyntax Prologue { get; private set; }
-        public SyntaxToken Eof { get; set; }
-
-        public XmlDocumentSyntax(
-            SyntaxKind kind,
-            XmlDeclarationSyntax prologue,
-            SyntaxNode precedingMisc,
-            XmlNodeSyntax body,
-            SyntaxNode followingMisc,
-            SyntaxToken eof) : base(kind)
+        internal new class Green : XmlNodeSyntax.Green
         {
-            this.Prologue = prologue;
-            this.PrecedingMisc = precedingMisc;
-            this.Body = body;
-            this.FollowingMisc = followingMisc;
-            this.Eof = eof;
-            SlotCount = 5;
-        }
+            readonly XmlDeclarationSyntax.Green prologue;
+            readonly GreenNode precedingMisc;
+            readonly XmlNodeSyntax.Green body;
+            readonly GreenNode followingMisc;
+            readonly SyntaxToken.Green eof;
 
-        public IXmlElement Root
-        {
-            get
+            internal XmlDeclarationSyntax.Green Prologue => prologue;
+            internal GreenNode PrecedingMisc => precedingMisc;
+            internal XmlNodeSyntax.Green Body => body;
+            internal GreenNode FollowingMisc => followingMisc;
+            internal SyntaxToken.Green Eof => eof;
+
+            internal Green(XmlDeclarationSyntax.Green prologue, GreenNode precedingMisc, XmlNodeSyntax.Green body, GreenNode followingMisc, SyntaxToken.Green eof)
+                : base(SyntaxKind.XmlDocument)
             {
-                return Body as IXmlElement;
+                this.SlotCount = 5;
+                this.prologue = prologue;
+                AdjustWidth(prologue);
+                this.precedingMisc = precedingMisc;
+                AdjustWidth(precedingMisc);
+                this.body = body;
+                AdjustWidth(body);
+                this.followingMisc = followingMisc;
+                AdjustWidth(followingMisc);
+                this.eof = eof;
+                AdjustWidth(eof);
             }
-        }
 
-        public IXmlElementSyntax RootSyntax
-        {
-            get
-            {
-                return Body as IXmlElementSyntax;
-            }
-        }
+            internal override SyntaxNode CreateRed(SyntaxNode parent, int position) => new XmlDocumentSyntax(this, parent, position);
 
-        public string Name
-        {
-            get
+            internal override GreenNode GetSlot(int index)
             {
-                if (Root == null)
+                switch (index)
                 {
-                    return null;
+                    case 0: return prologue;
+                    case 1: return precedingMisc;
+                    case 2: return body;
+                    case 3: return followingMisc;
+                    case 4: return eof;
                 }
+                throw new InvalidOperationException();
+            }
 
-                return Root.Name;
+            internal override GreenNode Accept(InternalSyntax.SyntaxVisitor visitor)
+            {
+                return visitor.VisitXmlDocument(this);
             }
         }
 
-        IXmlElement IXmlElement.Parent
+        internal new Green GreenNode => (Green)base.GreenNode;
+
+        XmlDeclarationSyntax prologue;
+        SyntaxNode precedingMisc;
+        XmlNodeSyntax body;
+        SyntaxNode followingMisc;
+        SyntaxToken eof;
+
+        public XmlDeclarationSyntax Prologue => GetRed(ref prologue, 0);
+        public SyntaxList<SyntaxNode> PrecedingMisc => new SyntaxList<SyntaxNode>(GetRed(ref precedingMisc, 1));
+        public XmlNodeSyntax Body => GetRed(ref body, 2);
+        public SyntaxList<SyntaxNode> FollowingMisc => new SyntaxList<SyntaxNode>(GetRed(ref followingMisc, 3));
+        public SyntaxToken Eof => GetRed(ref eof, 4);
+
+        internal XmlDocumentSyntax(Green green, SyntaxNode parent, int position)
+            : base(green, parent, position)
         {
-            get
-            {
-                return null;
-            }
-        }
 
-        public IEnumerable<IXmlElement> Elements
-        {
-            get
-            {
-                if (Root == null)
-                {
-                    return null;
-                }
-
-                return Root.Elements;
-            }
-        }
-
-        public IEnumerable<KeyValuePair<string, string>> Attributes
-        {
-            get
-            {
-                if (Root == null)
-                {
-                    return null;
-                }
-
-                return Root.Attributes;
-            }
-        }
-
-        public string Value
-        {
-            get
-            {
-                if (Root == null)
-                {
-                    return null;
-                }
-
-                return Root.Value;
-            }
-        }
-
-        public IXmlElementSyntax AsSyntaxElement
-        {
-            get
-            {
-                return Root as IXmlElementSyntax;
-            }
-        }
-
-        public string this[string attributeName]
-        {
-            get
-            {
-                if (Root == null)
-                {
-                    return null;
-                }
-
-                return Root[attributeName];
-            }
-        }
-
-        public override SyntaxNode GetSlot(int index)
-        {
-            switch (index)
-            {
-                case 0:
-                    return Prologue;
-                case 1:
-                    return PrecedingMisc;
-                case 2:
-                    return Body;
-                case 3:
-                    return FollowingMisc;
-                case 4:
-                    return Eof;
-                default:
-                    throw null;
-            }
         }
 
         public override SyntaxNode Accept(SyntaxVisitor visitor)
         {
             return visitor.VisitXmlDocument(this);
         }
+
+        internal override SyntaxNode GetCachedSlot(int index)
+        {
+            switch (index)
+            {
+                case 0: return prologue;
+                case 1: return precedingMisc;
+                case 2: return body;
+                case 3: return followingMisc;
+                case 4: return eof;
+                default: return null;
+            }
+        }
+
+        internal override SyntaxNode GetNodeSlot(int slot)
+        {
+            switch (slot)
+            {
+                case 0: return Prologue;
+                case 1: return GetRed(ref precedingMisc, 1);
+                case 2: return Body;
+                case 3: return GetRed(ref followingMisc, 3);
+                case 4: return Eof;
+                default: return null;
+            }
+        }
+
+        public IXmlElementSyntax RootSyntax => Body as IXmlElementSyntax;
+        public IXmlElement Root => RootSyntax.AsElement;
     }
 }

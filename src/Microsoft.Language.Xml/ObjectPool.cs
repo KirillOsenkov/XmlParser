@@ -147,7 +147,7 @@ namespace Microsoft.Language.Xml
             }
 
             inst = CreateInstance();
-            gotInstance:
+        gotInstance:
 
 #if DETECT_LEAKS
             var tracker = new LeakTracker();

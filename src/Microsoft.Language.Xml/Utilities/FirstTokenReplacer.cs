@@ -2,22 +2,24 @@
 
 namespace Microsoft.Language.Xml
 {
-    internal class FirstTokenReplacer : SyntaxRewriter
+    using InternalSyntax;
+
+    internal class FirstTokenReplacer : InternalSyntax.SyntaxRewriter
     {
-        private readonly Func<SyntaxToken, SyntaxToken> _newItem;
+        private readonly Func<SyntaxToken.Green, SyntaxToken.Green> _newItem;
         private bool _isFirst = true;
 
-        private FirstTokenReplacer(Func<SyntaxToken, SyntaxToken> newItem)
+        private FirstTokenReplacer(Func<SyntaxToken.Green, SyntaxToken.Green> newItem)
         {
             _newItem = newItem;
         }
 
-        internal static TTree Replace<TTree>(TTree root, Func<SyntaxToken, SyntaxToken> newItem) where TTree : SyntaxNode
+        internal static TTree Replace<TTree>(TTree root, Func<SyntaxToken.Green, SyntaxToken.Green> newItem) where TTree : GreenNode
         {
             return ((TTree)new FirstTokenReplacer(newItem).Visit(root));
         }
 
-        public override SyntaxNode VisitSyntaxNode(SyntaxNode node)
+        public override GreenNode VisitSyntaxNode(GreenNode node)
         {
             if (node == null)
             {
@@ -35,7 +37,7 @@ namespace Microsoft.Language.Xml
             return result;
         }
 
-        public override SyntaxToken VisitSyntaxToken(SyntaxToken token)
+        public override SyntaxToken.Green VisitSyntaxToken(SyntaxToken.Green token)
         {
             return _newItem(token);
         }

@@ -2,6 +2,8 @@
 
 namespace Microsoft.Language.Xml
 {
+    using static SyntaxFactory;
+
     public class SyntaxRewriter : SyntaxVisitor
     {
         public SyntaxList<TNode> VisitList<TNode>(SyntaxList<TNode> list) where TNode : SyntaxNode
@@ -111,7 +113,7 @@ namespace Microsoft.Language.Xml
             }
 
             var newPrecedingMisc = VisitList<SyntaxNode>(node.PrecedingMisc);
-            if (node.PrecedingMisc != newPrecedingMisc.Node)
+            if (node.PrecedingMisc.Node != newPrecedingMisc.Node)
             {
                 anyChanges = true;
             }
@@ -123,7 +125,7 @@ namespace Microsoft.Language.Xml
             }
 
             var newFollowingMisc = VisitList<SyntaxNode>(node.FollowingMisc);
-            if (node.FollowingMisc != newFollowingMisc.Node)
+            if (node.FollowingMisc.Node != newFollowingMisc.Node)
             {
                 anyChanges = true;
             }
@@ -136,8 +138,7 @@ namespace Microsoft.Language.Xml
 
             if (anyChanges)
             {
-                return new XmlDocumentSyntax(
-                    node.Kind,
+                return XmlDocument(
                     newDeclaration,
                     newPrecedingMisc.Node,
                     newRoot,
@@ -191,8 +192,7 @@ namespace Microsoft.Language.Xml
 
             if (anyChanges)
             {
-                return new XmlDeclarationSyntax(
-                    node.Kind,
+                return XmlDeclaration(
                     newLessThanQuestionToken,
                     newXmlKeyword,
                     newVersion,
@@ -209,8 +209,8 @@ namespace Microsoft.Language.Xml
         public override SyntaxNode VisitXmlDeclarationOption(XmlDeclarationOptionSyntax node)
         {
             bool anyChanges = false;
-            var newName = ((XmlNameTokenSyntax)Visit(node.Name));
-            if (node.Name != newName)
+            var newName = ((XmlNameTokenSyntax)Visit(node.NameNode));
+            if (node.NameNode != newName)
             {
                 anyChanges = true;
             }
@@ -229,7 +229,7 @@ namespace Microsoft.Language.Xml
 
             if (anyChanges)
             {
-                return new XmlDeclarationOptionSyntax(node.Kind, newName, newEquals, newValue);
+                return XmlDeclarationOption(newName, newEquals, newValue);
             }
             else
             {
@@ -247,7 +247,7 @@ namespace Microsoft.Language.Xml
             }
 
             var newContent = VisitList<SyntaxNode>(node.Content);
-            if (node.Content != newContent.Node)
+            if (node.Content.Node != newContent.Node)
             {
                 anyChanges = true;
             }
@@ -260,7 +260,7 @@ namespace Microsoft.Language.Xml
 
             if (anyChanges)
             {
-                return new XmlElementSyntax(newStartTag, newContent.Node, newEndTag);
+                return XmlElement(newStartTag, newContent.Node, newEndTag);
             }
             else
             {
@@ -272,14 +272,14 @@ namespace Microsoft.Language.Xml
         {
             bool anyChanges = false;
             var newTextTokens = VisitList<SyntaxNode>(node.TextTokens);
-            if (node.TextTokens != newTextTokens.Node)
+            if (node.TextTokens.Node != newTextTokens.Node)
             {
                 anyChanges = true;
             }
 
             if (anyChanges)
             {
-                return new XmlTextSyntax(node.Kind, newTextTokens.Node);
+                return XmlText(newTextTokens.Node);
             }
             else
             {
@@ -302,8 +302,8 @@ namespace Microsoft.Language.Xml
                 anyChanges = true;
             }
 
-            var newAttributes = VisitList<SyntaxNode>(node.Attributes);
-            if (node.Attributes != newAttributes.Node)
+            var newAttributes = VisitList<SyntaxNode>(node.AttributesNode);
+            if (node.AttributesNode.Node != newAttributes.Node)
             {
                 anyChanges = true;
             }
@@ -316,7 +316,7 @@ namespace Microsoft.Language.Xml
 
             if (anyChanges)
             {
-                return new XmlElementStartTagSyntax(node.Kind, newLessThanToken, newName, newAttributes.Node, newGreaterThanToken);
+                return XmlElementStartTag(newLessThanToken, newName, newAttributes.Node, newGreaterThanToken);
             }
             else
             {
@@ -347,7 +347,7 @@ namespace Microsoft.Language.Xml
 
             if (anyChanges)
             {
-                return new XmlElementEndTagSyntax(node.Kind, newLessThanSlashToken, newName, newGreaterThanToken);
+                return XmlElementEndTag(newLessThanSlashToken, newName, newGreaterThanToken);
             }
             else
             {
@@ -371,7 +371,7 @@ namespace Microsoft.Language.Xml
             }
 
             var newAttributes = VisitList<SyntaxNode>(node.AttributesNode);
-            if (node.AttributesNode != newAttributes.Node)
+            if (node.AttributesNode.Node != newAttributes.Node)
             {
                 anyChanges = true;
             }
@@ -384,7 +384,7 @@ namespace Microsoft.Language.Xml
 
             if (anyChanges)
             {
-                return new XmlEmptyElementSyntax(newLessThanToken, newName, newAttributes.Node, newSlashGreaterThanToken);
+                return XmlEmptyElement(newLessThanToken, newName, newAttributes.Node, newSlashGreaterThanToken);
             }
             else
             {
@@ -415,7 +415,7 @@ namespace Microsoft.Language.Xml
 
             if (anyChanges)
             {
-                return new XmlAttributeSyntax(newName, newEqualsToken, newValue);
+                return XmlAttribute(newName, newEqualsToken, newValue);
             }
             else
             {
@@ -433,7 +433,7 @@ namespace Microsoft.Language.Xml
             }
 
             var newTextTokens = VisitList(node.TextTokens);
-            if (node.TextTokens != newTextTokens.Node)
+            if (node.TextTokens.Node != newTextTokens.Node)
             {
                 anyChanges = true;
             }
@@ -446,7 +446,7 @@ namespace Microsoft.Language.Xml
 
             if (anyChanges)
             {
-                return new XmlStringSyntax(node.Kind, newStartQuoteToken, newTextTokens.Node, newEndQuoteToken);
+                return XmlString(newStartQuoteToken, newTextTokens.Node, newEndQuoteToken);
             }
             else
             {
@@ -471,7 +471,7 @@ namespace Microsoft.Language.Xml
 
             if (anyChanges)
             {
-                return new XmlNameSyntax(newPrefix, newLocalName);
+                return XmlName(newPrefix, newLocalName);
             }
             else
             {
@@ -514,7 +514,7 @@ namespace Microsoft.Language.Xml
             }
 
             var newTextTokens = VisitList<SyntaxNode>(node.Content);
-            if (node.Content != newTextTokens.Node)
+            if (node.Content.Node != newTextTokens.Node)
             {
                 anyChanges = true;
             }
@@ -527,7 +527,7 @@ namespace Microsoft.Language.Xml
 
             if (anyChanges)
             {
-                return new XmlCommentSyntax(node.Kind, newLessThanExclamationMinusMinusToken, newTextTokens.Node, newMinusMinusGreaterThanToken);
+                return XmlComment(newLessThanExclamationMinusMinusToken, newTextTokens.Node, newMinusMinusGreaterThanToken);
             }
             else
             {
@@ -551,7 +551,7 @@ namespace Microsoft.Language.Xml
             }
 
             var newTextTokens = VisitList<SyntaxNode>(node.TextTokens);
-            if (node.TextTokens != newTextTokens.Node)
+            if (node.TextTokens.Node != newTextTokens.Node)
             {
                 anyChanges = true;
             }
@@ -564,7 +564,7 @@ namespace Microsoft.Language.Xml
 
             if (anyChanges)
             {
-                return new XmlProcessingInstructionSyntax(newLessThanQuestionToken, newName, newTextTokens.Node, newQuestionGreaterThanToken);
+                return XmlProcessingInstruction(newLessThanQuestionToken, newName, newTextTokens.Node, newQuestionGreaterThanToken);
             }
             else
             {
@@ -582,7 +582,7 @@ namespace Microsoft.Language.Xml
             }
 
             var newTextTokens = VisitList<SyntaxNode>(node.TextTokens);
-            if (node.TextTokens != newTextTokens.Node)
+            if (node.TextTokens != newTextTokens)
             {
                 anyChanges = true;
             }
@@ -595,7 +595,7 @@ namespace Microsoft.Language.Xml
 
             if (anyChanges)
             {
-                return new XmlCDataSectionSyntax(node.Kind, newBeginCDataToken, newTextTokens.Node, newEndCDataToken);
+                return XmlCDataSection(newBeginCDataToken, newTextTokens.Node, newEndCDataToken);
             }
             else
             {

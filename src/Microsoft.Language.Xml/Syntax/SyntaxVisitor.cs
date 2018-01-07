@@ -2,7 +2,7 @@
 
 namespace Microsoft.Language.Xml
 {
-    public abstract partial class SyntaxVisitor
+    public abstract class SyntaxVisitor
     {
         public virtual SyntaxNode Visit(SyntaxNode node)
         {

@@ -8,16 +8,16 @@ namespace Microsoft.Language.Xml
         public static TextSpan GetLeadingTriviaSpan(this SyntaxNode node)
         {
             var leadingTrivia = node.GetLeadingTrivia();
-            return leadingTrivia != null ? 
-                new TextSpan(node.Start, leadingTrivia.Width) : 
+            return leadingTrivia != null ?
+                new TextSpan(node.Start, leadingTrivia.Width) :
                 new TextSpan(node.Start, 0);
         }
 
         public static TextSpan GetTrailingTriviaSpan(this SyntaxNode node)
         {
             var trailingTrivia = node.GetTrailingTrivia();
-            return trailingTrivia != null ? 
-                new TextSpan(node.Start + node.FullWidth - trailingTrivia.Width, trailingTrivia.Width) : 
+            return trailingTrivia != null ?
+                new TextSpan(node.Start + node.FullWidth - trailingTrivia.Width, trailingTrivia.Width) :
                 new TextSpan(node.Start + node.FullWidth, 0);
         }
 
@@ -125,7 +125,7 @@ namespace Microsoft.Language.Xml
 
                     while (currentState.i < currentState.node.SlotCount)
                     {
-                        var child = currentState.node.GetSlot(currentState.i);
+                        var child = currentState.node.GetNodeSlot(currentState.i);
                         currentState.i++;
 
                         if (child != null)
@@ -164,7 +164,7 @@ namespace Microsoft.Language.Xml
             {
                 for (int i = 0; i < node.SlotCount; i++)
                 {
-                    var child = node.GetSlot(i);
+                    var child = node.GetNodeSlot(i);
                     if (child != null)
                     {
                         if (child.Start > span.End)

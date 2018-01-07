@@ -1,200 +1,181 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Threading;
 
 namespace Microsoft.Language.Xml
 {
+    using InternalSyntax;
+
     public abstract class SyntaxNode
     {
-        public SyntaxKind Kind { get; protected set; }
-        public SyntaxNode Parent { get; internal set; }
-        public int Start { get; internal set; }
+        public SyntaxNode Parent { get; }
+        public int Start { get; }
 
-        private byte slotCount;
-        private int fullWidth;
+        public SyntaxKind Kind => GreenNode.Kind;
+        public int FullWidth => GreenNode.FullWidth;
+        public int Width => GreenNode.Width;
 
-        public SyntaxNode(SyntaxKind kind)
+        internal GreenNode GreenNode { get; }
+
+        internal SyntaxNode(GreenNode green, SyntaxNode parent, int position)
         {
-            this.Kind = kind;
-            this.fullWidth = -1;
-        }
-
-        public int FullWidth
-        {
-            get
-            {
-                if (fullWidth == -1)
-                {
-                    throw new InvalidOperationException();
-                }
-
-                return fullWidth;
-            }
-        }
-
-        public virtual int Width
-        {
-            get
-            {
-                return FullWidth - (GetLeadingTriviaWidth() + GetTrailingTriviaWidth());
-            }
+            this.GreenNode = green;
+            this.Parent = parent;
+            this.Start = position;
         }
 
         public TextSpan Span
         {
             get
             {
-                return new TextSpan(Start + GetLeadingTriviaWidth(), Width);
+                // Start with the full span.
+                var start = Start;
+                var width = this.GreenNode.FullWidth;
+
+                // adjust for preceding trivia (avoid calling this twice, do not call Green.Width)
+                var precedingWidth = this.GreenNode.GetLeadingTriviaWidth();
+                start += precedingWidth;
+                width -= precedingWidth;
+
+                // adjust for following trivia width
+                width -= this.GreenNode.GetTrailingTriviaWidth();
+
+                Debug.Assert(width >= 0);
+                return new TextSpan(start, width);
             }
         }
 
-        public TextSpan FullSpan
-        {
-            get
-            {
-                return new TextSpan(Start, FullWidth);
-            }
-        }
+        public int SpanStart => Start + GreenNode.GetLeadingTriviaWidth();
+
+        public TextSpan FullSpan => new TextSpan(this.Start, this.GreenNode.FullWidth);
 
         public int End => Start + FullWidth;
 
+        internal int SlotCount => GreenNode.SlotCount;
+
         public virtual int GetSlotCountIncludingTrivia()
         {
-            return SlotCount;
+            return GreenNode.SlotCount;
         }
 
         public virtual SyntaxNode GetSlotIncludingTrivia(int index)
         {
-            return GetSlot(index);
+            return GetNodeSlot(index);
         }
 
         public abstract SyntaxNode Accept(SyntaxVisitor visitor);
-
-        private struct ComputeFullWidthState
-        {
-            public SyntaxNode Node;
-            public SyntaxNode Parent;
-            public int Index;
-        }
-
-        internal int ComputeFullWidthIterative(int start = 0)
-        {
-            return ComputeFullWidthIterative(this, start);
-        }
 
         protected virtual int GetTextWidth()
         {
             return 0;
         }
 
-        private static int ComputeFullWidthIterative(SyntaxNode node, int start = 0)
+        internal SyntaxNode GetRed(ref SyntaxNode field, int slot)
         {
-            if (node.fullWidth >= 0)
+            var result = field;
+
+            if (result == null)
             {
-                return node.fullWidth;
-            }
-
-            node.Start = start;
-
-            Stack<ComputeFullWidthState> nodes = new Stack<ComputeFullWidthState>();
-            nodes.Push(new ComputeFullWidthState()
-            {
-                Node = node
-            });
-
-            while (nodes.Count != 0)
-            {
-                var state = nodes.Pop();
-
-                AfterPopState:
-                node = state.Node;
-                if (node.fullWidth == -1)
+                var green = this.GreenNode.GetSlot(slot);
+                if (green != null)
                 {
-                    node.fullWidth = node.GetTextWidth();
-
-                    // Node full width is now zero or the node is a token/trivial
-                    // and the full width represents the width of the text
-                    // for the token/trivia. Therefore, start is only incremented
-                    // for tokens and trivia.
-                    start += node.fullWidth;
-                }
-
-                var parent = state.Parent;
-
-                var slotCount = node.GetSlotCountIncludingTrivia();
-                for (; state.Index < slotCount; state.Index++)
-                {
-                    var child = node.GetSlotIncludingTrivia(state.Index);
-                    if (child == null)
-                    {
-                        continue;
-                    }
-
-                    child.Parent = node;
-                    child.Start = start;
-
-                    if (child.fullWidth == -1)
-                    {
-                        state.Index++;
-                        nodes.Push(state);
-
-                        state = new ComputeFullWidthState()
-                        {
-                            Node = child,
-                            Parent = node
-                        };
-
-                        goto AfterPopState;
-                    }
-                    else
-                    {
-                        start += child.fullWidth;
-                        node.fullWidth += child.fullWidth;
-                    }
-                }
-
-                if (parent != null)
-                {
-                    if (parent.fullWidth == -1)
-                    {
-                        parent.fullWidth = 0;
-                    }
-
-                    parent.fullWidth += node.fullWidth;
+                    Interlocked.CompareExchange(ref field, green.CreateRed(this, this.GetChildPosition(slot)), null);
+                    result = field;
                 }
             }
 
-            return node.fullWidth;
+            return result;
         }
 
-        private int ComputeFullWidth()
+        protected T GetRed<T>(ref T field, int slot) where T : SyntaxNode
         {
-            int width = 0;
-            for (int i = 0; i < SlotCount; i++)
+            var result = field;
+
+            if (result == null)
             {
-                var slot = GetSlot(i);
-                if (slot != null)
+                var green = this.GreenNode.GetSlot(slot);
+                if (green != null)
                 {
-                    width += slot.FullWidth;
+                    Interlocked.CompareExchange(ref field, (T)green.CreateRed(this, this.GetChildPosition(slot)), null);
+                    result = field;
                 }
             }
 
-            return width;
+            return result;
+        }
+
+        internal SyntaxNode GetRedElement(ref SyntaxNode element, int slot)
+        {
+            Debug.Assert(this.IsList);
+
+            var result = element;
+
+            if (result == null)
+            {
+                var green = this.GreenNode.GetSlot(slot);
+                // passing list's parent
+                Interlocked.CompareExchange(ref element, green.CreateRed(this.Parent, this.GetChildPosition(slot)), null);
+                result = element;
+            }
+
+            return result;
+        }
+
+        internal virtual int GetChildPosition(int index)
+        {
+            int offset = 0;
+            var green = this.GreenNode;
+            while (index > 0)
+            {
+                index--;
+                var prevSibling = this.GetCachedSlot(index);
+                if (prevSibling != null)
+                {
+                    return prevSibling.End + offset;
+                }
+                var greenChild = green.GetSlot(index);
+                if (greenChild != null)
+                {
+                    offset += greenChild.FullWidth;
+                }
+            }
+
+            return this.Start + offset;
+        }
+
+        /// <summary>
+        /// Gets a node at given node index without forcing its creation.
+        /// If node was not created it would return null.
+        /// </summary>
+        internal abstract SyntaxNode GetCachedSlot(int index);
+
+        /// <summary>
+        /// Creates a new tree of nodes with the specified nodes, tokens or trivia replaced.
+        /// </summary>
+        protected internal virtual SyntaxNode ReplaceCore<TNode>(
+            IEnumerable<TNode> nodes = null,
+            Func<TNode, TNode, SyntaxNode> computeReplacementNode = null,
+            IEnumerable<SyntaxToken> tokens = null,
+            Func<SyntaxToken, SyntaxToken, SyntaxToken> computeReplacementToken = null,
+            IEnumerable<SyntaxTrivia> trivia = null,
+            Func<SyntaxTrivia, SyntaxTrivia, SyntaxTrivia> computeReplacementTrivia = null) where TNode : SyntaxNode
+        {
+            return SyntaxReplacer.Replace(this, nodes, computeReplacementNode, tokens, computeReplacementToken, trivia, computeReplacementTrivia);
         }
 
         // Get the leading trivia a green array, recursively to first token.
         public virtual SyntaxNode GetLeadingTrivia()
         {
-            var possibleFirstChild = GetFirstToken();
-            if (possibleFirstChild != null)
-            {
-                return possibleFirstChild.GetLeadingTrivia();
-            }
-            else
-            {
-                return null;
-            }
+            return GetFirstToken()?.GetLeadingTrivia();
+        }
+
+        // Get the trailing trivia a green array, recursively to first token.
+        public virtual SyntaxNode GetTrailingTrivia()
+        {
+            return GetLastToken()?.GetTrailingTrivia();
         }
 
         public virtual void GetIndexAndOffset(int targetOffset, out int index, out int offset)
@@ -203,23 +184,15 @@ namespace Microsoft.Language.Xml
             offset = 0;
         }
 
-        public virtual SyntaxNode WithLeadingTrivia(SyntaxNode trivia)
-        {
-            return this;
-        }
-
-        public virtual SyntaxNode WithTrailingTrivia(SyntaxNode trivia)
-        {
-            return this;
-        }
+        internal abstract SyntaxNode GetNodeSlot(int index);
 
         public IEnumerable<SyntaxNode> ChildNodes
         {
             get
             {
-                for (int i = 0; i < SlotCount; i++)
+                for (int i = 0; i < GreenNode.SlotCount; i++)
                 {
-                    var child = GetSlot(i);
+                    var child = GetNodeSlot(i);
                     if (child != null)
                     {
                         yield return child;
@@ -285,91 +258,12 @@ namespace Microsoft.Language.Xml
 
         public virtual string ToFullString()
         {
-            var builder = PooledStringBuilder.GetInstance();
-            var writer = new StringWriter(builder, CultureInfo.InvariantCulture);
-            WriteTo(writer);
-            return builder.ToStringAndFree();
+            return GreenNode.ToFullString();
         }
 
-        /*  <summary>
-        ''' Append the full text of this node including children and trivia to the given stringbuilder.
-        ''' </summary>
-        */
-        public virtual void WriteTo(TextWriter writer)
-        {
-            var stack = new Stack<SyntaxNode>();
-            stack.Push(this);
-            while (stack.Count > 0)
-            {
-                ((SyntaxNode)stack.Pop()).WriteToOrFlatten(writer, stack);
-            }
-        }
+        public bool HasLeadingTrivia => GreenNode.HasLeadingTrivia;
 
-        /*  <summary>
-        ''' NOTE: the method should write OR push children, but never do both
-        ''' </summary>
-        */
-        internal virtual void WriteToOrFlatten(TextWriter writer, Stack<SyntaxNode> stack)
-        {
-            // By default just push children to the stack
-            for (var i = this.SlotCount - 1; i >= 0; i--)
-            {
-                var node = GetSlot(i);
-                if (node != null)
-                {
-                    stack.Push(GetSlot(i));
-                }
-            }
-        }
-
-        // Get the trailing trivia a green array, recursively to first token.
-        public virtual SyntaxNode GetTrailingTrivia()
-        {
-            var possibleLastChild = GetLastToken();
-            if (possibleLastChild != null)
-            {
-                return possibleLastChild.GetTrailingTrivia();
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        internal bool IsMissing
-        {
-            get
-            {
-                // flag has reversed meaning hence "=="
-                return false; // (this.flags & NodeFlags.IsNotMissing) == 0;
-            }
-        }
-
-        public virtual int GetLeadingTriviaWidth()
-        {
-            return this.GetFirstTerminal().GetLeadingTriviaWidth();
-        }
-
-        public virtual int GetTrailingTriviaWidth()
-        {
-            return this.GetLastTerminal().GetTrailingTriviaWidth();
-        }
-
-        public bool HasLeadingTrivia
-        {
-            get
-            {
-                return this.GetLeadingTrivia() != null;
-            }
-        }
-
-        public bool HasTrailingTrivia
-        {
-            get
-            {
-                return this.GetTrailingTrivia() != null;
-            }
-        }
+        public bool HasTrailingTrivia => GreenNode.HasTrailingTrivia;
 
         internal SyntaxToken GetFirstToken()
         {
@@ -390,7 +284,7 @@ namespace Microsoft.Language.Xml
                 bool foundChild = false;
                 for (int i = 0, n = node.SlotCount; i < n; i++)
                 {
-                    var child = node.GetSlot(i);
+                    var child = node.GetNodeSlot(i);
                     if (child != null)
                     {
                         node = child;
@@ -406,8 +300,29 @@ namespace Microsoft.Language.Xml
             }
             while (node.SlotCount != 0);
 
-            return node;
+            return node == this ? this : node;
         }
+
+        public SyntaxNode GetLastTerminal()
+        {
+            var node = this;
+
+            do
+            {
+                for (int i = node.SlotCount - 1; i >= 0; i--)
+                {
+                    var child = node.GetNodeSlot(i);
+                    if (child != null)
+                    {
+                        node = child;
+                        break;
+                    }
+                }
+            } while (node.SlotCount != 0);
+
+            return node == this ? this : node;
+        }
+
 
         internal SyntaxNode AddError(DiagnosticInfo diagnostic)
         {
@@ -424,7 +339,7 @@ namespace Microsoft.Language.Xml
          ''' diagnostics not on tokens to the given diagnostic info list.
          ''' </summary>
         */
-        internal virtual void CollectConstituentTokensAndDiagnostics(SyntaxListBuilder<SyntaxToken> tokenListBuilder, IList<DiagnosticInfo> nonTokenDiagnostics)
+        /*internal virtual void CollectConstituentTokensAndDiagnostics(SyntaxListBuilder<SyntaxToken> tokenListBuilder, IList<DiagnosticInfo> nonTokenDiagnostics)
         {
             DiagnosticInfo[] diagnostics = this.GetDiagnostics();
             if (diagnostics != null && diagnostics.Length > 0)
@@ -441,10 +356,10 @@ namespace Microsoft.Language.Xml
                 var green = GetSlot(i);
                 if (green != null)
                 {
-                    ((SyntaxNode)green).CollectConstituentTokensAndDiagnostics(tokenListBuilder, nonTokenDiagnostics);
+                    green.CollectConstituentTokensAndDiagnostics(tokenListBuilder, nonTokenDiagnostics);
                 }
             }
-        }
+        }*/
 
         private static readonly DiagnosticInfo[] NoDiagnostics = new DiagnosticInfo[0];
 
@@ -462,66 +377,10 @@ namespace Microsoft.Language.Xml
             return NoDiagnostics;
         }
 
-        public SyntaxNode GetLastTerminal()
-        {
-            var node = this;
+        public bool IsList => GreenNode.IsList;
 
-            do
-            {
-                for (int i = node.SlotCount - 1; i >= 0; i--)
-                {
-                    var child = node.GetSlot(i);
-                    if (child != null)
-                    {
-                        node = child;
-                        break;
-                    }
-                }
-            } while (node.slotCount != 0);
+        internal bool IsMissing => GreenNode.IsMissing;
 
-            return node;
-        }
-
-        public int SlotCount
-        {
-            get
-            {
-                int count = this.slotCount;
-                if (count == byte.MaxValue)
-                {
-                    count = GetSlotCount();
-                }
-
-                return count;
-            }
-
-            protected set
-            {
-                this.slotCount = (byte)value;
-            }
-        }
-
-        public bool IsList
-        {
-            get
-            {
-                return Kind == SyntaxKind.List;
-            }
-        }
-
-        public virtual bool IsToken { get { return false; } }
-
-        // for slot count's >= byte.MaxValue
-        protected virtual int GetSlotCount()
-        {
-            return this.slotCount;
-        }
-
-        public abstract SyntaxNode GetSlot(int index);
-
-        protected virtual void AdjustWidth(SyntaxNode node)
-        {
-            this.fullWidth = FullWidth + node.FullWidth;
-        }
+        public virtual bool IsToken => GreenNode.IsToken;
     }
 }

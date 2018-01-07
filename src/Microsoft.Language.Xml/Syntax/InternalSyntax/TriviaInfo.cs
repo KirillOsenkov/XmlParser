@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace Microsoft.Language.Xml
+namespace Microsoft.Language.Xml.InternalSyntax
 {
     internal class TriviaInfo
     {
-        private TriviaInfo(SyntaxNode leadingTrivia, SyntaxNode trailingTrivia)
+        private TriviaInfo(GreenNode leadingTrivia, GreenNode trailingTrivia)
         {
             this._leadingTrivia = leadingTrivia;
             this._trailingTrivia = trailingTrivia;
@@ -13,10 +13,10 @@ namespace Microsoft.Language.Xml
 
         private const int maximumCachedTriviaWidth = 40;
         private const int triviaInfoCacheSize = 64;
-        private static readonly Func<SyntaxNode, int> triviaKeyHasher = (SyntaxNode key) => Hash.Combine(key.ToFullString(), ((short)key.Kind));
-        private static readonly Func<SyntaxNode, TriviaInfo, bool> triviaKeyEquality = (SyntaxNode key, TriviaInfo value) => (key == value._leadingTrivia) || ((key.Kind == value._leadingTrivia.Kind) && (key.FullWidth == value._leadingTrivia.FullWidth) && (key.ToFullString() == value._leadingTrivia.ToFullString()));
+        private static readonly Func<GreenNode, int> triviaKeyHasher = (GreenNode key) => Hash.Combine(key.ToFullString(), ((short)key.Kind));
+        private static readonly Func<GreenNode, TriviaInfo, bool> triviaKeyEquality = (GreenNode key, TriviaInfo value) => (key == value._leadingTrivia) || ((key.Kind == value._leadingTrivia.Kind) && (key.FullWidth == value._leadingTrivia.FullWidth) && (key.ToFullString() == value._leadingTrivia.ToFullString()));
 
-        private static bool ShouldCacheTriviaInfo(SyntaxNode leadingTrivia, SyntaxNode trailingTrivia)
+        private static bool ShouldCacheTriviaInfo(GreenNode leadingTrivia, GreenNode trailingTrivia)
         {
             Debug.Assert(leadingTrivia != null);
             if (trailingTrivia == null)
@@ -33,13 +33,13 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        public static TriviaInfo Create(SyntaxNode leadingTrivia, SyntaxNode trailingTrivia)
+        public static TriviaInfo Create(GreenNode leadingTrivia, GreenNode trailingTrivia)
         {
             Debug.Assert(leadingTrivia != null);
             return new TriviaInfo(leadingTrivia, trailingTrivia);
         }
 
-        public SyntaxNode _leadingTrivia;
-        public SyntaxNode _trailingTrivia;
+        public GreenNode _leadingTrivia;
+        public GreenNode _trailingTrivia;
     }
 }
