@@ -1188,6 +1188,7 @@ namespace Microsoft.Language.Xml
                 followingTrivia);
         }
 
+        private static readonly PunctuationSyntax.Green _xmlDoubleQuoteToken = Punctuation(SyntaxKind.DoubleQuoteToken, "\"", null, null);
         private SyntaxToken.Green XmlMakeDoubleQuoteToken(
             InternalSyntax.SyntaxList<GreenNode> leadingTrivia,
             char spelling,
@@ -1204,9 +1205,12 @@ namespace Microsoft.Language.Xml
                 followingTrivia = ws;
             }
 
+            if (leadingTrivia.Node == null && followingTrivia == null)
+                return _xmlDoubleQuoteToken;
+
             return Punctuation(
                 SyntaxKind.DoubleQuoteToken,
-                "\"",
+                Intern(spelling),
                 leadingTrivia,
                 followingTrivia);
         }
@@ -1244,11 +1248,14 @@ namespace Microsoft.Language.Xml
             return _stringTable.Add(spelling, 0, spelling.Length);
         }
 
+        private static readonly PunctuationSyntax.Green _xmlEqualsToken = Punctuation(SyntaxKind.EqualsToken, "=", null, null);
         private SyntaxToken.Green XmlMakeEqualsToken(InternalSyntax.SyntaxList<GreenNode> leadingTrivia)
         {
             AdvanceChar();
             var followingTrivia = ScanXmlWhitespace();
-            return Punctuation(SyntaxKind.EqualsToken, "=", leadingTrivia, followingTrivia);
+            if (leadingTrivia.Node == null && followingTrivia == null)
+                return _xmlEqualsToken;
+            return Punctuation(SyntaxKind.EqualsToken, Intern('='), leadingTrivia, followingTrivia);
         }
 
         private SyntaxToken.Green XmlMakeGreaterToken(InternalSyntax.SyntaxList<GreenNode> precedingTrivia)
