@@ -18,10 +18,10 @@ namespace Microsoft.Language.Xml
         private Buffer buffer;
         private CancellationToken cancellationToken;
 
-        private Parser(Buffer buffer, CancellationToken cancellationToken = default(CancellationToken))
+        private Parser(Buffer buffer, Scanner scanner = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             this.buffer = buffer;
-            this._scanner = new Scanner(buffer);
+            this._scanner = scanner ?? new Scanner(buffer);
             this.cancellationToken = cancellationToken;
         }
 
@@ -34,9 +34,47 @@ namespace Microsoft.Language.Xml
         public static XmlDocumentSyntax Parse(Buffer buffer)
         {
             var parser = new Parser(buffer);
-            var root = parser.Parse();
+            return ParseDocument(parser);
+        }
 
+        public static XmlDocumentSyntax ParseIncremental(string newXml, TextChangeRange[] changes, XmlDocumentSyntax previousDocument)
+        {
+            return ParseIncremental(new StringBuffer(newXml), changes, previousDocument);
+        }
+
+        public static XmlDocumentSyntax ParseIncremental(Buffer newBuffer, TextChangeRange[] changes, XmlDocumentSyntax previousDocument)
+        {
+            if (!CanParseIncrementally(previousDocument, changes))
+                return Parse(newBuffer);
+
+            var parser = new Parser(newBuffer, new Blender(newBuffer, changes, previousDocument));
+            return ParseDocument(parser);
+        }
+
+        static XmlDocumentSyntax ParseDocument(Parser parser)
+        {
+            var root = parser.Parse();
             return (XmlDocumentSyntax)root.CreateRed();
+        }
+
+        static bool CanParseIncrementally(SyntaxNode root, TextChangeRange[] changes)
+        {
+            foreach (var change in changes)
+            {
+                for (int position = change.Span.Start; position < change.Span.End; position++)
+                {
+                    var nonTerminal = root.FindNode(position, includeTrivia: false, excludeTerminal: true);
+                    if (nonTerminal == null)
+                        continue;
+                    // If one of the change touches a node name then all bets are off and we need to reparse the whole context
+                    if (nonTerminal.Kind == SyntaxKind.XmlName && ((XmlNameSyntax)nonTerminal).IsXmlNodeName())
+                        return false;
+                    // Advance position to the end of the node we found
+                    position += nonTerminal.FullWidth - position + nonTerminal.Start - 1;
+                }
+            }
+
+            return true;
         }
 
         private XmlDocumentSyntax.Green Parse()
@@ -79,9 +117,7 @@ namespace Microsoft.Language.Xml
             {
                 element = ParseXmlElement(state);
                 if (element == null)
-                {
                     break;
-                }
 
                 parts.Add(element);
             }
@@ -253,6 +289,14 @@ namespace Microsoft.Language.Xml
                 switch (CurrentToken.Kind)
                 {
                     case SyntaxKind.LessThanToken:
+                        var reused = _scanner.GetCurrentSyntaxNode() as XmlNodeSyntax.Green;
+                        if (reused != null && (reused.Kind == SyntaxKind.XmlElement || reused.Kind == SyntaxKind.XmlEmptyElement))
+                        {
+                            xml = reused;
+                            GetNextSyntaxNode();
+                            break;
+                        }
+
                         bool nextTokenIsSlash = PeekNextToken(ScannerState.Element).Kind == SyntaxKind.SlashToken;
                         if (nextTokenIsSlash)
                         {
@@ -529,6 +573,12 @@ namespace Microsoft.Language.Xml
             currentToken = null;
         }
 
+        internal void GetNextSyntaxNode(ScannerState withState = ScannerState.Content)
+        {
+            _scanner.MoveToNextSyntaxNode(withState);
+            currentToken = null;
+        }
+
         private XmlCDataSectionSyntax.Green ParseXmlCData(ScannerState nextState)
         {
             Debug.Assert(CurrentToken.Kind == SyntaxKind.BeginCDataToken, "ParseXmlCData called on the wrong token.");
@@ -772,6 +822,14 @@ namespace Microsoft.Language.Xml
                 CurrentToken.Kind == SyntaxKind.SingleQuoteToken ||
                 CurrentToken.Kind == SyntaxKind.DoubleQuoteToken)
             {
+                var reused = _scanner.GetCurrentSyntaxNode() as XmlNodeSyntax.Green;
+                if (reused != null && reused.Kind == SyntaxKind.XmlAttribute)
+                {
+                    Result = reused;
+                    GetNextSyntaxNode(ScannerState.Element);
+                    return Result;
+                }
+
                 var Name = ParseXmlQualifiedName(requireLeadingWhitespace, true, ScannerState.Element, ScannerState.Element);
                 if (CurrentToken.Kind == SyntaxKind.EqualsToken)
                 {

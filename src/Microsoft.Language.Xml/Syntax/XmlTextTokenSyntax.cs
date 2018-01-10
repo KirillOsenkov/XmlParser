@@ -18,12 +18,12 @@
 
             internal override SyntaxNode CreateRed(SyntaxNode parent, int position) => new XmlTextTokenSyntax(this, parent, position);
 
-            public override GreenNode WithLeadingTrivia(GreenNode trivia)
+            public override SyntaxToken.Green WithLeadingTrivia(GreenNode trivia)
             {
                 return new Green(Kind, Text, trivia, TrailingTrivia);
             }
 
-            public override GreenNode WithTrailingTrivia(GreenNode trivia)
+            public override SyntaxToken.Green WithTrailingTrivia(GreenNode trivia)
             {
                 return new Green(Kind, Text, LeadingTrivia, trivia);
             }

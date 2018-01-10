@@ -24,7 +24,9 @@ namespace Microsoft.Language.Xml
         public static SyntaxNode FindNode(
             this SyntaxNode node,
             int position,
-            Func<SyntaxNode, bool> descendIntoChildren = null)
+            Func<SyntaxNode, bool> descendIntoChildren = null,
+            bool includeTrivia = true,
+            bool excludeTerminal = false)
         {
             if (node == null)
             {
@@ -52,11 +54,11 @@ namespace Microsoft.Language.Xml
                     index--;
                 }
 
-                var slotCount = node.GetSlotCountIncludingTrivia();
+                var slotCount = includeTrivia ? node.GetSlotCountIncludingTrivia() : node.SlotCount;
 
                 for (int i = index; i < slotCount; i++)
                 {
-                    var child = node.GetSlotIncludingTrivia(i);
+                    var child = includeTrivia ? node.GetSlotIncludingTrivia(i) : node.GetNodeSlot(i);
                     if (child != null)
                     {
                         if (child.Start > position)
@@ -71,6 +73,9 @@ namespace Microsoft.Language.Xml
                         }
                         else
                         {
+                            // We have hit a terminal, maybe we should be returning its non-terminal parent
+                            if (child.SlotCount == 0 && excludeTerminal)
+                                return node;
                             node = child;
                             searchChildren = true;
                             break;

@@ -36,6 +36,13 @@ namespace Microsoft.Language.Xml.Test
             T(" <a  /> ");
         }
 
+        [Fact]
+        public void ParseMultipleAttributes()
+        {
+            T(@"<a attr1=""foo"" attr2=""bar"" />");
+            T(@"<a attr1=""foo"" attr2=""bar""></a>");
+        }
+
         //[TestMethod]
         private void ParseLargeFile()
         {

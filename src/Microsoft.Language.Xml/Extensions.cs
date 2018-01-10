@@ -33,5 +33,38 @@ namespace Microsoft.Language.Xml
 
             return low;
         }
+
+        internal static bool OverlapsWithAny(this TextSpan span, TextSpan[] otherSpans)
+        {
+            foreach (var other in otherSpans)
+            {
+                // TextSpan.OverlapsWith does not handle empty spans so
+                // empty spans need to be handled explicitly.
+                if (other.Length == 0)
+                {
+                    if (span.Contains(other.Start))
+                        return false;
+                }
+                else
+                {
+                    if (span.OverlapsWith(other))
+                        return true;
+                }
+            }
+            return false;
+        }
+
+        internal static bool AnyContainsPosition(this TextSpan[] spans, int position)
+        {
+            foreach (var span in spans)
+            {
+                if (span.Contains(position) || (span.Length == 0 && span.Start == position))
+                    return true;
+                // Assume that spans are sorted
+                if (span.Start > position)
+                    return false;
+            }
+            return false;
+        }
     }
 }

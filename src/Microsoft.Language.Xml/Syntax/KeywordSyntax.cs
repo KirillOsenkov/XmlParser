@@ -13,12 +13,12 @@
 
             internal override SyntaxNode CreateRed(SyntaxNode parent, int position) => new KeywordSyntax(this, parent, position);
 
-            public override GreenNode WithLeadingTrivia(GreenNode trivia)
+            public override SyntaxToken.Green WithLeadingTrivia(GreenNode trivia)
             {
                 return new Green(Text, trivia, TrailingTrivia);
             }
 
-            public override GreenNode WithTrailingTrivia(GreenNode trivia)
+            public override SyntaxToken.Green WithTrailingTrivia(GreenNode trivia)
             {
                 return new Green(Text, LeadingTrivia, trivia);
             }

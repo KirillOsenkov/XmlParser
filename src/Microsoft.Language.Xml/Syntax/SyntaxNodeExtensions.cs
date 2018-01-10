@@ -41,5 +41,27 @@ namespace Microsoft.Language.Xml
             var newLast = last.WithTrailingTrivia(trivia);
             return node.ReplaceToken(last, newLast);
         }
+
+        /// <summary>
+        /// Returns true if the node is a XmlElementSyntax or XmlEmptyElementSyntax
+        /// </summary>
+        public static bool IsElement(this SyntaxNode node)
+        {
+            return node.Kind == SyntaxKind.XmlElement || node.Kind == SyntaxKind.XmlEmptyElement;
+        }
+
+        internal static bool IsXmlNodeName(this XmlNameSyntax name)
+        {
+            var p = name.Parent;
+            switch (p.Kind)
+            {
+                case SyntaxKind.XmlElement:
+                case SyntaxKind.XmlEmptyElement:
+                case SyntaxKind.XmlElementStartTag:
+                case SyntaxKind.XmlElementEndTag:
+                    return true;
+                default: return false;
+            }
+        }
     }
 }

@@ -10,7 +10,6 @@ namespace Microsoft.Language.Xml
         IEnumerable<IXmlElementSyntax> Elements { get; }
         IEnumerable<XmlAttributeSyntax> Attributes { get; }
         XmlAttributeSyntax this[string attributeName] { get; }
-        IXmlElementSyntax AsSyntaxElement { get; }
         IXmlElement AsElement { get; }
     }
 }

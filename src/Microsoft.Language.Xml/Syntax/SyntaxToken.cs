@@ -51,8 +51,8 @@ namespace Microsoft.Language.Xml
             internal override sealed GreenNode GetTrailingTrivia() => TrailingTrivia;
             public override int GetTrailingTriviaWidth() => TrailingTrivia == null ? 0 : TrailingTrivia.FullWidth;
 
-            public abstract GreenNode WithLeadingTrivia(GreenNode trivia);
-            public abstract GreenNode WithTrailingTrivia(GreenNode trivia);
+            public abstract SyntaxToken.Green WithLeadingTrivia(GreenNode trivia);
+            public abstract SyntaxToken.Green WithTrailingTrivia(GreenNode trivia);
 
             protected override sealed int GetSlotCount() => 0;
 

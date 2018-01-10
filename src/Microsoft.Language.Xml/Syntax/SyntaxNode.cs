@@ -201,6 +201,16 @@ namespace Microsoft.Language.Xml
             }
         }
 
+        public IEnumerable<IXmlElement> GetParents()
+        {
+            var parent = this.ParentElement;
+            while (parent != null)
+            {
+                yield return parent;
+                parent = parent.Parent;
+            }
+        }
+
         public SyntaxNode GetParent(int parentChainLength = 1)
         {
             var current = this;
@@ -224,7 +234,7 @@ namespace Microsoft.Language.Xml
                 var current = this.Parent;
                 while (current != null)
                 {
-                    if (current is IXmlElement)
+                    if (current.IsElement())
                     {
                         return (IXmlElement)current;
                     }
@@ -236,23 +246,62 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        public IEnumerable<IXmlElement> GetDescendants()
+        internal IEnumerable<XmlNodeSyntax> GetParentElementsAndAttributes()
         {
-            List<IXmlElement> result = new List<IXmlElement>();
-            AddDescendants(this, result);
-            return result;
+            var parent = Parent;
+            while (parent != null && !parent.IsElement())
+            {
+                if (parent.Kind == SyntaxKind.XmlAttribute)
+                    yield return (XmlNodeSyntax)parent;
+                parent = parent.Parent;
+            }
+            if (parent == null)
+                yield break;
+            var parentElement = (XmlNodeSyntax)parent;
+            while (parentElement != null)
+            {
+                yield return parentElement;
+                parentElement = (XmlNodeSyntax)parentElement.ParentElement;
+            }
         }
 
-        private static void AddDescendants(SyntaxNode node, List<IXmlElement> resultList)
+        public IEnumerable<IXmlElement> GetDescendantsAndSelf()
         {
-            if (node is IXmlElement)
+            return GetDescendantsInternal(this, includeSelf: true);
+        }
+
+        public IEnumerable<IXmlElement> GetDescendants()
+        {
+            return GetDescendantsInternal(this, includeSelf: false);
+        }
+
+        private static IEnumerable<IXmlElement> GetDescendantsInternal(SyntaxNode node, bool includeSelf)
+        {
+            if (includeSelf && node is IXmlElement e)
             {
-                resultList.Add((IXmlElement)node);
+                yield return e;
             }
 
-            foreach (var child in node.ChildNodes)
+            var childStack = new Stack<SyntaxNode>();
+            childStack.Push(node);
+
+            while (childStack.Count > 0)
             {
-                AddDescendants(child, resultList);
+                var c = childStack.Pop();
+                for (int i = 0; i < c.GreenNode.SlotCount; i++)
+                {
+                    var child = c.GetNodeSlot(i);
+                    if (child != null && child is IXmlElement childElement)
+                    {
+                        yield return childElement;
+                    }
+                }
+                for (int i = c.GreenNode.SlotCount - 1; i >= 0; i--)
+                {
+                    var child = c.GetCachedSlot(i);
+                    if (child != null)
+                        childStack.Push(child);
+                }
             }
         }
 
@@ -322,7 +371,6 @@ namespace Microsoft.Language.Xml
 
             return node == this ? this : node;
         }
-
 
         internal SyntaxNode AddError(DiagnosticInfo diagnostic)
         {

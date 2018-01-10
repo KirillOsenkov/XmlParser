@@ -12,6 +12,9 @@ namespace Microsoft.Language.Xml
 
     public class Scanner
     {
+        public const int MaxTokensLookAheadBeyondEOL = 4;
+        public const int MaxCharsLookBehind = 1;
+
         private ScannerToken _prevToken;
         protected ScannerToken _currentToken;
         protected int _lineBufferOffset; // marks the next character to read from _LineBuffer
@@ -32,6 +35,23 @@ namespace Microsoft.Language.Xml
             this._bufferLen = buffer.Length;
             _sbPooled = PooledStringBuilder.GetInstance();
             _sb = _sbPooled.Builder;
+        }
+
+        internal virtual bool TryCrumbleOnce()
+        {
+            Debug.Assert(false, "regular scanner has nothing to crumble");
+            return false;
+        }
+
+        internal virtual GreenNode GetCurrentSyntaxNode()
+        {
+            return null;
+        }
+
+        internal virtual void MoveToNextSyntaxNode(ScannerState withState)
+        {
+            _prevToken = default(ScannerToken);
+            ResetTokens(withState);
         }
 
         internal SyntaxToken.Green GetCurrentToken()
@@ -87,6 +107,13 @@ namespace Microsoft.Language.Xml
             RevertState(_currentToken);
             _tokens.Clear();
             _currentToken = _currentToken.With(ScannerState.Content, null);
+        }
+
+        private void ResetTokens(ScannerState state)
+        {
+            Debug.Assert(_lineBufferOffset >= _currentToken.Position);
+            _tokens.Clear();
+            _currentToken = new ScannerToken(_lineBufferOffset, _endOfTerminatorTrivia, null, state);
         }
 
         internal SyntaxToken.Green PeekNextToken(ScannerState state)
