@@ -191,5 +191,184 @@ namespace Microsoft.Language.Xml
                 return rewritten;
             }
         }
+
+		internal static SyntaxNode ReplaceNodeInList (SyntaxNode root, SyntaxNode originalNode, IEnumerable<SyntaxNode> newNodes)
+		{
+			return new NodeListEditor (originalNode, newNodes, ListEditKind.Replace).Visit (root);
+		}
+
+		internal static SyntaxNode InsertNodeInList (SyntaxNode root, SyntaxNode nodeInList, IEnumerable<SyntaxNode> nodesToInsert, bool insertBefore)
+		{
+			return new NodeListEditor (nodeInList, nodesToInsert, insertBefore ? ListEditKind.InsertBefore : ListEditKind.InsertAfter).Visit (root);
+		}
+
+		public static SyntaxNode ReplaceTokenInList (SyntaxNode root, SyntaxToken tokenInList, IEnumerable<SyntaxToken> newTokens)
+		{
+			return new TokenListEditor (tokenInList, newTokens, ListEditKind.Replace).Visit (root);
+		}
+
+		public static SyntaxNode InsertTokenInList (SyntaxNode root, SyntaxToken tokenInList, IEnumerable<SyntaxToken> newTokens, bool insertBefore)
+		{
+			return new TokenListEditor (tokenInList, newTokens, insertBefore ? ListEditKind.InsertBefore : ListEditKind.InsertAfter).Visit (root);
+		}
+
+		private enum ListEditKind
+		{
+			InsertBefore,
+			InsertAfter,
+			Replace
+		}
+
+		private static InvalidOperationException GetItemNotListElementException ()
+		{
+			return new InvalidOperationException ("Missing list item");
+		}
+
+		private abstract class BaseListEditor : SyntaxRewriter
+		{
+			private readonly TextSpan _elementSpan;
+			private readonly bool _visitTrivia;
+			private readonly bool _visitIntoStructuredTrivia;
+
+			protected readonly ListEditKind editKind;
+
+			public BaseListEditor (
+				TextSpan elementSpan,
+				ListEditKind editKind,
+				bool visitTrivia,
+				bool visitIntoStructuredTrivia)
+			{
+				_elementSpan = elementSpan;
+				this.editKind = editKind;
+				_visitTrivia = visitTrivia || visitIntoStructuredTrivia;
+				_visitIntoStructuredTrivia = visitIntoStructuredTrivia;
+			}
+
+			private bool ShouldVisit (TextSpan span)
+			{
+				if (span.IntersectsWith (_elementSpan)) {
+					// node's full span intersects with at least one node to be replaced
+					// so we need to visit node's children to find it.
+					return true;
+				}
+
+				return false;
+			}
+
+			public override SyntaxNode Visit (SyntaxNode node)
+			{
+				SyntaxNode rewritten = node;
+
+				if (node != null) {
+					if (this.ShouldVisit (node.FullSpan)) {
+						rewritten = base.Visit (node);
+					}
+				}
+
+				return rewritten;
+			}
+
+			public override SyntaxToken VisitSyntaxToken (SyntaxToken token)
+			{
+				var rewritten = token;
+
+				if (_visitTrivia && this.ShouldVisit (token.FullSpan)) {
+					rewritten = base.VisitSyntaxToken (token);
+				}
+
+				return rewritten;
+			}
+		}
+
+		private class NodeListEditor : BaseListEditor
+		{
+			private readonly SyntaxNode _originalNode;
+			private readonly IEnumerable<SyntaxNode> _newNodes;
+
+			public NodeListEditor (
+				SyntaxNode originalNode,
+				IEnumerable<SyntaxNode> replacementNodes,
+				ListEditKind editKind)
+				: base (originalNode.Span, editKind, false, false)
+			{
+				_originalNode = originalNode;
+				_newNodes = replacementNodes;
+			}
+
+			public override SyntaxNode Visit (SyntaxNode node)
+			{
+				if (node == _originalNode) {
+					throw GetItemNotListElementException ();
+				}
+
+				return base.Visit (node);
+			}
+
+			public override SyntaxList<TNode> VisitList<TNode> (SyntaxList<TNode> list)
+			{
+				if (_originalNode is TNode) {
+					var index = list.IndexOf ((TNode)_originalNode);
+					if (index >= 0 && index < list.Count) {
+						switch (this.editKind) {
+						case ListEditKind.Replace:
+							return list.ReplaceRange ((TNode)_originalNode, _newNodes.Cast<TNode> ());
+
+						case ListEditKind.InsertAfter:
+							return list.InsertRange (index + 1, _newNodes.Cast<TNode> ());
+
+						case ListEditKind.InsertBefore:
+							return list.InsertRange (index, _newNodes.Cast<TNode> ());
+						}
+					}
+				}
+
+				return base.VisitList<TNode> (list);
+			}
+		}
+
+		private class TokenListEditor : BaseListEditor
+		{
+			private readonly SyntaxToken _originalToken;
+			private readonly IEnumerable<SyntaxToken> _newTokens;
+
+			public TokenListEditor (
+				SyntaxToken originalToken,
+				IEnumerable<SyntaxToken> newTokens,
+				ListEditKind editKind)
+				: base (originalToken.Span, editKind, false, false)
+			{
+				_originalToken = originalToken;
+				_newTokens = newTokens;
+			}
+
+			public override SyntaxToken VisitSyntaxToken (SyntaxToken token)
+			{
+				if (token == _originalToken) {
+					throw GetItemNotListElementException ();
+				}
+
+				return base.VisitSyntaxToken (token);
+			}
+
+			// TODO the TNode type makes it hard to constrain this to SyntaxToken only
+			/*public override SyntaxList<TNode> VisitList<TNode>(SyntaxList<TNode> list)
+			{
+				var index = list.IndexOf ((SyntaxNode)_originalToken);
+				if (index >= 0 && index < list.Count) {
+					switch (this.editKind) {
+					case ListEditKind.Replace:
+						return list.ReplaceRange (_originalToken, _newTokens);
+
+					case ListEditKind.InsertAfter:
+						return list.InsertRange (index + 1, _newTokens);
+
+					case ListEditKind.InsertBefore:
+						return list.InsertRange (index, _newTokens);
+					}
+				}
+
+				return base.VisitList (list);
+			}*/
+		}
     }
 }

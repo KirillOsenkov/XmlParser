@@ -99,11 +99,9 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        public string Name => NameNode?.Name;
+		public string Name => NameNode?.FullName;
 
         public SyntaxList<SyntaxNode> Content => default(SyntaxList<SyntaxNode>);
-
-        public string TextContent => string.Empty;
 
         public IEnumerable<IXmlElementSyntax> Elements
         {
@@ -113,9 +111,11 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        public XmlAttributeSyntax this[string attributeName] => AttributesNode.FirstOrDefault(attr => string.Equals(attr.Name, attributeName, StringComparison.Ordinal));
+		public XmlAttributeSyntax GetAttribute (string localName, string prefix = null) => AttributesNode.FirstOrDefault (
+			attr => string.Equals (attr.NameNode.LocalName, localName, StringComparison.Ordinal) && string.Equals (attr.NameNode.Prefix, prefix, StringComparison.Ordinal)
+		);
 
-        public string GetAttributeValue(string attributeName) => this[attributeName]?.Value;
+		public string GetAttributeValue (string localName, string prefix = null) => GetAttribute (localName, prefix)?.Value;
 
         public IXmlElement AsElement => this;
         public IXmlElementSyntax AsSyntaxElement => this;
@@ -164,8 +164,53 @@ namespace Microsoft.Language.Xml
         #region IXmlElementSyntax
 
         IEnumerable<XmlAttributeSyntax> IXmlElementSyntax.Attributes => (IEnumerable<XmlAttributeSyntax>)AttributesNode;
-        IXmlElementSyntax IXmlElementSyntax.Parent => ParentElement.AsSyntaxElement;
+        IXmlElementSyntax IXmlElementSyntax.Parent => ParentElement;
+		XmlNodeSyntax IXmlElementSyntax.AsNode => this;
 
-        #endregion
+		IXmlElementSyntax IXmlElementSyntax.WithName (XmlNameSyntax newName) => WithName (newName);
+
+		IXmlElementSyntax IXmlElementSyntax.WithContent (SyntaxList<SyntaxNode> newContent) => throw new NotImplementedException ();
+
+		IXmlElementSyntax IXmlElementSyntax.WithAttributes (IEnumerable<XmlAttributeSyntax> newAttributes) => WithAttributes (new SyntaxList<XmlAttributeSyntax> (newAttributes));
+
+		#endregion
+
+		public XmlEmptyElementSyntax Update (PunctuationSyntax lessThanToken, XmlNameSyntax name, SyntaxList<XmlAttributeSyntax> attributes, PunctuationSyntax slashGreaterThanToken)
+		{
+			if (lessThanToken != this.LessThanToken || name != this.NameNode || attributes != this.AttributesNode || slashGreaterThanToken != this.SlashGreaterThanToken) {
+				var newNode = SyntaxFactory.XmlEmptyElement (lessThanToken, name, attributes, slashGreaterThanToken);
+				/*var annotations = this.GetAnnotations ();
+				if (annotations != null && annotations.Length > 0)
+					return newNode.WithAnnotations (annotations);*/
+				return newNode;
+			}
+
+			return this;
+		}
+
+		public XmlEmptyElementSyntax WithLessThanToken (PunctuationSyntax lessThanToken)
+		{
+			return this.Update (lessThanToken, this.NameNode, this.AttributesNode, this.SlashGreaterThanToken);
+		}
+
+		public XmlEmptyElementSyntax WithName (XmlNameSyntax name)
+		{
+			return this.Update (this.LessThanToken, name, this.AttributesNode, this.SlashGreaterThanToken);
+		}
+
+		public XmlEmptyElementSyntax WithAttributes (SyntaxList<XmlAttributeSyntax> attributes)
+		{
+			return this.Update (this.LessThanToken, this.NameNode, attributes, this.SlashGreaterThanToken);
+		}
+
+		public XmlEmptyElementSyntax WithSlashGreaterThanToken (PunctuationSyntax slashGreaterThanToken)
+		{
+			return this.Update (this.LessThanToken, this.NameNode, this.AttributesNode, slashGreaterThanToken);
+		}
+
+		public XmlEmptyElementSyntax AddAttributes (params XmlAttributeSyntax[] items)
+		{
+			return this.WithAttributes (this.AttributesNode.AddRange (items));
+		}
     }
 }

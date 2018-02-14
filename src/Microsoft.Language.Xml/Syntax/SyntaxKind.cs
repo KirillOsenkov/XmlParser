@@ -1,6 +1,6 @@
 ﻿namespace Microsoft.Language.Xml
 {
-    public enum SyntaxKind
+	public enum SyntaxKind : byte
     {
         LessThanQuestionToken,
         XmlNameToken,

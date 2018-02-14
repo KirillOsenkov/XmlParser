@@ -6,7 +6,8 @@ namespace Microsoft.Language.Xml
 {
     public class SyntaxFactory
     {
-        public static readonly SyntaxToken EofToken = Token(null, SyntaxKind.EndOfFileToken, null, "");
+		public static readonly SyntaxToken EofToken = Token(null, SyntaxKind.EndOfFileToken, null, "");
+		public static readonly SyntaxTrivia CarriageReturnLineFeed = EndOfLineTrivia ("\r\n");
 
         public static XmlDocumentSyntax XmlDocument(
             XmlDeclarationSyntax prologue,
@@ -25,11 +26,11 @@ namespace Microsoft.Language.Xml
             SyntaxNode followingMisc,
             SyntaxToken eof)
         {
-            return (XmlDocumentSyntax)new XmlDocumentSyntax.Green(prologue.GreenNode,
-                                                                   precedingMisc.GreenNode,
-                                                                   body.GreenNode,
-                                                                   followingMisc.GreenNode,
-                                                                   eof.GreenNode).CreateRed();
+			return (XmlDocumentSyntax)new XmlDocumentSyntax.Green(prologue?.GreenNode,
+			                                                      precedingMisc?.GreenNode,
+			                                                      body.GreenNode,
+			                                                      followingMisc?.GreenNode,
+			                                                      eof.GreenNode).CreateRed();
         }
 
         public static XmlNameSyntax XmlName(XmlPrefixSyntax prefix, XmlNameTokenSyntax localName)
@@ -96,12 +97,12 @@ namespace Microsoft.Language.Xml
             return (SkippedTokensTriviaSyntax)new SkippedTokensTriviaSyntax.Green(syntaxList.GreenNode).CreateRed();
         }
 
-        public static XmlNodeSyntax XmlElement(XmlElementStartTagSyntax startElement, SyntaxList<SyntaxNode> contentList, XmlElementEndTagSyntax endElement)
+		public static XmlElementSyntax XmlElement(XmlElementStartTagSyntax startElement, SyntaxList<SyntaxNode> contentList, XmlElementEndTagSyntax endElement)
         {
             return XmlElement(startElement, contentList.Node, endElement);
         }
 
-        public static XmlNodeSyntax XmlElement(XmlElementStartTagSyntax startElement, SyntaxNode content, XmlElementEndTagSyntax endElement)
+		public static XmlElementSyntax XmlElement(XmlElementStartTagSyntax startElement, SyntaxNode content, XmlElementEndTagSyntax endElement)
         {
             return (XmlElementSyntax)new XmlElementSyntax.Green(startElement.GreenNode, content.GreenNode, endElement.GreenNode).CreateRed();
         }
@@ -280,7 +281,7 @@ namespace Microsoft.Language.Xml
 
         public static XmlTextTokenSyntax XmlTextLiteralToken(string text, SyntaxNode leadingTrivia, SyntaxNode trailingTrivia)
         {
-            return (XmlTextTokenSyntax)new XmlTextTokenSyntax.Green(text, leadingTrivia.GreenNode, trailingTrivia.GreenNode).CreateRed();
+            return (XmlTextTokenSyntax)new XmlTextTokenSyntax.Green(text, leadingTrivia?.GreenNode, trailingTrivia?.GreenNode).CreateRed();
         }
 
         /*  <summary>
@@ -380,5 +381,41 @@ namespace Microsoft.Language.Xml
         {
             return new SyntaxList<TNode>(nodes);
         }
+
+		public static SyntaxList<TNode> List<TNode> (params TNode[] nodes) where TNode : SyntaxNode
+		{
+			return new SyntaxList<TNode> (nodes);
+		}
+
+		/// <summary>
+		/// Creates an empty list of trivia.
+		/// </summary>
+		public static SyntaxTriviaList TriviaList ()
+		{
+			return default (SyntaxTriviaList);
+		}
+
+		/// <summary>
+		/// Creates a singleton list of trivia.
+		/// </summary>
+		/// <param name="trivia">A single trivia.</param>
+		public static SyntaxTriviaList TriviaList (SyntaxTrivia trivia)
+		{
+			return new SyntaxTriviaList (trivia);
+		}
+
+		/// <summary>
+		/// Creates a list of trivia.
+		/// </summary>
+		/// <param name="trivias">An array of trivia.</param>
+		public static SyntaxTriviaList TriviaList (params SyntaxTrivia[] trivias)
+			=> new SyntaxTriviaList (trivias);
+
+		/// <summary>
+		/// Creates a list of trivia.
+		/// </summary>
+		/// <param name="trivias">A sequence of trivia.</param>
+		public static SyntaxTriviaList TriviaList (IEnumerable<SyntaxTrivia> trivias)
+			=> new SyntaxTriviaList (trivias);
     }
 }

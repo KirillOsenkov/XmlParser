@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace Microsoft.Language.Xml.InternalSyntax
 {
@@ -10,6 +11,18 @@ namespace Microsoft.Language.Xml.InternalSyntax
     {
         int fullWidth;
         byte slotCount;
+
+		NodeFlags flags;
+
+		static readonly ConditionalWeakTable<GreenNode, DiagnosticInfo[]> diagnosticsTable =
+			new ConditionalWeakTable<GreenNode, DiagnosticInfo[]> ();
+
+		static readonly ConditionalWeakTable<GreenNode, SyntaxAnnotation[]> annotationsTable =
+			new ConditionalWeakTable<GreenNode, SyntaxAnnotation[]> ();
+
+		static readonly DiagnosticInfo[] s_noDiagnostics = Array.Empty<DiagnosticInfo> ();
+		static readonly SyntaxAnnotation[] s_noAnnotations = Array.Empty<SyntaxAnnotation> ();
+		//static readonly IEnumerable<SyntaxAnnotation> s_noAnnotationsEnumerable = SpecializedCollections.EmptyEnumerable<SyntaxAnnotation> ();
 
         internal int FullWidth => fullWidth;
         internal SyntaxKind Kind { get; }
@@ -26,6 +39,22 @@ namespace Microsoft.Language.Xml.InternalSyntax
                 throw new InvalidOperationException();
             this.fullWidth = fullWidth;
         }
+
+		protected GreenNode(SyntaxKind kind, int fullWidth, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
+			: this (kind, fullWidth)
+		{
+			if (diagnostics?.Length > 0) {
+				this.flags |= NodeFlags.ContainsDiagnostics;
+				diagnosticsTable.Add (this, diagnostics);
+			}
+			if (annotations?.Length > 0) {
+				foreach (var annotation in annotations)
+					if (annotation == null)
+						throw new ArgumentException (paramName: nameof (annotations), message: "Annotation cannot be null");
+				this.flags |= NodeFlags.ContainsAnnotations;
+				annotationsTable.Add (this, annotations);
+			}
+		}
 
         protected void AdjustWidth(GreenNode node)
         {
@@ -290,18 +319,28 @@ namespace Microsoft.Language.Xml.InternalSyntax
             }
         }
 
+		public bool ContainsDiagnostics {
+			get {
+				return (this.flags & NodeFlags.ContainsDiagnostics) != 0;
+			}
+		}
+
+		public bool ContainsAnnotations {
+			get {
+				return (this.flags & NodeFlags.ContainsAnnotations) != 0;
+			}
+		}
+
         internal DiagnosticInfo[] GetDiagnostics()
         {
-            // TODO
-            return Array.Empty<DiagnosticInfo>();
-            /*if (this.ContainsDiagnostics) {
+			if (this.ContainsDiagnostics) {
 				DiagnosticInfo[] diags;
-				if (s_diagnosticsTable.TryGetValue (this, out diags)) {
+				if (diagnosticsTable.TryGetValue (this, out diags)) {
 					return diags;
 				}
 			}
 
-			return s_noDiagnostics;*/
+			return Array.Empty<DiagnosticInfo> ();
         }
 
         internal GreenNode SetDiagnostic(DiagnosticInfo diagnostic)
@@ -309,11 +348,32 @@ namespace Microsoft.Language.Xml.InternalSyntax
             return SetDiagnostics(new[] { diagnostic });
         }
 
-        internal virtual GreenNode SetDiagnostics(DiagnosticInfo[] diagnostics)
-        {
-            // TODO
-            return this;
-        }
+		// TODO
+		//internal abstract GreenNode SetDiagnostics (DiagnosticInfo[] diagnostics);
+		internal virtual GreenNode SetDiagnostics (DiagnosticInfo[] diagnostics)
+		{
+			return this;
+		}
+
+		public SyntaxAnnotation[] GetAnnotations ()
+		{
+			if (this.ContainsAnnotations) {
+				SyntaxAnnotation[] annotations;
+				if (annotationsTable.TryGetValue (this, out annotations)) {
+					System.Diagnostics.Debug.Assert (annotations.Length != 0, "we should return nonempty annotations or NoAnnotations");
+					return annotations;
+				}
+			}
+
+			return Array.Empty<SyntaxAnnotation> ();
+		}
+
+		// TODO
+		//internal abstract GreenNode SetAnnotations (SyntaxAnnotation[] annotations);
+		internal virtual GreenNode SetAnnotations (SyntaxAnnotation[] annotations)
+		{
+			return this;
+		}
 
         internal GreenNode AddError(DiagnosticInfo err)
         {

@@ -8,7 +8,7 @@
     <PackageReference Include="Nerdbank.GitVersioning" Version="1.6.35" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Syntax\InternalSyntax\" />
+    <Folder Include="InternalSyntax\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Syntax\XmlElementSyntaxBase.cs" />

@@ -74,14 +74,14 @@ namespace Microsoft.Language.Xml
             return Text.Length;
         }
 
-        public sealed override SyntaxNode GetTrailingTrivia()
+		public sealed override SyntaxTriviaList GetTrailingTrivia()
         {
-            return null;
+			return default(SyntaxTriviaList);
         }
 
-        public sealed override SyntaxNode GetLeadingTrivia()
+		public sealed override SyntaxTriviaList GetLeadingTrivia()
         {
-            return null;
+			return default(SyntaxTriviaList);
         }
 
         public override string ToString() => Text;

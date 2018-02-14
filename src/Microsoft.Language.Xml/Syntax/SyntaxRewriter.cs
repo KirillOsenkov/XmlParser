@@ -6,7 +6,7 @@ namespace Microsoft.Language.Xml
 
     public class SyntaxRewriter : SyntaxVisitor
     {
-        public SyntaxList<TNode> VisitList<TNode>(SyntaxList<TNode> list) where TNode : SyntaxNode
+        public virtual SyntaxList<TNode> VisitList<TNode>(SyntaxList<TNode> list) where TNode : SyntaxNode
         {
             SyntaxListBuilder<TNode> alternate = default(SyntaxListBuilder<TNode>);
             int i = 0;
@@ -40,7 +40,7 @@ namespace Microsoft.Language.Xml
             return list;
         }
 
-        public SeparatedSyntaxList<TNode> VisitList<TNode>(SeparatedSyntaxList<TNode> list) where TNode : SyntaxNode
+        public virtual SeparatedSyntaxList<TNode> VisitList<TNode>(SeparatedSyntaxList<TNode> list) where TNode : SyntaxNode
         {
             SeparatedSyntaxListBuilder<TNode> alternate = default(SeparatedSyntaxListBuilder<TNode>);
             int i = 0;
@@ -457,14 +457,14 @@ namespace Microsoft.Language.Xml
         public override SyntaxNode VisitXmlName(XmlNameSyntax node)
         {
             bool anyChanges = false;
-            var newPrefix = ((XmlPrefixSyntax)Visit(node.Prefix));
-            if (node.Prefix != newPrefix)
+            var newPrefix = ((XmlPrefixSyntax)Visit(node.PrefixNode));
+            if (node.PrefixNode != newPrefix)
             {
                 anyChanges = true;
             }
 
-            var newLocalName = ((XmlNameTokenSyntax)Visit(node.LocalName));
-            if (node.LocalName != newLocalName)
+            var newLocalName = ((XmlNameTokenSyntax)Visit(node.LocalNameNode));
+            if (node.LocalNameNode != newLocalName)
             {
                 anyChanges = true;
             }

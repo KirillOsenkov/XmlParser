@@ -1044,13 +1044,13 @@ namespace Microsoft.Language.Xml
                 if (nameExpr.Kind == SyntaxKind.XmlName)
                 {
                     var name = ((XmlNameSyntax)nameExpr);
-                    if (name.Prefix != null)
+                    if (name.PrefixNode != null)
                     {
-                        prefix = name.Prefix.Name.Text;
+                        prefix = name.PrefixNode.Name.Text;
                         colon = ":";
                     }
 
-                    localName = name.LocalName.Text;
+                    localName = name.LocalNameNode.Text;
                 }
 
                 endElement = ReportSyntaxError(endElement, ERRID.ERR_MismatchedXmlEndTag, prefix, colon, localName);

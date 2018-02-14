@@ -30,12 +30,12 @@
 
         public override SyntaxToken WithLeadingTrivia(SyntaxNode trivia)
         {
-            return (XmlEntityTokenSyntax)new Green(Entity, EntityValue, trivia.GreenNode, GetTrailingTrivia()?.GreenNode).CreateRed(Parent, Start);
+			return (XmlEntityTokenSyntax)new Green(Entity, EntityValue, trivia.GreenNode, GetTrailingTrivia().Node?.GreenNode).CreateRed(Parent, Start);
         }
 
         public override SyntaxToken WithTrailingTrivia(SyntaxNode trivia)
         {
-            return (XmlEntityTokenSyntax)new Green(Entity, EntityValue, GetLeadingTrivia()?.GreenNode, trivia.GreenNode).CreateRed(Parent, Start);
+			return (XmlEntityTokenSyntax)new Green(Entity, EntityValue, GetLeadingTrivia().Node?.GreenNode, trivia.GreenNode).CreateRed(Parent, Start);
         }
     }
 }

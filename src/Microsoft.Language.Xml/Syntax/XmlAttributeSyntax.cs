@@ -53,7 +53,7 @@ namespace Microsoft.Language.Xml
 
         public XmlNameSyntax NameNode => GetRed(ref nameNode, 0);
         public new PunctuationSyntax Equals => GetRed(ref equalsSyntax, 1);
-        public XmlNodeSyntax ValueNode => GetRed(ref valueNode, 2);
+		public XmlStringSyntax ValueNode => GetRed(ref valueNode, 2);
 
         internal XmlAttributeSyntax(Green green, SyntaxNode parent, int position)
             : base(green, parent, position)
@@ -61,16 +61,9 @@ namespace Microsoft.Language.Xml
 
         }
 
-        /*internal XmlAttributeSyntax (XmlAttributeGreen name, PunctuationSyntax equals, XmlNodeSyntax value)
-            : base(SyntaxKind.XmlAttribute)
-        {
-            this.NameNode = name;
-            this.Equals = equals;
-            this.ValueNode = value;
-            SlotCount = 3;
-        }*/
+		public string Name => NameNode?.FullName;
 
-        public string Name => NameNode?.Name;
+		public bool IsNamespaceDeclaration => string.Equals (NameNode?.Prefix, "xmlns", StringComparison.Ordinal);
 
         public string Value
         {
@@ -122,5 +115,33 @@ namespace Microsoft.Language.Xml
                 default: return null;
             }
         }
+
+		public XmlAttributeSyntax Update (XmlNameSyntax name, PunctuationSyntax equalsToken, XmlStringSyntax value)
+		{
+			if (name != this.NameNode || equalsToken != this.Equals || value != this.ValueNode) {
+				var newNode = SyntaxFactory.XmlAttribute (name, equalsToken, value);
+				/*var annotations = this.GetAnnotations ();
+				if (annotations != null && annotations.Length > 0)
+					return newNode.WithAnnotations (annotations);*/
+				return newNode;
+			}
+
+			return this;
+		}
+
+		public XmlAttributeSyntax WithName (XmlNameSyntax name)
+		{
+			return this.Update (name, this.Equals, this.ValueNode);
+		}
+
+		public XmlAttributeSyntax WithEqualsToken (PunctuationSyntax equalsToken)
+		{
+			return this.Update (this.NameNode, equalsToken, this.ValueNode);
+		}
+
+		public XmlAttributeSyntax WithValue (XmlStringSyntax value)
+		{
+			return this.Update (this.NameNode, this.Equals, value);
+		}
     }
 }

@@ -400,7 +400,7 @@ namespace Microsoft.Language.Xml
                 return new EnumeratorImpl(this);
             }
 
-            return ((IEnumerable<TNode>)Array.Empty<TNode>()).GetEnumerator();
+			return SpecializedCollections.EmptyEnumerator<TNode> ();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -410,7 +410,7 @@ namespace Microsoft.Language.Xml
                 return new EnumeratorImpl(this);
             }
 
-            return ((IEnumerable)Array.Empty<TNode>()).GetEnumerator();
+			return SpecializedCollections.EmptyEnumerator<TNode> ();
         }
 
         public static bool operator ==(SyntaxList<TNode> left, SyntaxList<TNode> right)

@@ -139,25 +139,27 @@ namespace Microsoft.Language.Xml
             tokenListBuilder.Add(this);
         }*/
 
-        public override SyntaxNode GetLeadingTrivia()
+		public override SyntaxTriviaList GetLeadingTrivia()
         {
             if (GreenNode.LeadingTrivia == null)
-                return null;
-            return GreenNode.LeadingTrivia.CreateRed(this, Start);
+				return default(SyntaxTriviaList);
+			return new SyntaxTriviaList (GreenNode.LeadingTrivia.CreateRed(this, Start), Start);
         }
 
-        public override SyntaxNode GetTrailingTrivia()
+		public override SyntaxTriviaList GetTrailingTrivia()
         {
             var trailingGreen = GreenNode.TrailingTrivia;
             if (trailingGreen == null)
-                return null;
+				return default (SyntaxTriviaList);
+			var leading = GreenNode.LeadingTrivia;
+			int index = 0;
+			if (leading != null) {
+				index = leading.IsList ? leading.SlotCount : 1;
+			}
             int trailingPosition = Start + this.FullWidth;
-            if (trailingGreen != null)
-            {
-                trailingPosition -= trailingGreen.FullWidth;
-            }
+			trailingPosition -= trailingGreen.FullWidth;
 
-            return trailingGreen.CreateRed(this, trailingPosition);
+			return new SyntaxTriviaList (trailingGreen.CreateRed (this, trailingPosition), trailingPosition, index);
         }
 
         public abstract SyntaxToken WithLeadingTrivia(SyntaxNode trivia);
@@ -202,12 +204,12 @@ namespace Microsoft.Language.Xml
         {
             if (index == 0)
             {
-                var trivia = GetLeadingTrivia();
-                return trivia ?? GetTrailingTrivia();
+				var trivia = GetLeadingTrivia().Node;
+				return trivia ?? GetTrailingTrivia().Node;
             }
             else if (index == 1)
             {
-                return GetTrailingTrivia();
+				return GetTrailingTrivia().Node;
             }
 
             throw new IndexOutOfRangeException();

@@ -7,7 +7,7 @@ namespace Microsoft.Language.Xml
     {
         public static TextSpan GetLeadingTriviaSpan(this SyntaxNode node)
         {
-            var leadingTrivia = node.GetLeadingTrivia();
+			var leadingTrivia = node.GetLeadingTrivia().Node;
             return leadingTrivia != null ?
                 new TextSpan(node.Start, leadingTrivia.Width) :
                 new TextSpan(node.Start, 0);
@@ -15,7 +15,7 @@ namespace Microsoft.Language.Xml
 
         public static TextSpan GetTrailingTriviaSpan(this SyntaxNode node)
         {
-            var trailingTrivia = node.GetTrailingTrivia();
+			var trailingTrivia = node.GetTrailingTrivia().Node;
             return trailingTrivia != null ?
                 new TextSpan(node.Start + node.FullWidth - trailingTrivia.Width, trailingTrivia.Width) :
                 new TextSpan(node.Start + node.FullWidth, 0);
