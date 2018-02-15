@@ -29,6 +29,23 @@ namespace Microsoft.Language.Xml
 			return attribute.WithValue (attribute.ValueNode.WithTextTokens (textTokens));
 		}
 
+		public static IXmlElementSyntax AddChild (this IXmlElementSyntax parent, IXmlElementSyntax child)
+		{
+			return parent.WithContent (parent.Content.Add (child.AsNode));
+		}
+
+		public static IXmlElementSyntax InsertChild (this IXmlElementSyntax parent, IXmlElementSyntax child, int index)
+		{
+			if (index == -1)
+				return AddChild (parent, child);
+			return parent.WithContent (parent.Content.Insert (index, child.AsNode));
+		}
+
+		public static IXmlElementSyntax RemoveChild (this IXmlElementSyntax parent, IXmlElementSyntax child)
+		{
+			return parent.WithContent (parent.Content.Remove (child.AsNode));
+		}
+
         internal static bool IsXmlNodeName (this XmlNameSyntax name)
 		{
 			var p = name.Parent;

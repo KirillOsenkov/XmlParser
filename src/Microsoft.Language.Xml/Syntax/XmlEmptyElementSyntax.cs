@@ -169,7 +169,7 @@ namespace Microsoft.Language.Xml
 
 		IXmlElementSyntax IXmlElementSyntax.WithName (XmlNameSyntax newName) => WithName (newName);
 
-		IXmlElementSyntax IXmlElementSyntax.WithContent (SyntaxList<SyntaxNode> newContent) => throw new NotImplementedException ();
+		IXmlElementSyntax IXmlElementSyntax.WithContent (SyntaxList<SyntaxNode> newContent) => WithContent (newContent);
 
 		IXmlElementSyntax IXmlElementSyntax.WithAttributes (IEnumerable<XmlAttributeSyntax> newAttributes) => WithAttributes (new SyntaxList<XmlAttributeSyntax> (newAttributes));
 
@@ -201,6 +201,17 @@ namespace Microsoft.Language.Xml
 		public XmlEmptyElementSyntax WithAttributes (SyntaxList<XmlAttributeSyntax> attributes)
 		{
 			return this.Update (this.LessThanToken, this.NameNode, attributes, this.SlashGreaterThanToken);
+		}
+
+		// This method has to convert to an XmlElementSyntax
+		public XmlElementSyntax WithContent (SyntaxList<SyntaxNode> content)
+		{
+			var greaterThanToken = SyntaxFactory.Punctuation (SyntaxKind.GreaterThanToken, ">", null, null);
+			var startTag = SyntaxFactory.XmlElementStartTag (this.LessThanToken, this.NameNode, this.AttributesNode, greaterThanToken);
+			var lessThanSlashToken = SyntaxFactory.Punctuation (SyntaxKind.LessThanSlashToken, "</", null, null);
+			var endTag = SyntaxFactory.XmlElementEndTag (lessThanToken, this.NameNode, greaterThanToken);
+
+			return SyntaxFactory.XmlElement (startTag, content, endTag);
 		}
 
 		public XmlEmptyElementSyntax WithSlashGreaterThanToken (PunctuationSyntax slashGreaterThanToken)
