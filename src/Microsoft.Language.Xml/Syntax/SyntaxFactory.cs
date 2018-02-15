@@ -28,14 +28,14 @@ namespace Microsoft.Language.Xml
         {
 			return (XmlDocumentSyntax)new XmlDocumentSyntax.Green(prologue?.GreenNode,
 			                                                      precedingMisc?.GreenNode,
-			                                                      body.GreenNode,
+			                                                      body?.GreenNode,
 			                                                      followingMisc?.GreenNode,
-			                                                      eof.GreenNode).CreateRed();
+			                                                      eof?.GreenNode).CreateRed();
         }
 
         public static XmlNameSyntax XmlName(XmlPrefixSyntax prefix, XmlNameTokenSyntax localName)
         {
-            return (XmlNameSyntax)new XmlNameSyntax.Green(prefix.GreenNode, localName.GreenNode).CreateRed();
+            return (XmlNameSyntax)new XmlNameSyntax.Green(prefix?.GreenNode, localName?.GreenNode).CreateRed();
         }
 
         public static PunctuationSyntax Punctuation(SyntaxKind kind, string spelling, SyntaxList<SyntaxNode> precedingTrivia, SyntaxList<SyntaxNode> followingTrivia)
@@ -94,7 +94,7 @@ namespace Microsoft.Language.Xml
 
         public static SyntaxNode SkippedTokensTrivia(SyntaxNode syntaxList)
         {
-            return (SkippedTokensTriviaSyntax)new SkippedTokensTriviaSyntax.Green(syntaxList.GreenNode).CreateRed();
+            return (SkippedTokensTriviaSyntax)new SkippedTokensTriviaSyntax.Green(syntaxList?.GreenNode).CreateRed();
         }
 
 		public static XmlElementSyntax XmlElement(XmlElementStartTagSyntax startElement, SyntaxList<SyntaxNode> contentList, XmlElementEndTagSyntax endElement)
@@ -104,7 +104,7 @@ namespace Microsoft.Language.Xml
 
 		public static XmlElementSyntax XmlElement(XmlElementStartTagSyntax startElement, SyntaxNode content, XmlElementEndTagSyntax endElement)
         {
-            return (XmlElementSyntax)new XmlElementSyntax.Green(startElement.GreenNode, content.GreenNode, endElement.GreenNode).CreateRed();
+            return (XmlElementSyntax)new XmlElementSyntax.Green(startElement?.GreenNode, content?.GreenNode, endElement?.GreenNode).CreateRed();
         }
 
         /*  <summary>
@@ -128,14 +128,14 @@ namespace Microsoft.Language.Xml
             Debug.Assert(lessThanToken != null && lessThanToken.Kind == SyntaxKind.LessThanToken);
             Debug.Assert(name != null);
             Debug.Assert(greaterThanToken != null && greaterThanToken.Kind == SyntaxKind.GreaterThanToken);
-            return (XmlElementStartTagSyntax)new XmlElementStartTagSyntax.Green(lessThanToken.GreenNode, name.GreenNode, attributes.GreenNode, greaterThanToken.GreenNode).CreateRed();
+            return (XmlElementStartTagSyntax)new XmlElementStartTagSyntax.Green(lessThanToken?.GreenNode, name?.GreenNode, attributes?.GreenNode, greaterThanToken?.GreenNode).CreateRed();
         }
 
         public static XmlElementEndTagSyntax XmlElementEndTag(PunctuationSyntax lessThanSlashToken, XmlNameSyntax name, PunctuationSyntax greaterThanToken)
         {
             Debug.Assert(lessThanSlashToken != null && lessThanSlashToken.Kind == SyntaxKind.LessThanSlashToken);
             Debug.Assert(greaterThanToken != null && greaterThanToken.Kind == SyntaxKind.GreaterThanToken);
-            return (XmlElementEndTagSyntax)new XmlElementEndTagSyntax.Green(lessThanSlashToken.GreenNode, name.GreenNode, greaterThanToken.GreenNode).CreateRed();
+            return (XmlElementEndTagSyntax)new XmlElementEndTagSyntax.Green(lessThanSlashToken?.GreenNode, name?.GreenNode, greaterThanToken?.GreenNode).CreateRed();
         }
 
         /*  <summary>
@@ -153,7 +153,7 @@ namespace Microsoft.Language.Xml
 
         public static XmlTextSyntax XmlText(SyntaxNode textTokens)
         {
-            return (XmlTextSyntax)new XmlTextSyntax.Green(textTokens.GreenNode).CreateRed();
+            return (XmlTextSyntax)new XmlTextSyntax.Green(textTokens?.GreenNode).CreateRed();
         }
 
         public static SyntaxToken Token(SyntaxNode leadingTrivia, SyntaxKind kind, SyntaxNode trailingTrivia, string text)
@@ -197,7 +197,7 @@ namespace Microsoft.Language.Xml
             Debug.Assert(lessThanToken != null && lessThanToken.Kind == SyntaxKind.LessThanToken);
             Debug.Assert(name != null);
             Debug.Assert(slashGreaterThanToken != null && slashGreaterThanToken.Kind == SyntaxKind.SlashGreaterThanToken);
-            return (XmlEmptyElementSyntax)new XmlEmptyElementSyntax.Green(lessThanToken.GreenNode, name.GreenNode, attributes.GreenNode, slashGreaterThanToken.GreenNode).CreateRed();
+            return (XmlEmptyElementSyntax)new XmlEmptyElementSyntax.Green(lessThanToken?.GreenNode, name?.GreenNode, attributes?.GreenNode, slashGreaterThanToken?.GreenNode).CreateRed();
         }
 
         /*  <summary>
@@ -216,7 +216,7 @@ namespace Microsoft.Language.Xml
             //Debug.Assert(startQuoteToken != null && SyntaxFacts.IsXmlStringStartQuoteToken(startQuoteToken.Kind));
             //Debug.Assert(endQuoteToken != null && SyntaxFacts.IsXmlStringEndQuoteToken(endQuoteToken.Kind));
 
-            return (XmlStringSyntax)new XmlStringSyntax.Green(startQuoteToken.GreenNode, textTokens.GreenNode, endQuoteToken.GreenNode).CreateRed();
+            return (XmlStringSyntax)new XmlStringSyntax.Green(startQuoteToken?.GreenNode, textTokens?.GreenNode, endQuoteToken?.GreenNode).CreateRed();
         }
 
         /*  <summary>
@@ -230,7 +230,7 @@ namespace Microsoft.Language.Xml
             Debug.Assert(equals != null && equals.Kind == SyntaxKind.EqualsToken);
             Debug.Assert(value != null);
 
-            return (XmlDeclarationOptionSyntax)new XmlDeclarationOptionSyntax.Green(name.GreenNode, equals.GreenNode, value.GreenNode).CreateRed();
+            return (XmlDeclarationOptionSyntax)new XmlDeclarationOptionSyntax.Green(name?.GreenNode, equals?.GreenNode, value?.GreenNode).CreateRed();
         }
 
         /*  <summary>
@@ -243,17 +243,17 @@ namespace Microsoft.Language.Xml
             //Debug.Assert(xmlKeyword != null && xmlKeyword.Kind == SyntaxKind.XmlKeyword);
             Debug.Assert(version != null);
             Debug.Assert(questionGreaterThanToken != null && questionGreaterThanToken.Kind == SyntaxKind.QuestionGreaterThanToken);
-            return (XmlDeclarationSyntax)new XmlDeclarationSyntax.Green(lessThanQuestionToken.GreenNode, xmlKeyword.GreenNode, version.GreenNode, encoding.GreenNode, standalone.GreenNode, questionGreaterThanToken.GreenNode).CreateRed();
+            return (XmlDeclarationSyntax)new XmlDeclarationSyntax.Green(lessThanQuestionToken?.GreenNode, xmlKeyword?.GreenNode, version?.GreenNode, encoding?.GreenNode, standalone?.GreenNode, questionGreaterThanToken.GreenNode).CreateRed();
         }
 
         public static XmlAttributeSyntax XmlAttribute(XmlNameSyntax name, PunctuationSyntax equals, XmlNodeSyntax value)
         {
-            return (XmlAttributeSyntax)new XmlAttributeSyntax.Green(name.GreenNode, equals.GreenNode, value.GreenNode).CreateRed();
+            return (XmlAttributeSyntax)new XmlAttributeSyntax.Green(name?.GreenNode, equals?.GreenNode, value?.GreenNode).CreateRed();
         }
 
         public static XmlPrefixSyntax XmlPrefix(XmlNameTokenSyntax localName, PunctuationSyntax colon)
         {
-            return (XmlPrefixSyntax)new XmlPrefixSyntax.Green(localName.GreenNode, colon.GreenNode).CreateRed();
+            return (XmlPrefixSyntax)new XmlPrefixSyntax.Green(localName?.GreenNode, colon?.GreenNode).CreateRed();
         }
 
         public static XmlProcessingInstructionSyntax XmlProcessingInstruction(
@@ -271,7 +271,7 @@ namespace Microsoft.Language.Xml
             SyntaxNode toList,
             PunctuationSyntax endProcessingInstruction)
         {
-            return (XmlProcessingInstructionSyntax)new XmlProcessingInstructionSyntax.Green(beginProcessingInstruction.GreenNode, name.GreenNode, toList.GreenNode, endProcessingInstruction.GreenNode).CreateRed();
+            return (XmlProcessingInstructionSyntax)new XmlProcessingInstructionSyntax.Green(beginProcessingInstruction?.GreenNode, name?.GreenNode, toList?.GreenNode, endProcessingInstruction?.GreenNode).CreateRed();
         }
 
         public static XmlTextTokenSyntax XmlTextLiteralToken(string text, SyntaxList<SyntaxNode> leadingTrivia, SyntaxList<SyntaxNode> trailingTrivia)
@@ -296,7 +296,7 @@ namespace Microsoft.Language.Xml
         public static XmlEntityTokenSyntax XmlEntityLiteralToken(string text, string value, SyntaxNode leadingTrivia, SyntaxNode trailingTrivia)
         {
             Debug.Assert(value != null);
-            return (XmlEntityTokenSyntax)new XmlEntityTokenSyntax.Green(text, value, leadingTrivia.GreenNode, trailingTrivia.GreenNode).CreateRed();
+            return (XmlEntityTokenSyntax)new XmlEntityTokenSyntax.Green(text, value, leadingTrivia?.GreenNode, trailingTrivia?.GreenNode).CreateRed();
         }
 
         public static SyntaxTrivia WhitespaceTrivia(string text)
@@ -323,7 +323,7 @@ namespace Microsoft.Language.Xml
             SyntaxNode result,
             PunctuationSyntax endCData)
         {
-            return (XmlCDataSectionSyntax)new XmlCDataSectionSyntax.Green(beginCData.GreenNode, result.GreenNode, endCData.GreenNode).CreateRed();
+            return (XmlCDataSectionSyntax)new XmlCDataSectionSyntax.Green(beginCData?.GreenNode, result?.GreenNode, endCData?.GreenNode).CreateRed();
         }
 
         public static XmlNodeSyntax XmlComment(
@@ -339,7 +339,7 @@ namespace Microsoft.Language.Xml
             SyntaxNode result,
             PunctuationSyntax endComment)
         {
-            return (XmlCommentSyntax)new XmlCommentSyntax.Green(beginComment.GreenNode, result.GreenNode, endComment.GreenNode).CreateRed();
+            return (XmlCommentSyntax)new XmlCommentSyntax.Green(beginComment?.GreenNode, result?.GreenNode, endComment?.GreenNode).CreateRed();
         }
 
         public static KeywordSyntax Keyword(string name, SyntaxList<SyntaxNode> leadingTrivia, SyntaxList<SyntaxNode> trailingTrivia)
@@ -349,7 +349,7 @@ namespace Microsoft.Language.Xml
 
         public static KeywordSyntax Keyword(string name, SyntaxNode leadingTrivia, SyntaxNode trailingTrivia)
         {
-            return (KeywordSyntax)new KeywordSyntax.Green(name, leadingTrivia.GreenNode, trailingTrivia.GreenNode).CreateRed();
+            return (KeywordSyntax)new KeywordSyntax.Green(name, leadingTrivia?.GreenNode, trailingTrivia?.GreenNode).CreateRed();
         }
 
         /// <summary>
