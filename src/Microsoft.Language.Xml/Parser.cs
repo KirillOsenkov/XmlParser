@@ -958,7 +958,7 @@ namespace Microsoft.Language.Xml
             ScannerState nextState)
         {
             var hasPrecedingWhitespace = requireLeadingWhitespace &&
-                (PrevToken.GetTrailingTrivia() != null && PrevToken.GetTrailingTrivia().ContainsWhitespaceTrivia() ||
+                (PrevToken != null && PrevToken.GetTrailingTrivia() != null && PrevToken.GetTrailingTrivia().ContainsWhitespaceTrivia() ||
                 CurrentToken.GetLeadingTrivia() != null && CurrentToken.GetLeadingTrivia().ContainsWhitespaceTrivia());
             var localName = ((XmlNameTokenSyntax.Green)CurrentToken);
             GetNextToken(stateForName);
