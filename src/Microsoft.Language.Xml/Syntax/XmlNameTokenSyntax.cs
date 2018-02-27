@@ -36,12 +36,12 @@ namespace Microsoft.Language.Xml
 
         }
 
-        public override SyntaxToken WithLeadingTrivia(SyntaxNode trivia)
+        internal override SyntaxToken WithLeadingTriviaCore(SyntaxNode trivia)
         {
 			return (XmlNameTokenSyntax)new Green(Text, trivia.GreenNode, GetTrailingTrivia().Node?.GreenNode).CreateRed(Parent, Start);
         }
 
-        public override SyntaxToken WithTrailingTrivia(SyntaxNode trivia)
+        internal override SyntaxToken WithTrailingTriviaCore(SyntaxNode trivia)
         {
 			return (XmlNameTokenSyntax)new Green(Text, GetLeadingTrivia().Node?.GreenNode, trivia.GreenNode).CreateRed(Parent, Start);
         }

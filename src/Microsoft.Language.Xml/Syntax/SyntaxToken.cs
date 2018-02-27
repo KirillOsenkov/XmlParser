@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 
 namespace Microsoft.Language.Xml
 {
@@ -162,8 +163,23 @@ namespace Microsoft.Language.Xml
 			return new SyntaxTriviaList (trailingGreen.CreateRed (this, trailingPosition), trailingPosition, index);
         }
 
-        public abstract SyntaxToken WithLeadingTrivia(SyntaxNode trivia);
-        public abstract SyntaxToken WithTrailingTrivia(SyntaxNode trivia);
+        internal abstract SyntaxToken WithLeadingTriviaCore(SyntaxNode trivia);
+        internal abstract SyntaxToken WithTrailingTriviaCore(SyntaxNode trivia);
+
+        public SyntaxToken WithLeadingTrivia (SyntaxNode trivia) => WithLeadingTriviaCore (trivia);
+        public SyntaxToken WithTrailingTrivia (SyntaxNode trivia) => WithTrailingTriviaCore (trivia);
+
+        public SyntaxToken WithLeadingTrivia(IEnumerable<SyntaxTrivia> trivia)
+        {
+            var greenList = trivia?.Select (t => t.GreenNode);
+            return WithLeadingTriviaCore (GreenNode.CreateList (greenList).CreateRed ());
+        }
+
+        public SyntaxToken WithTrailingTrivia(IEnumerable<SyntaxTrivia> trivia)
+        {
+            var greenList = trivia?.Select (t => t.GreenNode);
+            return WithTrailingTriviaCore (GreenNode.CreateList (greenList).CreateRed ());
+        }
 
         internal override sealed SyntaxNode GetCachedSlot(int index)
         {
