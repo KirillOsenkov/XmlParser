@@ -57,7 +57,7 @@ namespace Microsoft.Language.Xml
         public XmlNameSyntax NameNode => GetRed(ref nameNode, 1);
         public PunctuationSyntax GreaterThanToken => GetRed(ref slashGreaterThanToken, 2);
 
-		public string Name => NameNode?.FullName;
+        public string Name => NameNode?.FullName;
 
         internal XmlElementEndTagSyntax(Green green, SyntaxNode parent, int position)
             : base(green, parent, position)
@@ -80,7 +80,7 @@ namespace Microsoft.Language.Xml
             }
         }
 
-		internal override SyntaxNode GetNodeSlot(int index)
+        internal override SyntaxNode GetNodeSlot(int index)
         {
             switch (index)
             {

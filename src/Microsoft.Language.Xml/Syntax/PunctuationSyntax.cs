@@ -41,7 +41,7 @@
 
         internal override SyntaxToken WithTrailingTriviaCore(SyntaxNode trivia)
         {
-			return (PunctuationSyntax)new Green(Kind, Text, GetLeadingTrivia().Node?.GreenNode, trivia.GreenNode).CreateRed(Parent, Start);
+            return (PunctuationSyntax)new Green(Kind, Text, GetLeadingTrivia().Node?.GreenNode, trivia.GreenNode).CreateRed(Parent, Start);
         }
     }
 }

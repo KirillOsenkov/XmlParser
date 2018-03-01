@@ -63,13 +63,13 @@ namespace Microsoft.Language.Xml
         }
 
         public string LocalName => LocalNameNode?.Text;
-		public string Prefix => PrefixNode?.Name?.Text;
+        public string Prefix => PrefixNode?.Name?.Text;
 
-		public string FullName => (PrefixNode != null ? (PrefixNode.Name?.Text ?? string.Empty) + ":" : string.Empty) + (LocalNameNode?.Text ?? string.Empty);
+        public string FullName => (PrefixNode != null ? (PrefixNode.Name?.Text ?? string.Empty) + ":" : string.Empty) + (LocalNameNode?.Text ?? string.Empty);
 
         public override string ToString()
         {
-			return $"XmlNameSyntax {FullName}";
+            return $"XmlNameSyntax {FullName}";
         }
 
         internal override SyntaxNode GetCachedSlot(int index)

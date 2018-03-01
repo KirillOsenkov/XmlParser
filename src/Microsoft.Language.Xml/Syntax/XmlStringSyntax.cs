@@ -92,37 +92,38 @@ namespace Microsoft.Language.Xml
             }
         }
 
-		public XmlStringSyntax Update (PunctuationSyntax startQuoteToken, SyntaxList<SyntaxNode> textTokens, PunctuationSyntax endQuoteToken)
-		{
-			if (startQuoteToken != this.StartQuoteToken || textTokens != this.TextTokens || endQuoteToken != this.EndQuoteToken) {
-				var newNode = SyntaxFactory.XmlString (startQuoteToken, textTokens, endQuoteToken);
-				/*var annotations = this.GetAnnotations ();
+        public XmlStringSyntax Update(PunctuationSyntax startQuoteToken, SyntaxList<SyntaxNode> textTokens, PunctuationSyntax endQuoteToken)
+        {
+            if (startQuoteToken != this.StartQuoteToken || textTokens != this.TextTokens || endQuoteToken != this.EndQuoteToken)
+            {
+                var newNode = SyntaxFactory.XmlString(startQuoteToken, textTokens, endQuoteToken);
+                /*var annotations = this.GetAnnotations ();
 				if (annotations != null && annotations.Length > 0)
 					return newNode.WithAnnotations (annotations);*/
-				return newNode;
-			}
+                return newNode;
+            }
 
-			return this;
-		}
+            return this;
+        }
 
-		public XmlStringSyntax WithStartQuoteToken (PunctuationSyntax startQuoteToken)
-		{
-			return Update (startQuoteToken, this.TextTokens, this.EndQuoteToken);
-		}
+        public XmlStringSyntax WithStartQuoteToken(PunctuationSyntax startQuoteToken)
+        {
+            return Update(startQuoteToken, this.TextTokens, this.EndQuoteToken);
+        }
 
-		public XmlStringSyntax WithEndQuoteToken (PunctuationSyntax endQuoteToken)
-		{
-			return Update (this.StartQuoteToken, this.TextTokens, endQuoteToken);
-		}
+        public XmlStringSyntax WithEndQuoteToken(PunctuationSyntax endQuoteToken)
+        {
+            return Update(this.StartQuoteToken, this.TextTokens, endQuoteToken);
+        }
 
-		public XmlStringSyntax WithTextTokens (SyntaxList<SyntaxNode> textTokens)
-		{
-			return Update (this.StartQuoteToken, textTokens, this.EndQuoteToken);
-		}
+        public XmlStringSyntax WithTextTokens(SyntaxList<SyntaxNode> textTokens)
+        {
+            return Update(this.StartQuoteToken, textTokens, this.EndQuoteToken);
+        }
 
-		public XmlStringSyntax AddTextTokens (params SyntaxToken[] items)
-		{
-			return this.WithTextTokens (this.TextTokens.AddRange (items));
-		}
+        public XmlStringSyntax AddTextTokens(params SyntaxToken[] items)
+        {
+            return this.WithTextTokens(this.TextTokens.AddRange(items));
+        }
     }
 }

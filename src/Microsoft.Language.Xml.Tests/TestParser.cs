@@ -115,8 +115,9 @@ namespace Microsoft.Language.Xml.Test
         {
             var root = Parser.ParseText(xml);
 
-            var descendantList = root.GetDescendants().Select(x =>
-                new KeyValuePair<int, IXmlElement>(x.Start, x))
+            var descendantList = root
+                .Descendants()
+                .Select(x => new KeyValuePair<int, IXmlElement>(x.AsNode.Start, x.AsElement))
                 .ToList();
 
             int last = 0;

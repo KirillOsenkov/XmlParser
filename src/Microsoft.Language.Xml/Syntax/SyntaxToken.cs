@@ -140,45 +140,46 @@ namespace Microsoft.Language.Xml
             tokenListBuilder.Add(this);
         }*/
 
-		public override SyntaxTriviaList GetLeadingTrivia()
+        public override SyntaxTriviaList GetLeadingTrivia()
         {
             if (GreenNode.LeadingTrivia == null)
-				return default(SyntaxTriviaList);
-			return new SyntaxTriviaList (GreenNode.LeadingTrivia.CreateRed(this, Start), Start);
+                return default(SyntaxTriviaList);
+            return new SyntaxTriviaList(GreenNode.LeadingTrivia.CreateRed(this, Start), Start);
         }
 
-		public override SyntaxTriviaList GetTrailingTrivia()
+        public override SyntaxTriviaList GetTrailingTrivia()
         {
             var trailingGreen = GreenNode.TrailingTrivia;
             if (trailingGreen == null)
-				return default (SyntaxTriviaList);
-			var leading = GreenNode.LeadingTrivia;
-			int index = 0;
-			if (leading != null) {
-				index = leading.IsList ? leading.SlotCount : 1;
-			}
+                return default(SyntaxTriviaList);
+            var leading = GreenNode.LeadingTrivia;
+            int index = 0;
+            if (leading != null)
+            {
+                index = leading.IsList ? leading.SlotCount : 1;
+            }
             int trailingPosition = Start + this.FullWidth;
-			trailingPosition -= trailingGreen.FullWidth;
+            trailingPosition -= trailingGreen.FullWidth;
 
-			return new SyntaxTriviaList (trailingGreen.CreateRed (this, trailingPosition), trailingPosition, index);
+            return new SyntaxTriviaList(trailingGreen.CreateRed(this, trailingPosition), trailingPosition, index);
         }
 
         internal abstract SyntaxToken WithLeadingTriviaCore(SyntaxNode trivia);
         internal abstract SyntaxToken WithTrailingTriviaCore(SyntaxNode trivia);
 
-        public SyntaxToken WithLeadingTrivia (SyntaxNode trivia) => WithLeadingTriviaCore (trivia);
-        public SyntaxToken WithTrailingTrivia (SyntaxNode trivia) => WithTrailingTriviaCore (trivia);
+        public SyntaxToken WithLeadingTrivia(SyntaxNode trivia) => WithLeadingTriviaCore(trivia);
+        public SyntaxToken WithTrailingTrivia(SyntaxNode trivia) => WithTrailingTriviaCore(trivia);
 
         public SyntaxToken WithLeadingTrivia(IEnumerable<SyntaxTrivia> trivia)
         {
-            var greenList = trivia?.Select (t => t.GreenNode);
-            return WithLeadingTriviaCore (GreenNode.CreateList (greenList).CreateRed ());
+            var greenList = trivia?.Select(t => t.GreenNode);
+            return WithLeadingTriviaCore(GreenNode.CreateList(greenList).CreateRed());
         }
 
         public SyntaxToken WithTrailingTrivia(IEnumerable<SyntaxTrivia> trivia)
         {
-            var greenList = trivia?.Select (t => t.GreenNode);
-            return WithTrailingTriviaCore (GreenNode.CreateList (greenList).CreateRed ());
+            var greenList = trivia?.Select(t => t.GreenNode);
+            return WithTrailingTriviaCore(GreenNode.CreateList(greenList).CreateRed());
         }
 
         internal override sealed SyntaxNode GetCachedSlot(int index)
@@ -220,12 +221,12 @@ namespace Microsoft.Language.Xml
         {
             if (index == 0)
             {
-				var trivia = GetLeadingTrivia().Node;
-				return trivia ?? GetTrailingTrivia().Node;
+                var trivia = GetLeadingTrivia().Node;
+                return trivia ?? GetTrailingTrivia().Node;
             }
             else if (index == 1)
             {
-				return GetTrailingTrivia().Node;
+                return GetTrailingTrivia().Node;
             }
 
             throw new IndexOutOfRangeException();

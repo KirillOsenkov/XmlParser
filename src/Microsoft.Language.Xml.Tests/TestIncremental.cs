@@ -57,10 +57,10 @@ namespace Microsoft.Language.Xml.Tests
 
         void AssertShareElementGreenNodesWithName(string elementName, int expectedCount, XmlNodeSyntax root1, XmlNodeSyntax root2)
         {
-            var nodes1 = root1.GetDescendantsAndSelf();
-            var nodes2 = root2.GetDescendantsAndSelf();
+            var nodes1 = root1.DescendantsAndSelf();
+            var nodes2 = root2.DescendantsAndSelf();
             var combined = nodes1.Zip(nodes2, (n1, n2) => (n1, n2))
-                                 .Where(t => t.Item1.Name == elementName)
+                                 .Where(t => t.Item1.NameNode.FullName == elementName)
                                  .ToList();
             Assert.Equal(expectedCount, combined.Count);
 
@@ -70,8 +70,8 @@ namespace Microsoft.Language.Xml.Tests
 
         void AssertShareAttributeGreenNodesWithPrefix(string attributePrefix, int expectedCount, XmlNodeSyntax root1, XmlNodeSyntax root2)
         {
-            var attributes1 = root1.GetDescendantsAndSelf().SelectMany(n => n.AsSyntaxElement.Attributes);
-            var attributes2 = root2.GetDescendantsAndSelf().SelectMany(n => n.AsSyntaxElement.Attributes);
+            var attributes1 = root1.DescendantsAndSelf().SelectMany(n => n.Attributes);
+            var attributes2 = root2.DescendantsAndSelf().SelectMany(n => n.Attributes);
             var combined = attributes1.Zip(attributes2, (a1, a2) => (a1, a2))
                                       .Where(t => t.Item1.Name.StartsWith(attributePrefix, StringComparison.Ordinal))
                                       .ToList();

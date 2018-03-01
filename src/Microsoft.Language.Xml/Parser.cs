@@ -169,7 +169,7 @@ namespace Microsoft.Language.Xml
             XmlNodeSyntax.Green body = null;
             InternalSyntax.SyntaxList<XmlNodeSyntax.Green> followingMisc = null;
 
-			body = ParseXmlElement(ScannerState.Misc);
+            body = ParseXmlElement(ScannerState.Misc);
 
             node = body;
             followingMisc = ParseXmlMisc(false, ref node);

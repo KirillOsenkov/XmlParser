@@ -4,9 +4,9 @@ using System.Linq;
 
 namespace Microsoft.Language.Xml
 {
-	public class SyntaxNodeRemover
+    public class SyntaxNodeRemover
     {
-        internal static TRoot RemoveNodes<TRoot>(TRoot root, IEnumerable<SyntaxNode> nodes, SyntaxRemoveOptions options)where TRoot : SyntaxNode
+        internal static TRoot RemoveNodes<TRoot>(TRoot root, IEnumerable<SyntaxNode> nodes, SyntaxRemoveOptions options) where TRoot : SyntaxNode
         {
             SyntaxNode[] nodesToRemove = nodes.ToArray();
             if (nodesToRemove.Length == 0)
@@ -16,15 +16,15 @@ namespace Microsoft.Language.Xml
             var residualTrivia = remover.ResidualTrivia;
             if (residualTrivia.Count > 0)
                 result = result.WithTrailingTrivia(result.GetTrailingTrivia().Concat(residualTrivia));
-			return (TRoot)result;
+            return (TRoot)result;
         }
 
-		private class SyntaxRemover : SyntaxRewriter
+        private class SyntaxRemover : SyntaxRewriter
         {
             private readonly HashSet<SyntaxNode> _nodesToRemove;
             private readonly SyntaxRemoveOptions _options;
             private readonly TextSpan _searchSpan;
-			private readonly SyntaxTriviaListBuilder _residualTrivia;
+            private readonly SyntaxTriviaListBuilder _residualTrivia;
             private HashSet<SyntaxNode> _directivesToKeep;
 
             public SyntaxRemover(SyntaxNode[] nodes, SyntaxRemoveOptions options)
@@ -32,7 +32,7 @@ namespace Microsoft.Language.Xml
                 this._nodesToRemove = new HashSet<SyntaxNode>(nodes);
                 this._options = options;
                 this._searchSpan = ComputeTotalSpan(nodes);
-				this._residualTrivia = null;
+                this._residualTrivia = null;
             }
 
             private static TextSpan ComputeTotalSpan(SyntaxNode[] nodes)
@@ -52,14 +52,14 @@ namespace Microsoft.Language.Xml
                 return new TextSpan(start, end - start);
             }
 
-			internal SyntaxTriviaList ResidualTrivia
+            internal SyntaxTriviaList ResidualTrivia
             {
                 get
                 {
-					if (this._residualTrivia != null)
-						return this._residualTrivia.ToList ();
-					else
-						return default (SyntaxTriviaList);
+                    if (this._residualTrivia != null)
+                        return this._residualTrivia.ToList();
+                    else
+                        return default(SyntaxTriviaList);
                 }
             }
 
@@ -78,7 +78,7 @@ namespace Microsoft.Language.Xml
 
             private static bool IsEndOfLine(SyntaxTrivia trivia)
             {
-				return trivia.Kind == SyntaxKind.EndOfLineTrivia;
+                return trivia.Kind == SyntaxKind.EndOfLineTrivia;
             }
 
             private static bool HasEndOfLine(SyntaxTriviaList trivia)
@@ -115,7 +115,7 @@ namespace Microsoft.Language.Xml
                 var result = token;
                 if (result.Kind != SyntaxKind.None && this._residualTrivia != null && this._residualTrivia.Count > 0)
                 {
-					this._residualTrivia.Add(result.GetLeadingTrivia ());
+                    this._residualTrivia.Add(result.GetLeadingTrivia());
                     result = result.WithLeadingTrivia(this._residualTrivia.ToList());
                     this._residualTrivia.Clear();
                 }
@@ -141,11 +141,11 @@ namespace Microsoft.Language.Xml
             {
                 if ((this._options & SyntaxRemoveOptions.KeepLeadingTrivia) != 0)
                 {
-					this.AddResidualTrivia(token.GetLeadingTrivia ());
-					this.AddResidualTrivia(token.GetTrailingTrivia ());
+                    this.AddResidualTrivia(token.GetLeadingTrivia());
+                    this.AddResidualTrivia(token.GetTrailingTrivia());
                     this.AddResidualTrivia(node.GetLeadingTrivia());
                 }
-				else if ((this._options & SyntaxRemoveOptions.KeepEndOfLine) != 0 && (HasEndOfLine(token.GetLeadingTrivia ()) || HasEndOfLine(token.GetTrailingTrivia ()) || HasEndOfLine(node.GetLeadingTrivia())))
+                else if ((this._options & SyntaxRemoveOptions.KeepEndOfLine) != 0 && (HasEndOfLine(token.GetLeadingTrivia()) || HasEndOfLine(token.GetTrailingTrivia()) || HasEndOfLine(node.GetLeadingTrivia())))
                     this.AddEndOfLine();
 
                 if ((this._options & SyntaxRemoveOptions.KeepTrailingTrivia) != 0)
@@ -164,10 +164,10 @@ namespace Microsoft.Language.Xml
                 if ((this._options & SyntaxRemoveOptions.KeepTrailingTrivia) != 0)
                 {
                     this.AddResidualTrivia(node.GetTrailingTrivia());
-					this.AddResidualTrivia(token.GetLeadingTrivia ());
-					this.AddResidualTrivia(token.GetTrailingTrivia ());
+                    this.AddResidualTrivia(token.GetLeadingTrivia());
+                    this.AddResidualTrivia(token.GetTrailingTrivia());
                 }
-				else if ((this._options & SyntaxRemoveOptions.KeepEndOfLine) != 0 && (HasEndOfLine(node.GetTrailingTrivia()) || HasEndOfLine(token.GetLeadingTrivia ()) || HasEndOfLine(token.GetTrailingTrivia ())))
+                else if ((this._options & SyntaxRemoveOptions.KeepEndOfLine) != 0 && (HasEndOfLine(node.GetTrailingTrivia()) || HasEndOfLine(token.GetLeadingTrivia()) || HasEndOfLine(token.GetTrailingTrivia())))
                     this.AddEndOfLine();
             }
 
@@ -180,40 +180,40 @@ namespace Microsoft.Language.Xml
                     removedSpan = TextSpan.FromBounds(removedSpan.Start, span.End);
                 return removedSpan;
             }
-		}
-	}
+        }
+    }
 
-	[Flags]
-	public enum SyntaxRemoveOptions
-	{
-		/// <summary>
-		/// None of the trivia associated with the node or token is kept.
-		/// </summary>
-		KeepNoTrivia = 0x0,
+    [Flags]
+    public enum SyntaxRemoveOptions
+    {
+        /// <summary>
+        /// None of the trivia associated with the node or token is kept.
+        /// </summary>
+        KeepNoTrivia = 0x0,
 
-		/// <summary>
-		/// The leading trivia associated with the node or token is kept.
-		/// </summary>
-		KeepLeadingTrivia = 0x1,
+        /// <summary>
+        /// The leading trivia associated with the node or token is kept.
+        /// </summary>
+        KeepLeadingTrivia = 0x1,
 
-		/// <summary>
-		/// The trailing trivia associated with the node or token is kept.
-		/// </summary>
-		KeepTrailingTrivia = 0x2,
+        /// <summary>
+        /// The trailing trivia associated with the node or token is kept.
+        /// </summary>
+        KeepTrailingTrivia = 0x2,
 
-		/// <summary>
-		/// The leading and trailing trivia associated with the node or token is kept.
-		/// </summary>
-		KeepExteriorTrivia = KeepLeadingTrivia | KeepTrailingTrivia,
+        /// <summary>
+        /// The leading and trailing trivia associated with the node or token is kept.
+        /// </summary>
+        KeepExteriorTrivia = KeepLeadingTrivia | KeepTrailingTrivia,
 
-		/// <summary>
-		/// Ensure that at least one EndOfLine trivia is kept if one was present 
-		/// </summary>
-		KeepEndOfLine = 0x10,
+        /// <summary>
+        /// Ensure that at least one EndOfLine trivia is kept if one was present 
+        /// </summary>
+        KeepEndOfLine = 0x10,
 
-		/// <summary>
-		/// Adds elastic marker trivia
-		/// </summary>
-		//AddElasticMarker = 0x20
-	}
+        /// <summary>
+        /// Adds elastic marker trivia
+        /// </summary>
+        //AddElasticMarker = 0x20
+    }
 }

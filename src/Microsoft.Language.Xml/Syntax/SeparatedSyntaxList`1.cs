@@ -81,75 +81,87 @@ namespace Microsoft.Language.Xml
             return this._list;
         }
 
-		public bool Contains (TNode node)
-		{
-			return this.IndexOf (node) >= 0;
-		}
+        public bool Contains(TNode node)
+        {
+            return this.IndexOf(node) >= 0;
+        }
 
-		public int IndexOf (TNode node)
-		{
-			for (int i = 0, n = this.Count; i < n; i++) {
-				if (object.Equals (this[i], node)) {
-					return i;
-				}
-			}
+        public int IndexOf(TNode node)
+        {
+            for (int i = 0, n = this.Count; i < n; i++)
+            {
+                if (object.Equals(this[i], node))
+                {
+                    return i;
+                }
+            }
 
-			return -1;
-		}
+            return -1;
+        }
 
-		public int IndexOf (Func<TNode, bool> predicate)
-		{
-			for (int i = 0, n = this.Count; i < n; i++) {
-				if (predicate (this[i])) {
-					return i;
-				}
-			}
+        public int IndexOf(Func<TNode, bool> predicate)
+        {
+            for (int i = 0, n = this.Count; i < n; i++)
+            {
+                if (predicate(this[i]))
+                {
+                    return i;
+                }
+            }
 
-			return -1;
-		}
+            return -1;
+        }
 
-		internal int IndexOf (SyntaxKind kind)
-		{
-			for (int i = 0, n = this.Count; i < n; i++) {
-				if (this[i].Kind == kind) {
-					return i;
-				}
-			}
+        internal int IndexOf(SyntaxKind kind)
+        {
+            for (int i = 0, n = this.Count; i < n; i++)
+            {
+                if (this[i].Kind == kind)
+                {
+                    return i;
+                }
+            }
 
-			return -1;
-		}
+            return -1;
+        }
 
-		public int LastIndexOf (TNode node)
-		{
-			for (int i = this.Count - 1; i >= 0; i--) {
-				if (object.Equals (this[i], node)) {
-					return i;
-				}
-			}
+        public int LastIndexOf(TNode node)
+        {
+            for (int i = this.Count - 1; i >= 0; i--)
+            {
+                if (object.Equals(this[i], node))
+                {
+                    return i;
+                }
+            }
 
-			return -1;
-		}
+            return -1;
+        }
 
-		public int LastIndexOf (Func<TNode, bool> predicate)
-		{
-			for (int i = this.Count - 1; i >= 0; i--) {
-				if (predicate (this[i])) {
-					return i;
-				}
-			}
+        public int LastIndexOf(Func<TNode, bool> predicate)
+        {
+            for (int i = this.Count - 1; i >= 0; i--)
+            {
+                if (predicate(this[i]))
+                {
+                    return i;
+                }
+            }
 
-			return -1;
-		}
+            return -1;
+        }
 
-		internal bool Any (Func<TNode, bool> predicate)
-		{
-			for (int i = 0; i < this.Count; i++) {
-				if (predicate (this[i])) {
-					return true;
-				}
-			}
+        internal bool Any(Func<TNode, bool> predicate)
+        {
+            for (int i = 0; i < this.Count; i++)
+            {
+                if (predicate(this[i]))
+                {
+                    return true;
+                }
+            }
 
-			return false;
-		}
+            return false;
+        }
     }
 }

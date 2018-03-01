@@ -1066,13 +1066,13 @@ namespace Microsoft.Language.Xml
             return default(XmlCharResult);
         }
 
-		private static readonly PunctuationSyntax.Green _xmlColonToken = Punctuation(SyntaxKind.ColonToken, ":", null, null);
+        private static readonly PunctuationSyntax.Green _xmlColonToken = Punctuation(SyntaxKind.ColonToken, ":", null, null);
         private PunctuationSyntax.Green XmlMakeColonToken(InternalSyntax.SyntaxList<GreenNode> precedingTrivia)
         {
             AdvanceChar();
             var followingTrivia = ScanXmlWhitespace();
-			if (precedingTrivia.Node == null && followingTrivia == null)
-				return _xmlColonToken;
+            if (precedingTrivia.Node == null && followingTrivia == null)
+                return _xmlColonToken;
             return Punctuation(SyntaxKind.ColonToken, ":", precedingTrivia, followingTrivia);
         }
 

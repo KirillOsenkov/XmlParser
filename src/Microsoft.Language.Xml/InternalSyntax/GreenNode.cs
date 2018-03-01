@@ -12,17 +12,17 @@ namespace Microsoft.Language.Xml.InternalSyntax
         int fullWidth;
         byte slotCount;
 
-		NodeFlags flags;
+        NodeFlags flags;
 
-		static readonly ConditionalWeakTable<GreenNode, DiagnosticInfo[]> diagnosticsTable =
-			new ConditionalWeakTable<GreenNode, DiagnosticInfo[]> ();
+        static readonly ConditionalWeakTable<GreenNode, DiagnosticInfo[]> diagnosticsTable =
+            new ConditionalWeakTable<GreenNode, DiagnosticInfo[]>();
 
-		static readonly ConditionalWeakTable<GreenNode, SyntaxAnnotation[]> annotationsTable =
-			new ConditionalWeakTable<GreenNode, SyntaxAnnotation[]> ();
+        static readonly ConditionalWeakTable<GreenNode, SyntaxAnnotation[]> annotationsTable =
+            new ConditionalWeakTable<GreenNode, SyntaxAnnotation[]>();
 
-		static readonly DiagnosticInfo[] s_noDiagnostics = Array.Empty<DiagnosticInfo> ();
-		static readonly SyntaxAnnotation[] s_noAnnotations = Array.Empty<SyntaxAnnotation> ();
-		//static readonly IEnumerable<SyntaxAnnotation> s_noAnnotationsEnumerable = SpecializedCollections.EmptyEnumerable<SyntaxAnnotation> ();
+        static readonly DiagnosticInfo[] s_noDiagnostics = Array.Empty<DiagnosticInfo>();
+        static readonly SyntaxAnnotation[] s_noAnnotations = Array.Empty<SyntaxAnnotation>();
+        //static readonly IEnumerable<SyntaxAnnotation> s_noAnnotationsEnumerable = SpecializedCollections.EmptyEnumerable<SyntaxAnnotation> ();
 
         internal int FullWidth => fullWidth;
         internal SyntaxKind Kind { get; }
@@ -40,21 +40,23 @@ namespace Microsoft.Language.Xml.InternalSyntax
             this.fullWidth = fullWidth;
         }
 
-		protected GreenNode(SyntaxKind kind, int fullWidth, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
-			: this (kind, fullWidth)
-		{
-			if (diagnostics?.Length > 0) {
-				this.flags |= NodeFlags.ContainsDiagnostics;
-				diagnosticsTable.Add (this, diagnostics);
-			}
-			if (annotations?.Length > 0) {
-				foreach (var annotation in annotations)
-					if (annotation == null)
-						throw new ArgumentException (paramName: nameof (annotations), message: "Annotation cannot be null");
-				this.flags |= NodeFlags.ContainsAnnotations;
-				annotationsTable.Add (this, annotations);
-			}
-		}
+        protected GreenNode(SyntaxKind kind, int fullWidth, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
+            : this(kind, fullWidth)
+        {
+            if (diagnostics?.Length > 0)
+            {
+                this.flags |= NodeFlags.ContainsDiagnostics;
+                diagnosticsTable.Add(this, diagnostics);
+            }
+            if (annotations?.Length > 0)
+            {
+                foreach (var annotation in annotations)
+                    if (annotation == null)
+                        throw new ArgumentException(paramName: nameof(annotations), message: "Annotation cannot be null");
+                this.flags |= NodeFlags.ContainsAnnotations;
+                annotationsTable.Add(this, annotations);
+            }
+        }
 
         protected void AdjustWidth(GreenNode node)
         {
@@ -319,28 +321,34 @@ namespace Microsoft.Language.Xml.InternalSyntax
             }
         }
 
-		public bool ContainsDiagnostics {
-			get {
-				return (this.flags & NodeFlags.ContainsDiagnostics) != 0;
-			}
-		}
+        public bool ContainsDiagnostics
+        {
+            get
+            {
+                return (this.flags & NodeFlags.ContainsDiagnostics) != 0;
+            }
+        }
 
-		public bool ContainsAnnotations {
-			get {
-				return (this.flags & NodeFlags.ContainsAnnotations) != 0;
-			}
-		}
+        public bool ContainsAnnotations
+        {
+            get
+            {
+                return (this.flags & NodeFlags.ContainsAnnotations) != 0;
+            }
+        }
 
         internal DiagnosticInfo[] GetDiagnostics()
         {
-			if (this.ContainsDiagnostics) {
-				DiagnosticInfo[] diags;
-				if (diagnosticsTable.TryGetValue (this, out diags)) {
-					return diags;
-				}
-			}
+            if (this.ContainsDiagnostics)
+            {
+                DiagnosticInfo[] diags;
+                if (diagnosticsTable.TryGetValue(this, out diags))
+                {
+                    return diags;
+                }
+            }
 
-			return Array.Empty<DiagnosticInfo> ();
+            return Array.Empty<DiagnosticInfo>();
         }
 
         internal GreenNode SetDiagnostic(DiagnosticInfo diagnostic)
@@ -348,32 +356,34 @@ namespace Microsoft.Language.Xml.InternalSyntax
             return SetDiagnostics(new[] { diagnostic });
         }
 
-		// TODO
-		//internal abstract GreenNode SetDiagnostics (DiagnosticInfo[] diagnostics);
-		internal virtual GreenNode SetDiagnostics (DiagnosticInfo[] diagnostics)
-		{
-			return this;
-		}
+        // TODO
+        //internal abstract GreenNode SetDiagnostics (DiagnosticInfo[] diagnostics);
+        internal virtual GreenNode SetDiagnostics(DiagnosticInfo[] diagnostics)
+        {
+            return this;
+        }
 
-		public SyntaxAnnotation[] GetAnnotations ()
-		{
-			if (this.ContainsAnnotations) {
-				SyntaxAnnotation[] annotations;
-				if (annotationsTable.TryGetValue (this, out annotations)) {
-					System.Diagnostics.Debug.Assert (annotations.Length != 0, "we should return nonempty annotations or NoAnnotations");
-					return annotations;
-				}
-			}
+        public SyntaxAnnotation[] GetAnnotations()
+        {
+            if (this.ContainsAnnotations)
+            {
+                SyntaxAnnotation[] annotations;
+                if (annotationsTable.TryGetValue(this, out annotations))
+                {
+                    System.Diagnostics.Debug.Assert(annotations.Length != 0, "we should return nonempty annotations or NoAnnotations");
+                    return annotations;
+                }
+            }
 
-			return Array.Empty<SyntaxAnnotation> ();
-		}
+            return Array.Empty<SyntaxAnnotation>();
+        }
 
-		// TODO
-		//internal abstract GreenNode SetAnnotations (SyntaxAnnotation[] annotations);
-		internal virtual GreenNode SetAnnotations (SyntaxAnnotation[] annotations)
-		{
-			return this;
-		}
+        // TODO
+        //internal abstract GreenNode SetAnnotations (SyntaxAnnotation[] annotations);
+        internal virtual GreenNode SetAnnotations(SyntaxAnnotation[] annotations)
+        {
+            return this;
+        }
 
         internal GreenNode AddError(DiagnosticInfo err)
         {

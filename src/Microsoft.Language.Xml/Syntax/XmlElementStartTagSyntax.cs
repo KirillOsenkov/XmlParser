@@ -64,7 +64,7 @@ namespace Microsoft.Language.Xml
         public SyntaxList<XmlAttributeSyntax> AttributesNode => new SyntaxList<XmlAttributeSyntax>(GetRed(ref attributesNode, 2));
         public PunctuationSyntax GreaterThanToken => GetRed(ref greaterThanToken, 3);
 
-		public string Name => NameNode?.FullName;
+        public string Name => NameNode?.FullName;
 
         internal XmlElementStartTagSyntax(Green green, SyntaxNode parent, int position)
             : base(green, parent, position)
@@ -101,43 +101,44 @@ namespace Microsoft.Language.Xml
             }
         }
 
-		public XmlElementStartTagSyntax Update (PunctuationSyntax lessThanToken, XmlNameSyntax name, SyntaxList<XmlAttributeSyntax> attributes, PunctuationSyntax greaterThanToken)
-		{
-			if (lessThanToken != this.LessThanToken || name != this.NameNode || attributes != this.AttributesNode || greaterThanToken != this.GreaterThanToken) {
-				var newNode = SyntaxFactory.XmlElementStartTag (lessThanToken, name, attributes, greaterThanToken);
-				/*var annotations = this.GetAnnotations ();
+        public XmlElementStartTagSyntax Update(PunctuationSyntax lessThanToken, XmlNameSyntax name, SyntaxList<XmlAttributeSyntax> attributes, PunctuationSyntax greaterThanToken)
+        {
+            if (lessThanToken != this.LessThanToken || name != this.NameNode || attributes != this.AttributesNode || greaterThanToken != this.GreaterThanToken)
+            {
+                var newNode = SyntaxFactory.XmlElementStartTag(lessThanToken, name, attributes, greaterThanToken);
+                /*var annotations = this.GetAnnotations ();
 				if (annotations != null && annotations.Length > 0)
 					return newNode.WithAnnotations (annotations);*/
-				return newNode;
-			}
+                return newNode;
+            }
 
-			return this;
-		}
+            return this;
+        }
 
-		public XmlElementStartTagSyntax WithLessThanToken (PunctuationSyntax lessThanToken)
-		{
-			return this.Update (lessThanToken, this.NameNode, this.AttributesNode, this.GreaterThanToken);
-		}
+        public XmlElementStartTagSyntax WithLessThanToken(PunctuationSyntax lessThanToken)
+        {
+            return this.Update(lessThanToken, this.NameNode, this.AttributesNode, this.GreaterThanToken);
+        }
 
-		public XmlElementStartTagSyntax WithName (XmlNameSyntax name)
-		{
-			return this.Update (this.LessThanToken, name, this.AttributesNode, this.GreaterThanToken);
-		}
+        public XmlElementStartTagSyntax WithName(XmlNameSyntax name)
+        {
+            return this.Update(this.LessThanToken, name, this.AttributesNode, this.GreaterThanToken);
+        }
 
-		public XmlElementStartTagSyntax WithAttributes (SyntaxList<XmlAttributeSyntax> attributes)
-		{
-			return this.Update (this.LessThanToken, this.NameNode, attributes, this.GreaterThanToken);
-		}
+        public XmlElementStartTagSyntax WithAttributes(SyntaxList<XmlAttributeSyntax> attributes)
+        {
+            return this.Update(this.LessThanToken, this.NameNode, attributes, this.GreaterThanToken);
+        }
 
-		public XmlElementStartTagSyntax WithGreaterThanToken (PunctuationSyntax greaterThanToken)
-		{
-			return this.Update (this.LessThanToken, this.NameNode, this.AttributesNode, greaterThanToken);
-		}
+        public XmlElementStartTagSyntax WithGreaterThanToken(PunctuationSyntax greaterThanToken)
+        {
+            return this.Update(this.LessThanToken, this.NameNode, this.AttributesNode, greaterThanToken);
+        }
 
-		public XmlElementStartTagSyntax AddAttributes (params XmlAttributeSyntax[] items)
-		{
-			return this.WithAttributes (this.AttributesNode.AddRange (items));
-		}
+        public XmlElementStartTagSyntax AddAttributes(params XmlAttributeSyntax[] items)
+        {
+            return this.WithAttributes(this.AttributesNode.AddRange(items));
+        }
 
         /*public override SyntaxNode WithLeadingTrivia(SyntaxNode trivia)
         {

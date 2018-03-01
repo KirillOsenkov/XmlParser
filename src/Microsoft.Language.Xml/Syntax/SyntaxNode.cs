@@ -16,11 +16,11 @@ namespace Microsoft.Language.Xml
 
         public SyntaxKind Kind => GreenNode.Kind;
 
-		public int FullWidth => GreenNode.FullWidth;
+        public int FullWidth => GreenNode.FullWidth;
         public int Width => GreenNode.Width;
-        public int SpanStart => Start + GreenNode.GetLeadingTriviaWidth ();
-		public TextSpan FullSpan => new TextSpan (this.Start, this.GreenNode.FullWidth);
-		public int End => Start + FullWidth;
+        public int SpanStart => Start + GreenNode.GetLeadingTriviaWidth();
+        public TextSpan FullSpan => new TextSpan(this.Start, this.GreenNode.FullWidth);
+        public int End => Start + FullWidth;
 
         internal GreenNode GreenNode { get; }
 
@@ -164,32 +164,32 @@ namespace Microsoft.Language.Xml
             return SyntaxReplacer.Replace(this, nodes, computeReplacementNode, tokens, computeReplacementToken, trivia, computeReplacementTrivia);
         }
 
-		protected internal virtual SyntaxNode ReplaceNodeInListCore (SyntaxNode originalNode, IEnumerable<SyntaxNode> replacementNodes)
-		{
-			return SyntaxReplacer.ReplaceNodeInList (this, originalNode, replacementNodes);
-		}
+        protected internal virtual SyntaxNode ReplaceNodeInListCore(SyntaxNode originalNode, IEnumerable<SyntaxNode> replacementNodes)
+        {
+            return SyntaxReplacer.ReplaceNodeInList(this, originalNode, replacementNodes);
+        }
 
-		protected internal virtual SyntaxNode InsertNodesInListCore (SyntaxNode nodeInList, IEnumerable<SyntaxNode> nodesToInsert, bool insertBefore)
-		{
-			return SyntaxReplacer.InsertNodeInList (this, nodeInList, nodesToInsert, insertBefore);
-		}
+        protected internal virtual SyntaxNode InsertNodesInListCore(SyntaxNode nodeInList, IEnumerable<SyntaxNode> nodesToInsert, bool insertBefore)
+        {
+            return SyntaxReplacer.InsertNodeInList(this, nodeInList, nodesToInsert, insertBefore);
+        }
 
-		protected internal virtual SyntaxNode ReplaceTokenInListCore (SyntaxToken originalToken, IEnumerable<SyntaxToken> newTokens)
-		{
-			return SyntaxReplacer.ReplaceTokenInList (this, originalToken, newTokens);
-		}
+        protected internal virtual SyntaxNode ReplaceTokenInListCore(SyntaxToken originalToken, IEnumerable<SyntaxToken> newTokens)
+        {
+            return SyntaxReplacer.ReplaceTokenInList(this, originalToken, newTokens);
+        }
 
-		protected internal virtual SyntaxNode InsertTokensInListCore (SyntaxToken originalToken, IEnumerable<SyntaxToken> newTokens, bool insertBefore)
-		{
-			return SyntaxReplacer.InsertTokenInList (this, originalToken, newTokens, insertBefore);
-		}
+        protected internal virtual SyntaxNode InsertTokensInListCore(SyntaxToken originalToken, IEnumerable<SyntaxToken> newTokens, bool insertBefore)
+        {
+            return SyntaxReplacer.InsertTokenInList(this, originalToken, newTokens, insertBefore);
+        }
 
-		protected internal virtual SyntaxNode RemoveNodesCore (IEnumerable<SyntaxNode> nodes, SyntaxRemoveOptions options)
-		{
-			return SyntaxNodeRemover.RemoveNodes (this, nodes, options);
-		}
+        protected internal virtual SyntaxNode RemoveNodesCore(IEnumerable<SyntaxNode> nodes, SyntaxRemoveOptions options)
+        {
+            return SyntaxNodeRemover.RemoveNodes(this, nodes, options);
+        }
 
-		/*protected virtual SyntaxNode ReplaceTriviaInListCore (SyntaxTrivia originalTrivia, IEnumerable<SyntaxTrivia> newTrivia)
+        /*protected virtual SyntaxNode ReplaceTriviaInListCore (SyntaxTrivia originalTrivia, IEnumerable<SyntaxTrivia> newTrivia)
 		{
 			return SyntaxReplacer.ReplaceTriviaInList (this, originalTrivia, newTrivia).AsRootOfNewTreeWithOptionsFrom (this.SyntaxTree);
 		}
@@ -200,17 +200,17 @@ namespace Microsoft.Language.Xml
 		}*/
 
         // Get the leading trivia a green array, recursively to first token.
-		public virtual SyntaxTriviaList GetLeadingTrivia()
+        public virtual SyntaxTriviaList GetLeadingTrivia()
         {
-			var firstToken = GetFirstToken ();
-			return firstToken == null ? default (SyntaxTriviaList) : firstToken.GetLeadingTrivia ();
+            var firstToken = GetFirstToken();
+            return firstToken == null ? default(SyntaxTriviaList) : firstToken.GetLeadingTrivia();
         }
 
         // Get the trailing trivia a green array, recursively to first token.
-		public virtual SyntaxTriviaList GetTrailingTrivia()
+        public virtual SyntaxTriviaList GetTrailingTrivia()
         {
-			var lastToken = GetLastToken ();
-			return lastToken == null ? default (SyntaxTriviaList) : lastToken.GetTrailingTrivia ();
+            var lastToken = GetLastToken();
+            return lastToken == null ? default(SyntaxTriviaList) : lastToken.GetTrailingTrivia();
         }
 
         public virtual void GetIndexAndOffset(int targetOffset, out int index, out int offset)
@@ -219,13 +219,13 @@ namespace Microsoft.Language.Xml
             offset = 0;
         }
 
-		/// <summary>
-		/// The list of child nodes and tokens of this node, where each element is a SyntaxNodeOrToken instance.
-		/// </summary>
-		public ChildSyntaxList ChildNodesAndTokens ()
-		{
-			return new ChildSyntaxList (this);
-		}
+        /// <summary>
+        /// The list of child nodes and tokens of this node, where each element is a SyntaxNodeOrToken instance.
+        /// </summary>
+        public ChildSyntaxList ChildNodesAndTokens()
+        {
+            return new ChildSyntaxList(this);
+        }
 
         internal abstract SyntaxNode GetNodeSlot(int index);
 
@@ -260,7 +260,7 @@ namespace Microsoft.Language.Xml
             return current;
         }
 
-		public IXmlElementSyntax ParentElement
+        public IXmlElementSyntax ParentElement
         {
             get
             {
@@ -269,7 +269,7 @@ namespace Microsoft.Language.Xml
                 {
                     if (current.IsElement())
                     {
-						return (IXmlElementSyntax)current;
+                        return (IXmlElementSyntax)current;
                     }
 
                     current = current.Parent;
@@ -303,10 +303,10 @@ namespace Microsoft.Language.Xml
             return GreenNode.ToFullString();
         }
 
-		internal void WriteTo (TextWriter writer)
-		{
-			GreenNode.WriteTo (writer);
-		}
+        internal void WriteTo(TextWriter writer)
+        {
+            GreenNode.WriteTo(writer);
+        }
 
         public bool HasLeadingTrivia => GreenNode.HasLeadingTrivia;
 

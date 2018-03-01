@@ -57,7 +57,7 @@ namespace Microsoft.Language.Xml
 
         public XmlElementStartTagSyntax StartTag => GetRed(ref startTag, 0);
         public SyntaxList<SyntaxNode> Content => new SyntaxList<SyntaxNode>(GetRed(ref content, 1));
-        public XmlElementEndTagSyntax EndTag => GetRed (ref endTag, 2);
+        public XmlElementEndTagSyntax EndTag => GetRed(ref endTag, 2);
 
         internal XmlElementSyntax(Green green, SyntaxNode parent, int position)
             : base(green, parent, position)
@@ -105,20 +105,20 @@ namespace Microsoft.Language.Xml
                 }
                 else if (Content.Node is IXmlElementSyntax elementSyntax)
                 {
-					return new IXmlElementSyntax[] { elementSyntax };
+                    return new IXmlElementSyntax[] { elementSyntax };
                 }
 
-				return SpecializedCollections.EmptyEnumerable<IXmlElementSyntax> ();
+                return SpecializedCollections.EmptyEnumerable<IXmlElementSyntax>();
             }
         }
 
-		public XmlAttributeSyntax GetAttribute (string localName, string prefix = null) => StartTag.AttributesNode.FirstOrDefault(
-			attr => string.Equals(attr.NameNode.LocalName, localName, StringComparison.Ordinal) && string.Equals (attr.NameNode.Prefix, prefix, StringComparison.Ordinal)
-		);
+        public XmlAttributeSyntax GetAttribute(string localName, string prefix = null) => StartTag.AttributesNode.FirstOrDefault(
+            attr => string.Equals(attr.NameNode.LocalName, localName, StringComparison.Ordinal) && string.Equals(attr.NameNode.Prefix, prefix, StringComparison.Ordinal)
+        );
 
-		public string GetAttributeValue (string localName, string prefix = null) => GetAttribute (localName, prefix)?.Value;
+        public string GetAttributeValue(string localName, string prefix = null) => GetAttribute(localName, prefix)?.Value;
 
-		public IXmlElement AsElement => this;
+        public IXmlElement AsElement => this;
         public IXmlElementSyntax AsSyntaxElement => this;
 
         #region IXmlElement
@@ -166,55 +166,56 @@ namespace Microsoft.Language.Xml
 
         IEnumerable<XmlAttributeSyntax> IXmlElementSyntax.Attributes => (IEnumerable<XmlAttributeSyntax>)StartTag?.AttributesNode;
         IXmlElementSyntax IXmlElementSyntax.Parent => ParentElement;
-		XmlNodeSyntax IXmlElementSyntax.AsNode => this;
+        XmlNodeSyntax IXmlElementSyntax.AsNode => this;
 
-		IXmlElementSyntax IXmlElementSyntax.WithName (XmlNameSyntax newName) => WithStartTag (StartTag.WithName (newName));
+        IXmlElementSyntax IXmlElementSyntax.WithName(XmlNameSyntax newName) => WithStartTag(StartTag.WithName(newName));
 
-		IXmlElementSyntax IXmlElementSyntax.WithContent (SyntaxList<SyntaxNode> newContent) => Update (StartTag, newContent, EndTag);
+        IXmlElementSyntax IXmlElementSyntax.WithContent(SyntaxList<SyntaxNode> newContent) => Update(StartTag, newContent, EndTag);
 
-		IXmlElementSyntax IXmlElementSyntax.WithAttributes (IEnumerable<XmlAttributeSyntax> newAttributes) => WithStartTag (StartTag.WithAttributes (new SyntaxList<XmlAttributeSyntax> (newAttributes)));
+        IXmlElementSyntax IXmlElementSyntax.WithAttributes(IEnumerable<XmlAttributeSyntax> newAttributes) => WithStartTag(StartTag.WithAttributes(new SyntaxList<XmlAttributeSyntax>(newAttributes)));
 
-		#endregion
+        #endregion
 
-		public XmlElementSyntax Update (XmlElementStartTagSyntax startTag, SyntaxList<SyntaxNode> content, XmlElementEndTagSyntax endTag)
-		{
-			if (startTag != this.StartTag || content != this.Content || endTag != this.EndTag) {
-				var newNode = SyntaxFactory.XmlElement (startTag, content, endTag);
-				/*var annotations = this.GetAnnotations ();
+        public XmlElementSyntax Update(XmlElementStartTagSyntax startTag, SyntaxList<SyntaxNode> content, XmlElementEndTagSyntax endTag)
+        {
+            if (startTag != this.StartTag || content != this.Content || endTag != this.EndTag)
+            {
+                var newNode = SyntaxFactory.XmlElement(startTag, content, endTag);
+                /*var annotations = this.GetAnnotations ();
 				if (annotations != null && annotations.Length > 0)
 					return newNode.WithAnnotations (annotations);*/
-				return newNode;
-			}
+                return newNode;
+            }
 
-			return this;
-		}
+            return this;
+        }
 
-		public XmlElementSyntax WithStartTag (XmlElementStartTagSyntax startTag)
-		{
-			return this.Update (startTag, this.Content, this.EndTag);
-		}
+        public XmlElementSyntax WithStartTag(XmlElementStartTagSyntax startTag)
+        {
+            return this.Update(startTag, this.Content, this.EndTag);
+        }
 
-		public XmlElementSyntax WithContent (SyntaxList<SyntaxNode> content)
-		{
-			return this.Update (this.StartTag, content, this.EndTag);
-		}
+        public XmlElementSyntax WithContent(SyntaxList<SyntaxNode> content)
+        {
+            return this.Update(this.StartTag, content, this.EndTag);
+        }
 
-		public XmlElementSyntax WithEndTag (XmlElementEndTagSyntax endTag)
-		{
-			return this.Update (this.StartTag, this.Content, endTag);
-		}
+        public XmlElementSyntax WithEndTag(XmlElementEndTagSyntax endTag)
+        {
+            return this.Update(this.StartTag, this.Content, endTag);
+        }
 
-		public XmlElementSyntax AddStartTagAttributes (params XmlAttributeSyntax[] items)
-		{
-			return this.WithStartTag (this.StartTag.WithAttributes (this.StartTag.AttributesNode.AddRange (items)));
-		}
+        public XmlElementSyntax AddStartTagAttributes(params XmlAttributeSyntax[] items)
+        {
+            return this.WithStartTag(this.StartTag.WithAttributes(this.StartTag.AttributesNode.AddRange(items)));
+        }
 
-		public XmlElementSyntax AddContent (params XmlNodeSyntax[] items)
-		{
-			return this.WithContent (this.Content.AddRange (items));
-		}
+        public XmlElementSyntax AddContent(params XmlNodeSyntax[] items)
+        {
+            return this.WithContent(this.Content.AddRange(items));
+        }
 
-		/*public override SyntaxNode WithLeadingTrivia(SyntaxNode trivia)
+        /*public override SyntaxNode WithLeadingTrivia(SyntaxNode trivia)
         {
             return new XmlElementSyntax((XmlElementStartTagSyntax)StartTag.WithLeadingTrivia(trivia),
                                         Content,
@@ -227,5 +228,5 @@ namespace Microsoft.Language.Xml
                                         Content,
                                         (XmlElementEndTagSyntax)EndTag.WithTrailingTrivia(trivia));
         }*/
-	}
+    }
 }

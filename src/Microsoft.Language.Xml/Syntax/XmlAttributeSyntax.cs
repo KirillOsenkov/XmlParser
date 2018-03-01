@@ -53,7 +53,7 @@ namespace Microsoft.Language.Xml
 
         public XmlNameSyntax NameNode => GetRed(ref nameNode, 0);
         public new PunctuationSyntax Equals => GetRed(ref equalsSyntax, 1);
-		public XmlStringSyntax ValueNode => GetRed(ref valueNode, 2);
+        public XmlStringSyntax ValueNode => GetRed(ref valueNode, 2);
 
         internal XmlAttributeSyntax(Green green, SyntaxNode parent, int position)
             : base(green, parent, position)
@@ -61,9 +61,9 @@ namespace Microsoft.Language.Xml
 
         }
 
-		public string Name => NameNode?.FullName;
+        public string Name => NameNode?.FullName;
 
-		public bool IsNamespaceDeclaration => string.Equals (NameNode?.Prefix, "xmlns", StringComparison.Ordinal);
+        public bool IsNamespaceDeclaration => string.Equals(NameNode?.Prefix, "xmlns", StringComparison.Ordinal);
 
         public string Value
         {
@@ -116,32 +116,33 @@ namespace Microsoft.Language.Xml
             }
         }
 
-		public XmlAttributeSyntax Update (XmlNameSyntax name, PunctuationSyntax equalsToken, XmlStringSyntax value)
-		{
-			if (name != this.NameNode || equalsToken != this.Equals || value != this.ValueNode) {
-				var newNode = SyntaxFactory.XmlAttribute (name, equalsToken, value);
-				/*var annotations = this.GetAnnotations ();
+        public XmlAttributeSyntax Update(XmlNameSyntax name, PunctuationSyntax equalsToken, XmlStringSyntax value)
+        {
+            if (name != this.NameNode || equalsToken != this.Equals || value != this.ValueNode)
+            {
+                var newNode = SyntaxFactory.XmlAttribute(name, equalsToken, value);
+                /*var annotations = this.GetAnnotations ();
 				if (annotations != null && annotations.Length > 0)
 					return newNode.WithAnnotations (annotations);*/
-				return newNode;
-			}
+                return newNode;
+            }
 
-			return this;
-		}
+            return this;
+        }
 
-		public XmlAttributeSyntax WithName (XmlNameSyntax name)
-		{
-			return this.Update (name, this.Equals, this.ValueNode);
-		}
+        public XmlAttributeSyntax WithName(XmlNameSyntax name)
+        {
+            return this.Update(name, this.Equals, this.ValueNode);
+        }
 
-		public XmlAttributeSyntax WithEqualsToken (PunctuationSyntax equalsToken)
-		{
-			return this.Update (this.NameNode, equalsToken, this.ValueNode);
-		}
+        public XmlAttributeSyntax WithEqualsToken(PunctuationSyntax equalsToken)
+        {
+            return this.Update(this.NameNode, equalsToken, this.ValueNode);
+        }
 
-		public XmlAttributeSyntax WithValue (XmlStringSyntax value)
-		{
-			return this.Update (this.NameNode, this.Equals, value);
-		}
+        public XmlAttributeSyntax WithValue(XmlStringSyntax value)
+        {
+            return this.Update(this.NameNode, this.Equals, value);
+        }
     }
 }
