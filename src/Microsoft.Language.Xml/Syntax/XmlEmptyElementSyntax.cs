@@ -210,7 +210,7 @@ namespace Microsoft.Language.Xml
             var greaterThanToken = SyntaxFactory.Punctuation(SyntaxKind.GreaterThanToken, ">", null, null);
             var startTag = SyntaxFactory.XmlElementStartTag(this.LessThanToken, this.NameNode, this.AttributesNode, greaterThanToken);
             var lessThanSlashToken = SyntaxFactory.Punctuation(SyntaxKind.LessThanSlashToken, "</", null, null);
-            var endTag = SyntaxFactory.XmlElementEndTag(lessThanToken, this.NameNode, greaterThanToken);
+            var endTag = SyntaxFactory.XmlElementEndTag(lessThanSlashToken, this.NameNode, greaterThanToken);
 
             return SyntaxFactory.XmlElement(startTag, content, endTag);
         }
