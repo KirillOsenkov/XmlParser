@@ -61,6 +61,8 @@ namespace Microsoft.Language.Xml
         {
             foreach (var change in changes)
             {
+                if (change.Span == root.Span)
+                    return false;
                 for (int position = change.Span.Start; position < change.Span.End; position++)
                 {
                     var nonTerminal = root.FindNode(position, includeTrivia: false, excludeTerminal: true);
