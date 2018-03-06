@@ -79,5 +79,26 @@ namespace Microsoft.Language.Xml
                 default: return null;
             }
         }
+
+        public XmlPrefixSyntax Update(XmlNameTokenSyntax name, PunctuationSyntax colonToken)
+        {
+            if (name != this.Name || colonToken != this.ColonToken)
+            {
+                var newNode = SyntaxFactory.XmlPrefix(name, colonToken);
+                return newNode;
+            }
+
+            return this;
+        }
+
+        public XmlPrefixSyntax WithName(XmlNameTokenSyntax name)
+        {
+            return Update(name, ColonToken);
+        }
+
+        public XmlPrefixSyntax WithColonToken(PunctuationSyntax colonToken)
+        {
+            return Update(Name, colonToken);
+        }
     }
 }

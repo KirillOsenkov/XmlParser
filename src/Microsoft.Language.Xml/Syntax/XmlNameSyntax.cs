@@ -91,5 +91,26 @@ namespace Microsoft.Language.Xml
                 default: return null;
             }
         }
+
+        public XmlNameSyntax Update(XmlPrefixSyntax prefix, XmlNameTokenSyntax localName)
+        {
+            if (prefix != this.PrefixNode || localName != this.LocalNameNode)
+            {
+                var newNode = SyntaxFactory.XmlName(prefix, localName);
+                return newNode;
+            }
+
+            return this;
+        }
+
+        public XmlNameSyntax WithPrefix(XmlPrefixSyntax prefix)
+        {
+            return Update(prefix, LocalNameNode);
+        }
+
+        public XmlNameSyntax WithLocalName(XmlNameTokenSyntax localName)
+        {
+            return Update(PrefixNode, localName);
+        }
     }
 }

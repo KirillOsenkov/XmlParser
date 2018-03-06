@@ -29,6 +29,15 @@ namespace Microsoft.Language.Xml
             return attribute.WithValue(attribute.ValueNode.WithTextTokens(textTokens));
         }
 
+        public static XmlAttributeSyntax WithPrefixName(this XmlAttributeSyntax attribute, string prefixName)
+        {
+            var existingName = attribute.NameNode;
+            var existingPrefix = existingName.PrefixNode;
+            var newName = SyntaxFactory.XmlNameToken(prefixName, null, null);
+
+            return attribute.WithName(existingName.WithPrefix(existingPrefix.WithName(newName)));
+        }
+
         public static IXmlElementSyntax AddChild(this IXmlElementSyntax parent, IXmlElementSyntax child)
         {
             return parent.WithContent(parent.Content.Add(child.AsNode));
