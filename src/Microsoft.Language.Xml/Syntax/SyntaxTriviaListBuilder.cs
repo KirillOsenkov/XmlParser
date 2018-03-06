@@ -126,7 +126,12 @@ namespace Microsoft.Language.Xml
         {
             if (_count > 0)
             {
-                return new SyntaxTriviaList(SyntaxFactory.List(_nodes).Node, position: 0, index: 0);
+                var tmp = new ArrayElement<GreenNode>[_count];
+                for (int i = 0; i < _count; i++)
+                {
+                    tmp[i].Value = _nodes[i].GreenNode;
+                }
+                return new SyntaxTriviaList(InternalSyntax.SyntaxList.List(tmp).CreateRed (), position: 0, index: 0);
             }
             else
             {
