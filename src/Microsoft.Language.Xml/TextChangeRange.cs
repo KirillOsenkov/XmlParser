@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace Microsoft.Language.Xml
@@ -17,6 +17,8 @@ namespace Microsoft.Language.Xml
         /// Width of the span after the edit.  A 0 here would represent a delete
         /// </summary>
         public int NewLength { get; }
+
+        public TextSpan NewSpan => new TextSpan(Span.Start, NewLength);
 
         /// <summary>
         /// Initializes a new instance of <see cref="TextChangeRange"/>.

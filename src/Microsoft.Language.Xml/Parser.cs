@@ -44,7 +44,7 @@ namespace Microsoft.Language.Xml
 
         public static XmlDocumentSyntax ParseIncremental(Buffer newBuffer, TextChangeRange[] changes, XmlDocumentSyntax previousDocument)
         {
-            if (!CanParseIncrementally(previousDocument, changes))
+            if (!CanParseIncrementally(previousDocument, newBuffer, changes))
                 return Parse(newBuffer);
 
             var parser = new Parser(newBuffer, new Blender(newBuffer, changes, previousDocument));
@@ -57,12 +57,25 @@ namespace Microsoft.Language.Xml
             return (XmlDocumentSyntax)root.CreateRed();
         }
 
-        static bool CanParseIncrementally(SyntaxNode root, TextChangeRange[] changes)
+        static bool CanParseIncrementally(SyntaxNode root, Buffer newBuffer, TextChangeRange[] changes)
         {
             foreach (var change in changes)
             {
+                // If the whole buffer changed, no need to do incremental parsing
                 if (change.Span == root.Span)
                     return false;
+                // If a special XML character has been entered, whole structure could have evolved
+                for (int position = change.NewSpan.Start; position < change.NewSpan.End; position++)
+                {
+                    switch (newBuffer[position]) {
+                        case '<':
+                        case '>':
+                        case '"':
+                        case '\'':
+                            return false;
+                        default: continue;
+                    }
+                }
                 for (int position = change.Span.Start; position < change.Span.End; position++)
                 {
                     var nonTerminal = root.FindNode(position, includeTrivia: false, excludeTerminal: true);
