@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -14,9 +14,10 @@ namespace Microsoft.Language.Xml
             SyntaxList<SyntaxNode> precedingMisc,
             XmlNodeSyntax body,
             SyntaxList<XmlNodeSyntax> followingMisc,
+            SkippedTokensTriviaSyntax skippedTokens,
             SyntaxToken eof)
         {
-            return XmlDocument(prologue, precedingMisc.Node, body, followingMisc.Node, eof);
+            return XmlDocument(prologue, precedingMisc.Node, body, followingMisc.Node, skippedTokens, eof);
         }
 
         public static XmlDocumentSyntax XmlDocument(
@@ -24,12 +25,14 @@ namespace Microsoft.Language.Xml
             SyntaxNode precedingMisc,
             XmlNodeSyntax body,
             SyntaxNode followingMisc,
+            SkippedTokensTriviaSyntax skippedTokens,
             SyntaxToken eof)
         {
             return (XmlDocumentSyntax)new XmlDocumentSyntax.Green(prologue?.GreenNode,
                                                                   precedingMisc?.GreenNode,
                                                                   body?.GreenNode,
                                                                   followingMisc?.GreenNode,
+                                                                  skippedTokens?.GreenNode,
                                                                   eof?.GreenNode).CreateRed();
         }
 

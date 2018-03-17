@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 
 namespace Microsoft.Language.Xml.InternalSyntax
 {
@@ -134,6 +134,12 @@ namespace Microsoft.Language.Xml.InternalSyntax
                 anyChanges = true;
             }
 
+            var newSkippedTokens = ((SkippedTokensTriviaSyntax.Green)VisitSkippedTokensTrivia(node.SkippedTokens));
+            if (node.SkippedTokens != newSkippedTokens)
+            {
+                anyChanges = true;
+            }
+
             if (anyChanges)
             {
                 return new XmlDocumentSyntax.Green(
@@ -141,6 +147,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
                     newPrecedingMisc.Node,
                     newRoot,
                     newFollowingMisc.Node,
+                    newSkippedTokens,
                     newEof);
             }
             else

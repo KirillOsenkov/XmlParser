@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Xunit;
 
-namespace Microsoft.Language.Xml.Test
+namespace Microsoft.Language.Xml.Tests
 {
     public class TestParser
     {
@@ -115,9 +115,8 @@ namespace Microsoft.Language.Xml.Test
         {
             var root = Parser.ParseText(xml);
 
-            var descendantList = root
-                .Descendants()
-                .Select(x => new KeyValuePair<int, IXmlElement>(x.AsNode.Start, x.AsElement))
+            var descendantList = root.Descendants().Select (x => x.AsElement).Select(x =>
+                new KeyValuePair<int, IXmlElement>(x.Start, x))
                 .ToList();
 
             int last = 0;

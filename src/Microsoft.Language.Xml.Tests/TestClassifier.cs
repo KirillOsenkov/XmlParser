@@ -4,7 +4,7 @@ using System.Text;
 using System.Windows;
 using Xunit;
 
-namespace Microsoft.Language.Xml.Test
+namespace Microsoft.Language.Xml.Tests
 {
     public class TestClassifier
     {

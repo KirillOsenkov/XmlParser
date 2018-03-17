@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace Microsoft.Language.Xml
@@ -456,9 +456,12 @@ namespace Microsoft.Language.Xml
                 {
                     var stackTop = childStack.Peek();
                     if (stackTop != null && stackTop.IsElement())
-                        yield return (IXmlElementSyntax)childStack;
+                        yield return (IXmlElementSyntax)stackTop;
                 }
             }
         }
+
+        public static int GetLeadingTriviaWidth(this SyntaxNode node) => node.GetLeadingTriviaSpan().Length;
+        public static int GetTrailingTriviaWidth(this SyntaxNode node) => node.GetTrailingTriviaSpan().Length;
     }
 }

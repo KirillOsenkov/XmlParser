@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Microsoft.Language.Xml
 {
@@ -35,9 +35,11 @@ namespace Microsoft.Language.Xml
             }
         }
 
+        internal new Green GreenNode => (Green)base.GreenNode;
+
         SyntaxNode textTokens;
 
-        public SyntaxList<SyntaxToken> TextTokens => new SyntaxList<SyntaxToken>(GetRed(ref textTokens, 0));
+        public SyntaxList<SyntaxToken> Tokens => new SyntaxList<SyntaxToken>(GetRed(ref textTokens, 0));
 
         internal SkippedTokensTriviaSyntax(Green green, SyntaxNode parent, int position)
             : base(green, parent, position)
@@ -45,7 +47,7 @@ namespace Microsoft.Language.Xml
 
         }
 
-        public string Value => TextTokens.Node?.ToFullString() ?? string.Empty;
+        public string Value => Tokens.Node?.ToFullString() ?? string.Empty;
 
         public override SyntaxNode Accept(SyntaxVisitor visitor)
         {

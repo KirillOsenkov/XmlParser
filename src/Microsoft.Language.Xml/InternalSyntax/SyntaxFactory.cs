@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Microsoft.Language.Xml.InternalSyntax
 {
@@ -10,9 +10,10 @@ namespace Microsoft.Language.Xml.InternalSyntax
             SyntaxList<GreenNode> precedingMisc,
             XmlNodeSyntax.Green body,
             SyntaxList<GreenNode> followingMisc,
+            SkippedTokensTriviaSyntax.Green skippedTokens,
             SyntaxToken.Green eof)
         {
-            return new XmlDocumentSyntax.Green(prologue, precedingMisc.Node, body, followingMisc.Node, eof);
+            return new XmlDocumentSyntax.Green(prologue, precedingMisc.Node, body, followingMisc.Node, skippedTokens, eof);
         }
 
         internal static XmlDocumentSyntax.Green XmlDocument(
@@ -20,9 +21,10 @@ namespace Microsoft.Language.Xml.InternalSyntax
             GreenNode precedingMisc,
             XmlNodeSyntax.Green body,
             GreenNode followingMisc,
+            SkippedTokensTriviaSyntax.Green skippedTokens,
             SyntaxToken.Green eof)
         {
-            return new XmlDocumentSyntax.Green(prologue, precedingMisc, body, followingMisc, eof);
+            return new XmlDocumentSyntax.Green(prologue, precedingMisc, body, followingMisc, skippedTokens, eof);
         }
 
         internal static XmlNodeSyntax.Green XmlElement(XmlElementStartTagSyntax.Green startElement, GreenNode content, XmlElementEndTagSyntax.Green endElement)

@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.Composition;
+using System.ComponentModel.Composition;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.Text;
@@ -47,7 +47,7 @@ namespace Microsoft.Language.Xml.Editor
 
         private static XmlNodeSyntax Parse(ITextSnapshot snapshot)
         {
-            return Parser.Parse (new TextSnapshotBuffer(snapshot));
+            return Parser.Parse(new TextSnapshotBuffer(snapshot));
         }
     }
 }

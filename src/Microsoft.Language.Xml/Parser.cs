@@ -1,8 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading;
 
 namespace Microsoft.Language.Xml
@@ -113,7 +112,7 @@ namespace Microsoft.Language.Xml
                 var elements = ParseXmlElements(ScannerState.Content);
                 if (!(elements is XmlDocumentSyntax.Green))
                 {
-                    result = XmlDocument(null, null, elements, null, CurrentToken);
+                    result = XmlDocument(null, null, elements, null, null, CurrentToken);
                 }
                 else
                 {
@@ -190,9 +189,21 @@ namespace Microsoft.Language.Xml
             followingMisc = ParseXmlMisc(false, ref node);
             body = node as XmlNodeSyntax.Green;
 
+            SkippedTokensTriviaSyntax.Green skippedTokens = null;
+            if (CurrentToken.Kind != SyntaxKind.EndOfFileToken)
+            {
+                var tokens = this._pool.Allocate<SyntaxToken.Green>();
+                while (CurrentToken.Kind != SyntaxKind.EndOfFileToken)
+                {
+                    tokens.Add(CurrentToken);
+                    GetNextToken(ScannerState.Content);
+                }
+                skippedTokens = SkippedTokensTrivia(tokens.ToList());
+                this._pool.Free(tokens);
+            }
             //Debug.Assert(CurrentToken.Kind == SyntaxKind.EndOfFileToken);
 
-            return XmlDocument(prologue, precedingMisc, body, followingMisc, CurrentToken);
+            return XmlDocument(prologue, precedingMisc, body, followingMisc, skippedTokens, CurrentToken);
         }
 
         private XmlProcessingInstructionSyntax.Green ParseXmlProcessingInstruction(ScannerState nextState)

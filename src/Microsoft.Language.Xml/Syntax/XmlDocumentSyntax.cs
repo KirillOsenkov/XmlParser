@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace Microsoft.Language.Xml
@@ -13,18 +13,20 @@ namespace Microsoft.Language.Xml
             readonly GreenNode precedingMisc;
             readonly XmlNodeSyntax.Green body;
             readonly GreenNode followingMisc;
+            readonly SkippedTokensTriviaSyntax.Green skippedTokens;
             readonly SyntaxToken.Green eof;
 
             internal XmlDeclarationSyntax.Green Prologue => prologue;
             internal GreenNode PrecedingMisc => precedingMisc;
             internal XmlNodeSyntax.Green Body => body;
             internal GreenNode FollowingMisc => followingMisc;
+            internal SkippedTokensTriviaSyntax.Green SkippedTokens => skippedTokens;
             internal SyntaxToken.Green Eof => eof;
 
-            internal Green(XmlDeclarationSyntax.Green prologue, GreenNode precedingMisc, XmlNodeSyntax.Green body, GreenNode followingMisc, SyntaxToken.Green eof)
+            internal Green(XmlDeclarationSyntax.Green prologue, GreenNode precedingMisc, XmlNodeSyntax.Green body, GreenNode followingMisc, SkippedTokensTriviaSyntax.Green skippedTokens, SyntaxToken.Green eof)
                 : base(SyntaxKind.XmlDocument)
             {
-                this.SlotCount = 5;
+                this.SlotCount = 6;
                 this.prologue = prologue;
                 AdjustWidth(prologue);
                 this.precedingMisc = precedingMisc;
@@ -33,6 +35,8 @@ namespace Microsoft.Language.Xml
                 AdjustWidth(body);
                 this.followingMisc = followingMisc;
                 AdjustWidth(followingMisc);
+                this.skippedTokens = skippedTokens;
+                AdjustWidth(skippedTokens);
                 this.eof = eof;
                 AdjustWidth(eof);
             }
@@ -47,7 +51,8 @@ namespace Microsoft.Language.Xml
                     case 1: return precedingMisc;
                     case 2: return body;
                     case 3: return followingMisc;
-                    case 4: return eof;
+                    case 4: return skippedTokens;
+                    case 5: return eof;
                 }
                 throw new InvalidOperationException();
             }
@@ -64,13 +69,15 @@ namespace Microsoft.Language.Xml
         SyntaxNode precedingMisc;
         XmlNodeSyntax body;
         SyntaxNode followingMisc;
+        SkippedTokensTriviaSyntax skippedTokens;
         SyntaxToken eof;
 
         public XmlDeclarationSyntax Prologue => GetRed(ref prologue, 0);
         public SyntaxList<SyntaxNode> PrecedingMisc => new SyntaxList<SyntaxNode>(GetRed(ref precedingMisc, 1));
         public XmlNodeSyntax Body => GetRed(ref body, 2);
         public SyntaxList<SyntaxNode> FollowingMisc => new SyntaxList<SyntaxNode>(GetRed(ref followingMisc, 3));
-        public SyntaxToken Eof => GetRed(ref eof, 4);
+        public SkippedTokensTriviaSyntax SkippedTokens => GetRed(ref skippedTokens, 4);
+        public SyntaxToken Eof => GetRed(ref eof, 5);
 
         internal XmlDocumentSyntax(Green green, SyntaxNode parent, int position)
             : base(green, parent, position)
@@ -91,7 +98,8 @@ namespace Microsoft.Language.Xml
                 case 1: return precedingMisc;
                 case 2: return body;
                 case 3: return followingMisc;
-                case 4: return eof;
+                case 4: return skippedTokens;
+                case 5: return eof;
                 default: return null;
             }
         }
@@ -104,7 +112,8 @@ namespace Microsoft.Language.Xml
                 case 1: return GetRed(ref precedingMisc, 1);
                 case 2: return Body;
                 case 3: return GetRed(ref followingMisc, 3);
-                case 4: return Eof;
+                case 4: return SkippedTokens;
+                case 5: return Eof;
                 default: return null;
             }
         }

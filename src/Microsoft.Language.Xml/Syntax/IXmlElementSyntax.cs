@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace Microsoft.Language.Xml
 {
     public interface IXmlElementSyntax
     {
+        string Name { get; }
         XmlNameSyntax NameNode { get; }
         SyntaxList<SyntaxNode> Content { get; }
         IXmlElementSyntax Parent { get; }

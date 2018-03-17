@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using Xunit;
 
-namespace Microsoft.Language.Xml.Test
+namespace Microsoft.Language.Xml.Tests
 {
     public class TestTrivia
     {
