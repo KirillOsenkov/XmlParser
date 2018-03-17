@@ -32,10 +32,10 @@ namespace Microsoft.Language.Xml.Editor
             var root = treeTask.Result;
             var lineStartPosition = line.Start.Position;
             var indent = FindTotalParentChainIndent(
-                root, 
-                lineStartPosition, 
-                currentPosition: 0, 
-                indent: 0, 
+                root,
+                lineStartPosition,
+                currentPosition: 0,
+                indent: 0,
                 indentSize: indentSize);
             return indent;
         }
@@ -98,7 +98,7 @@ namespace Microsoft.Language.Xml.Editor
             }
 
             int totalLength = 0;
-            foreach (var child in leadingTrivia.ChildNodes)
+            foreach (var child in leadingTrivia)
             {
                 if (child.Kind == SyntaxKind.WhitespaceTrivia)
                 {

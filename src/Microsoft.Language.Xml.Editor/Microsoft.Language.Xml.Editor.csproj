@@ -3,15 +3,16 @@
     <AssemblyName>Microsoft.Language.Xml.Editor</AssemblyName>
     <TargetFramework>net46</TargetFramework>
     <NBGV_DoNotEmitNonVersionCustomAttributes>true</NBGV_DoNotEmitNonVersionCustomAttributes>
+    <IsWindows>$([MSBuild]::IsOSPlatform('Windows'))</IsWindows>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Nerdbank.GitVersioning" Version="1.6.35" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.VisualStudio.CoreUtility" Version="15.0.26606" />
-    <PackageReference Include="Microsoft.VisualStudio.Language.StandardClassification" Version="15.0.26606" />
-    <PackageReference Include="Microsoft.VisualStudio.Text.Data" Version="15.0.26606" />
-    <PackageReference Include="Microsoft.VisualStudio.Text.Logic" Version="15.0.26606" />
-    <PackageReference Include="Microsoft.VisualStudio.Text.UI" Version="15.0.26606" />
-    <PackageReference Include="Microsoft.VisualStudio.Text.UI.Wpf" Version="15.0.26606" />
+    <PackageReference Include="Microsoft.VisualStudio.CoreUtility" Version="15.6.281-preview" />
+    <PackageReference Include="Microsoft.VisualStudio.Language.StandardClassification" Version="15.6.281-preview" />
+    <PackageReference Include="Microsoft.VisualStudio.Text.Data" Version="15.6.281-preview" />
+    <PackageReference Include="Microsoft.VisualStudio.Text.Logic" Version="15.6.281-preview" />
+    <PackageReference Include="Microsoft.VisualStudio.Text.UI" Version="15.6.281-preview" />
+    <PackageReference Include="Microsoft.VisualStudio.Text.UI.Wpf" Version="15.6.281-preview" />
   </ItemGroup>
   <PropertyGroup>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
@@ -26,11 +27,8 @@
     <PackageTags>Xml Parser LanguageService Classifier VS VisualStudio Editor</PackageTags>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
     <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Xaml" />
-    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" Condition="$(IsWindows)" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.Language.Xml\Microsoft.Language.Xml.csproj" />
@@ -39,5 +37,6 @@
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\key.snk</AssemblyOriginatorKeyFile>
     <DelaySign>False</DelaySign>
+    <DefineConstants Condition="$(IsWindows)">WPF;$(DefineConstants)</DefineConstants>
   </PropertyGroup>
 </Project>

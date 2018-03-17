@@ -71,6 +71,9 @@ namespace Microsoft.Language.Xml
             return 0;
         }
 
+        public int GetLeadingTriviaWidth () => GreenNode.GetLeadingTriviaWidth ();
+        public int GetTrailingTriviaWidth () => GreenNode.GetTrailingTriviaWidth ();
+
         internal SyntaxNode GetRed(ref SyntaxNode field, int slot)
         {
             var result = field;

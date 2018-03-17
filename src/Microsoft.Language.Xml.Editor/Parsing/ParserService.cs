@@ -47,8 +47,7 @@ namespace Microsoft.Language.Xml.Editor
 
         private static XmlNodeSyntax Parse(ITextSnapshot snapshot)
         {
-            var parser = new Parser(new TextSnapshotBuffer(snapshot));
-            return parser.Parse();
+            return Parser.Parse (new TextSnapshotBuffer(snapshot));
         }
     }
 }

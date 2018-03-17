@@ -1,8 +1,10 @@
 ﻿using System.ComponentModel.Composition;
-using System.Windows.Media;
 using Microsoft.VisualStudio.Language.StandardClassification;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Utilities;
+#if WPF
+using System.Windows.Media;
+#endif
 
 namespace Microsoft.Language.Xml
 {
@@ -24,7 +26,9 @@ namespace Microsoft.Language.Xml
             private XmlLiteralAttributeNameFormatDefinition()
             {
                 this.DisplayName = "XML Attribute";
+                #if WPF
                 this.ForegroundColor = Colors.Red; // HC_LIGHTRED
+                #endif
             }
         }
         #endregion
@@ -45,7 +49,9 @@ namespace Microsoft.Language.Xml
             private XmlLiteralAttributeQuotesFormatDefinition()
             {
                 this.DisplayName = "XML Attribute Quotes";
+                #if WPF
                 this.ForegroundColor = Colors.Black; // HC_LIGHTBLACK
+                #endif
             }
         }
         #endregion
@@ -66,7 +72,9 @@ namespace Microsoft.Language.Xml
             private XmlLiteralAttributeValueFormatDefinition()
             {
                 this.DisplayName = "XML Attribute Value";
+                #if WPF
                 this.ForegroundColor = Colors.Blue; // HC_LIGHTBLUE
+                #endif
             }
         }
         #endregion
@@ -87,7 +95,9 @@ namespace Microsoft.Language.Xml
             private XmlLiteralCDataSectionFormatDefinition()
             {
                 this.DisplayName = "XML CData Section";
+                #if WPF
                 this.ForegroundColor = Colors.Gray; // HC_LIGHTGRAY
+                #endif
             }
         }
         #endregion
@@ -108,7 +118,9 @@ namespace Microsoft.Language.Xml
             private XmlLiteralCommentFormatDefinition()
             {
                 this.DisplayName = "XML Comment";
+                #if WPF
                 this.ForegroundColor = Colors.Green; // HC_LIGHTGREEN
+                #endif
             }
         }
         #endregion
@@ -129,7 +141,9 @@ namespace Microsoft.Language.Xml
             private XmlLiteralDelimiterFormatDefinition()
             {
                 this.DisplayName = "XML Delimiter";
+                #if WPF
                 this.ForegroundColor = Colors.Blue; // HC_LIGHTBLUE
+                #endif
             }
         }
         #endregion
@@ -150,7 +164,9 @@ namespace Microsoft.Language.Xml
             private XmlLiteralEntityReferenceFormatDefinition()
             {
                 this.DisplayName = "XML Entity Reference";
+                #if WPF
                 this.ForegroundColor = Colors.Red; // HC_LIGHTRED
+                #endif
             }
         }
         #endregion
@@ -171,7 +187,9 @@ namespace Microsoft.Language.Xml
             private XmlLiteralNameFormatDefinition()
             {
                 this.DisplayName = "XML Name";
+                #if WPF
                 this.ForegroundColor = Color.FromRgb(163, 21, 21); // HC_LIGHTMAROON
+                #endif
             }
         }
         #endregion
@@ -192,7 +210,9 @@ namespace Microsoft.Language.Xml
             private XmlLiteralProcessingInstructionFormatDefinition()
             {
                 this.DisplayName = "XML Processing Instruction";
+                #if WPF
                 this.ForegroundColor = Colors.Gray; // HC_LIGHTGRAY
+                #endif
             }
         }
         #endregion
@@ -213,7 +233,9 @@ namespace Microsoft.Language.Xml
             private XmlLiteralTextFormatDefinition()
             {
                 this.DisplayName = "XML Text";
+                #if WPF
                 this.ForegroundColor = Colors.Black; // HC_LIGHTBLACK
+                #endif
             }
         }
         #endregion
