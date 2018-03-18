@@ -85,5 +85,6 @@ namespace Microsoft.Language.Xml
         }
 
         public override string ToString() => Text;
+        public sealed override string ToFullString() => Text;
     }
 }

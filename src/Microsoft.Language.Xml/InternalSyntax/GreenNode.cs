@@ -136,7 +136,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
 
         internal virtual bool IsList => false;
         internal virtual bool IsToken => false;
-        internal virtual bool IsMissing => false;
+        internal virtual bool IsMissing => (flags & NodeFlags.IsMissing) != 0;
 
         internal virtual GreenNode GetLeadingTrivia()
         {
@@ -395,5 +395,63 @@ namespace Microsoft.Language.Xml.InternalSyntax
         {
             return visitor.Visit(this);
         }
+
+        #region Caching
+
+        internal const int MaxCachedChildNum = 3;
+
+        internal bool IsCacheable {
+            get {
+                return ((this.flags & NodeFlags.InheritMask) == NodeFlags.None) &&
+                    this.SlotCount <= GreenNode.MaxCachedChildNum;
+            }
+        }
+
+        internal int GetCacheHash ()
+        {
+            Debug.Assert (this.IsCacheable);
+
+            int code = (int)(this.flags) ^ (int)this.Kind;
+            int cnt = this.SlotCount;
+            for (int i = 0; i < cnt; i++) {
+                var child = GetSlot (i);
+                if (child != null) {
+                    code = Hash.Combine (RuntimeHelpers.GetHashCode (child), code);
+                }
+            }
+
+            return code & Int32.MaxValue;
+        }
+
+        internal bool IsCacheEquivalent (SyntaxKind kind, NodeFlags flags, GreenNode child1)
+        {
+            Debug.Assert (this.IsCacheable);
+
+            return this.Kind == kind &&
+                this.flags == flags &&
+                this.GetSlot (0) == child1;
+        }
+
+        internal bool IsCacheEquivalent (SyntaxKind kind, NodeFlags flags, GreenNode child1, GreenNode child2)
+        {
+            Debug.Assert (this.IsCacheable);
+
+            return this.Kind == kind &&
+                this.flags == flags &&
+                this.GetSlot (0) == child1 &&
+                this.GetSlot (1) == child2;
+        }
+
+        internal bool IsCacheEquivalent (SyntaxKind kind, NodeFlags flags, GreenNode child1, GreenNode child2, GreenNode child3)
+        {
+            Debug.Assert (this.IsCacheable);
+
+            return this.Kind == kind &&
+                this.flags == flags &&
+                this.GetSlot (0) == child1 &&
+                this.GetSlot (1) == child2 &&
+                this.GetSlot (2) == child3;
+        }
+        #endregion //Caching
     }
 }

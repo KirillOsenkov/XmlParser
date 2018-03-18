@@ -232,9 +232,6 @@ namespace Microsoft.Language.Xml
             throw new IndexOutOfRangeException();
         }
 
-        public override string ToString()
-        {
-            return Text;
-        }
+        public override string ToString() => Text;
     }
 }

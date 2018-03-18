@@ -58,14 +58,28 @@ namespace Microsoft.Language.Xml.InternalSyntax
             return new XmlAttributeSyntax.Green(name, equals, value);
         }
 
-        internal static XmlPrefixSyntax.Green XmlPrefix(XmlNameTokenSyntax.Green localName, PunctuationSyntax.Green colon)
+        internal static XmlPrefixSyntax.Green XmlPrefix(XmlNameTokenSyntax.Green prefixName, PunctuationSyntax.Green colon)
         {
-            return new XmlPrefixSyntax.Green(localName, colon);
+            int hash;
+            var cached = SyntaxNodeCache.TryGetNode (SyntaxKind.XmlPrefix, prefixName, colon, out hash);
+            if (cached != null) return (XmlPrefixSyntax.Green)cached;
+
+            var result = new XmlPrefixSyntax.Green (prefixName, colon);
+            if (hash >= 0)
+                SyntaxNodeCache.AddNode (result, hash);
+            return result;
         }
 
         internal static XmlNameSyntax.Green XmlName(XmlPrefixSyntax.Green prefix, XmlNameTokenSyntax.Green localName)
         {
-            return new XmlNameSyntax.Green(prefix, localName);
+            int hash;
+            var cached = SyntaxNodeCache.TryGetNode(SyntaxKind.XmlName, prefix, localName, out hash);
+            if (cached != null) return (XmlNameSyntax.Green)cached;
+
+            var result = new XmlNameSyntax.Green(prefix, localName);
+            if (hash >= 0)
+                SyntaxNodeCache.AddNode(result, hash);
+            return result;
         }
 
         internal static XmlDeclarationOptionSyntax.Green XmlDeclarationOption(XmlNameTokenSyntax.Green name, PunctuationSyntax.Green equals, XmlStringSyntax.Green value)
