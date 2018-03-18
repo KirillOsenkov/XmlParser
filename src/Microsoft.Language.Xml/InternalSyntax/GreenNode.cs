@@ -60,7 +60,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
 
         protected void AdjustWidth(GreenNode node)
         {
-            this.fullWidth += (node?.fullWidth).GetValueOrDefault();
+            this.fullWidth += node == null ? 0 : node.fullWidth;
         }
 
         public int SlotCount
