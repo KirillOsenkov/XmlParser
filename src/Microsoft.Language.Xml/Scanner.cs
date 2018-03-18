@@ -27,6 +27,7 @@ namespace Microsoft.Language.Xml
         private readonly StringBuilder _sb;
         private readonly char[] _internBuffer = new char[256];
         private TextKeyedCache<SyntaxTrivia.Green> _triviaCache = TextKeyedCache<SyntaxTrivia.Green>.GetInstance ();
+        private TextKeyedCache<XmlNameTokenSyntax.Green> _nameTokenCache = TextKeyedCache<XmlNameTokenSyntax.Green>.GetInstance();
 
         public Scanner(Buffer buffer)
         {
@@ -961,7 +962,20 @@ namespace Microsoft.Language.Xml
             Debug.Assert(tokenWidth > 0);
             var text = GetText(tokenWidth);
             var followingTrivia = ScanXmlWhitespace();
-            return new XmlNameTokenSyntax.Green(text, precedingTrivia, followingTrivia);
+            // TODO: do something more efficient than create an intermediary string
+            // for instance augment TextKeyedCache to work directly on the Buffer
+            // instance instead of string or char[]
+            var key = (precedingTrivia == null ? string.Empty : precedingTrivia.ToFullString())
+                + text
+                + (followingTrivia == null ? string.Empty : followingTrivia.ToFullString());
+            var hashCode = Hash.GetFNVHashCode(key);
+            var nameToken = _nameTokenCache.FindItem(key, 0, key.Length, hashCode);
+            if (nameToken == null) {
+                nameToken = new XmlNameTokenSyntax.Green(text, precedingTrivia, followingTrivia);
+                _nameTokenCache.AddItem(key, 0, key.Length, hashCode, nameToken);
+            }
+
+            return nameToken;
         }
 
         public int UTF16ToUnicode(Scanner.XmlCharResult ch)
