@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Microsoft.Language.Xml
@@ -27,7 +26,7 @@ namespace Microsoft.Language.Xml
         private readonly PooledStringBuilder _sbPooled;
         private readonly StringBuilder _sb;
         private readonly char[] _internBuffer = new char[256];
-        private ConditionalWeakTable<string, GreenNode> _triviaCache = new ConditionalWeakTable<string, GreenNode>();
+        private TextKeyedCache<SyntaxTrivia.Green> _triviaCache = TextKeyedCache<SyntaxTrivia.Green>.GetInstance ();
 
         public Scanner(Buffer buffer)
         {
@@ -2036,7 +2035,12 @@ namespace Microsoft.Language.Xml
         {
             Debug.Assert(text.Length > 0);
             Debug.Assert(text.All(IsWhitespace));
-            GreenNode ws = _triviaCache.GetValue(text, key => new SyntaxTrivia.Green(SyntaxKind.WhitespaceTrivia, text));
+            var hashCode = Hash.GetFNVHashCode(text);
+            var ws = _triviaCache.FindItem(text, 0, text.Length, hashCode);
+            if (ws == null) {
+                ws = new SyntaxTrivia.Green(SyntaxKind.WhitespaceTrivia, text);
+                _triviaCache.AddItem(text, 0, text.Length, hashCode, ws);
+            }
             return ws;
         }
 
