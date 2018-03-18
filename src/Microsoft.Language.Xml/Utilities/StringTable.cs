@@ -589,6 +589,8 @@ namespace Microsoft.Language.Xml
             return Interlocked.Increment(ref StringTable.sharedRandom);
         }
 
+        internal static bool TextEquals(string array, string text) => TextEquals(array, text, 0, text.Length);
+
         internal static bool TextEquals(string array, string text, int start, int length)
         {
             if (array.Length != length)
