@@ -28,7 +28,7 @@ namespace Microsoft.Language.Xml.Tests
             Assert.Equal("Root", root.Name);
         }
 
-        [Fact(Skip = "https://github.com/KirillOsenkov/XmlParser/issues/8")]
+        [Fact]
         public void TestRootLevelTrivia()
         {
             var root = Parser.ParseText("<!-- C --><Root></Root>")?.Root;

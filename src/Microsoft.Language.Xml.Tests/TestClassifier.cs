@@ -108,7 +108,7 @@ namespace Microsoft.Language.Xml.Tests
         [Fact]
         public void ClassifyWindow()
         {
-            T("<a/><b/>", 0, 4,
+            T("<root><a/><b/></root>", 6, 4,
                 XmlClassificationTypes.XmlDelimiter,
                 XmlClassificationTypes.XmlName,
                 XmlClassificationTypes.XmlDelimiter);
@@ -117,7 +117,7 @@ namespace Microsoft.Language.Xml.Tests
         [Fact]
         public void ClassifyWindow2()
         {
-            T("<a/><b/>", 1, 4,
+            T("<root><a/><b/></root>", 7, 4,
                 XmlClassificationTypes.XmlName,
                 XmlClassificationTypes.XmlDelimiter,
                 XmlClassificationTypes.XmlDelimiter);
@@ -126,7 +126,7 @@ namespace Microsoft.Language.Xml.Tests
         [Fact]
         public void ClassifyWindow3()
         {
-            T("<a/><b/>", 4, 4,
+            T("<root><a/><b/></root>", 10, 4,
                 XmlClassificationTypes.XmlDelimiter,
                 XmlClassificationTypes.XmlName,
                 XmlClassificationTypes.XmlDelimiter);
@@ -135,7 +135,7 @@ namespace Microsoft.Language.Xml.Tests
         [Fact]
         public void ClassifyWindow4()
         {
-            T("<ab/><ab/>", 2, 5,
+            T("<root><ab/><ab/></root>", 8, 5,
                 XmlClassificationTypes.XmlName,
                 XmlClassificationTypes.XmlDelimiter,
                 XmlClassificationTypes.XmlDelimiter,

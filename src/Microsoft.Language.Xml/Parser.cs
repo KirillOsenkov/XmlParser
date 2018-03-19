@@ -102,51 +102,8 @@ namespace Microsoft.Language.Xml
             //    CurrentToken.Kind == SyntaxKind.LessThanQuestionToken,
             //    "Invalid XML");
 
-            XmlDocumentSyntax.Green result = null;
-            if (CurrentToken.Kind == SyntaxKind.LessThanQuestionToken)
-            {
-                result = ParseXmlDocument();
-            }
-            else
-            {
-                var elements = ParseXmlElements(ScannerState.Content);
-                if (!(elements is XmlDocumentSyntax.Green))
-                {
-                    result = XmlDocument(null, null, elements, null, null, CurrentToken);
-                }
-                else
-                {
-                    result = elements as XmlDocumentSyntax.Green;
-                }
-            }
-
+            XmlDocumentSyntax.Green result = ParseXmlDocument();
             return result;
-        }
-
-        private XmlNodeSyntax.Green ParseXmlElements(ScannerState state)
-        {
-            XmlNodeSyntax.Green element = null;
-            var parts = new List<GreenNode>();
-            do
-            {
-                element = ParseXmlElement(state);
-                if (element == null)
-                    break;
-
-                parts.Add(element);
-            }
-            while (element != null);
-
-            if (parts.Count > 1)
-            {
-                element = XmlElement(null, InternalSyntax.SyntaxList.List(parts.ToArray()), null);
-            }
-            else if (parts.Count == 1)
-            {
-                element = (XmlNodeSyntax.Green)parts[0];
-            }
-
-            return element;
         }
 
         internal SyntaxToken.Green CurrentToken
@@ -173,9 +130,7 @@ namespace Microsoft.Language.Xml
 
         private XmlDocumentSyntax.Green ParseXmlDocument()
         {
-            Debug.Assert(CurrentToken.Kind == SyntaxKind.LessThanQuestionToken);
-
-            var prologue = ParseXmlDeclaration();
+            var prologue = CurrentToken.Kind == SyntaxKind.LessThanQuestionToken ? ParseXmlDeclaration() : null;
 
             GreenNode node = prologue;
             var precedingMisc = ParseXmlMisc(true, ref node);
@@ -189,21 +144,25 @@ namespace Microsoft.Language.Xml
             followingMisc = ParseXmlMisc(false, ref node);
             body = node as XmlNodeSyntax.Green;
 
-            SkippedTokensTriviaSyntax.Green skippedTokens = null;
-            if (CurrentToken.Kind != SyntaxKind.EndOfFileToken)
-            {
-                var tokens = this._pool.Allocate<SyntaxToken.Green>();
-                while (CurrentToken.Kind != SyntaxKind.EndOfFileToken)
-                {
-                    tokens.Add(CurrentToken);
-                    GetNextToken(ScannerState.Content);
-                }
-                skippedTokens = SkippedTokensTrivia(tokens.ToList());
-                this._pool.Free(tokens);
-            }
+            var skippedTokens = ParseSkippedTokens();
             //Debug.Assert(CurrentToken.Kind == SyntaxKind.EndOfFileToken);
 
             return XmlDocument(prologue, precedingMisc, body, followingMisc, skippedTokens, CurrentToken);
+        }
+
+        private SkippedTokensTriviaSyntax.Green ParseSkippedTokens ()
+        {
+            SkippedTokensTriviaSyntax.Green skippedTokens = null;
+            if (CurrentToken.Kind != SyntaxKind.EndOfFileToken) {
+                var tokens = this._pool.Allocate<SyntaxToken.Green> ();
+                while (CurrentToken.Kind != SyntaxKind.EndOfFileToken) {
+                    tokens.Add (CurrentToken);
+                    GetNextToken (ScannerState.Content);
+                }
+                skippedTokens = SkippedTokensTrivia (tokens.ToList ());
+                this._pool.Free (tokens);
+            }
+            return skippedTokens;
         }
 
         private XmlProcessingInstructionSyntax.Green ParseXmlProcessingInstruction(ScannerState nextState)
@@ -1193,7 +1152,7 @@ namespace Microsoft.Language.Xml
                         {
                             content[count - 1] = content[count - 1].AddTrailingSyntax(skipped, ERRID.ERR_DTDNotSupported);
                         }
-                        else
+                        else if (outerNode != null)
                         {
                             outerNode = outerNode.AddTrailingSyntax(skipped, ERRID.ERR_DTDNotSupported);
                         }
