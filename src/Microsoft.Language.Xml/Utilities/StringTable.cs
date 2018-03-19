@@ -29,12 +29,12 @@ namespace Microsoft.Language.Xml
         //       Roslyn C# compiler project
 
         // Size of local cache.
-        private const int LocalSizeBits = 11;
+        private const int LocalSizeBits = 10;
         private const int LocalSize = (1 << LocalSizeBits);
         private const int LocalSizeMask = LocalSize - 1;
 
         // max size of shared cache.
-        private const int SharedSizeBits = 16;
+        private const int SharedSizeBits = 13;
         private const int SharedSize = (1 << SharedSizeBits);
         private const int SharedSizeMask = SharedSize - 1;
 

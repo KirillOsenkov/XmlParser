@@ -107,7 +107,7 @@ namespace Microsoft.Language.Xml
 
     internal static class SyntaxNodeCache
     {
-        private const int CacheSizeBits = 16;
+        private const int CacheSizeBits = 13;
         private const int CacheSize = 1 << CacheSizeBits;
         private const int CacheMask = CacheSize - 1;
 
