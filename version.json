@@ -8,8 +8,13 @@
     "^refs/heads/v\\d+(?:.\\d+)?$" // we also release out of vNN branches
   ],
   "cloudBuild": {
+    "setVersionVariables": true,
     "buildNumber": {
-      "enabled": true
+      "enabled": true,
+      "includeCommitId": {
+        "when": "always",
+        "where": "buildMetadata"
+      }
     }
   }
 }
