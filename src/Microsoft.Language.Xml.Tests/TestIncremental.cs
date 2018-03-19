@@ -64,8 +64,8 @@ namespace Microsoft.Language.Xml.Tests
                                  .ToList();
             Assert.Equal(expectedCount, combined.Count);
 
-            foreach (var (firstNode, otherFirstNode) in combined)
-                AssertShareGreen((SyntaxNode)firstNode, (SyntaxNode)otherFirstNode);
+            foreach (var node in combined)
+                AssertShareGreen((SyntaxNode)node.Item1, (SyntaxNode)node.Item2);
         }
 
         void AssertShareAttributeGreenNodesWithPrefix(string attributePrefix, int expectedCount, XmlNodeSyntax root1, XmlNodeSyntax root2)
@@ -77,8 +77,8 @@ namespace Microsoft.Language.Xml.Tests
                                       .ToList();
             Assert.Equal(expectedCount, combined.Count);
 
-            foreach (var (firstNode, otherFirstNode) in combined)
-                AssertShareGreen(firstNode, otherFirstNode);
+            foreach (var node in combined)
+                AssertShareGreen(node.Item1, node.Item2);
         }
 
         void AssertShareGreen(SyntaxNode node1, SyntaxNode node2)
