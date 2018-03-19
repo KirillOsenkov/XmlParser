@@ -2,10 +2,12 @@
   <PropertyGroup>
     <AssemblyName>Microsoft.Language.Xml.Tests</AssemblyName>
     <TargetFramework>net46</TargetFramework>
+    <IsWindows>$([MSBuild]::IsOSPlatform('Windows'))</IsWindows>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="xunit" Version="2.3.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
+    <PackageReference Include="xunit.runner.console" Version="2.3.1" Condition="!$(IsWindows)" />
     <PackageReference Include="System.ValueTuple" Version="4.4.0" />
   </ItemGroup>
   <ItemGroup>
@@ -19,5 +21,14 @@
   </ItemGroup>
   <ItemGroup>
     <XunitTest_Xml Include="$(OutputPath)\TestResult.xml" />
+  </ItemGroup>
+  <PropertyGroup Condition="Exists('$(XunitConsolePath)')">
+    <XunitConsoleDirectory>$([System.IO.Path]::GetDirectoryName('$(XunitConsolePath)'))</XunitConsoleDirectory>
+  </PropertyGroup>
+  <ItemGroup Condition="!$(IsWindows)">
+    <None Include="$(XunitConsoleDirectory)\*">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Visible>False</Visible>
+    </None>
   </ItemGroup>
 </Project>
