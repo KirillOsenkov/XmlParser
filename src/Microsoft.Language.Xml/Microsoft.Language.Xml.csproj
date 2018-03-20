@@ -15,7 +15,7 @@
   </ItemGroup>
   <PropertyGroup>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <PackageId>Microsoft.Language.Xml</PackageId>
+    <PackageId>GuiLabs.Language.Xml</PackageId>
     <Authors>Microsoft</Authors>
     <Company>Microsoft</Company>
     <Summary>A full-fidelity XML parser</Summary>

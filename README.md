@@ -1,8 +1,8 @@
 # XmlParser
 
 [![Build status](https://ci.appveyor.com/api/projects/status/5ur9sv9bp4nr7a3n?svg=true)](https://ci.appveyor.com/project/KirillOsenkov/xmlparser)
-[![NuGet package](https://img.shields.io/nuget/v/Microsoft.Language.Xml.svg)](https://nuget.org/packages/Microsoft.Language.Xml)
-[![NuGet package for VS Editor](https://img.shields.io/nuget/v/Microsoft.Language.Xml.Editor.svg)](https://nuget.org/packages/Microsoft.Language.Xml.Editor)
+[![NuGet package](https://img.shields.io/nuget/v/Microsoft.Language.Xml.svg)](https://nuget.org/packages/GuiLabs.Language.Xml)
+[![NuGet package for VS Editor](https://img.shields.io/nuget/v/Microsoft.Language.Xml.Editor.svg)](https://nuget.org/packages/GuiLabs.Language.Xml.Editor)
 
 A Roslyn-inspired full-fidelity XML parser with no dependencies and a simple Visual Studio XML language service.
 
@@ -20,12 +20,14 @@ This is work in progress and by no means complete. Specifically:
  * I reserve the right to accept only very high quality pull requests. I have very limited time to work on this so I ask everybody to please respect that.
 
 ## Download from NuGet:
- * https://www.nuget.org/packages/Microsoft.Language.Xml
- * https://www.nuget.org/packages/Microsoft.Language.Xml.Editor
+ * [GuiLabs.Language.Xml](https://www.nuget.org/packages/GuiLabs.Language.Xml)
+ * [GuiLabs.Language.Xml.Editor](https://www.nuget.org/packages/GuiLabs.Language.Xml.Editor)
 
 ## Sample:
 
 ```
+using Microsoft.Language.Xml;
+
 var root = Parser.ParseText(xml);
 ...
 public interface IXmlElement
