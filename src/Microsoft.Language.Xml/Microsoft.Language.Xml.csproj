@@ -24,6 +24,7 @@
     <PackageProjectUrl>https://github.com/KirillOsenkov/XmlParser</PackageProjectUrl>
     <RepositoryUrl>https://github.com/KirillOsenkov/XmlParser</RepositoryUrl>
     <PackageTags>Xml Parser</PackageTags>
+    <PackageIconUrl>http://neteril.org/~jeremie/language_xml_logo.png</PackageIconUrl>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>True</SignAssembly>

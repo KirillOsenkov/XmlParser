@@ -25,6 +25,7 @@
     <PackageProjectUrl>https://github.com/KirillOsenkov/XmlParser</PackageProjectUrl>
     <RepositoryUrl>https://github.com/KirillOsenkov/XmlParser</RepositoryUrl>
     <PackageTags>Xml Parser LanguageService Classifier VS VisualStudio Editor</PackageTags>
+    <PackageIconUrl>http://neteril.org/~jeremie/language_xml_logo.png</PackageIconUrl>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System.ComponentModel.Composition" />
