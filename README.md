@@ -25,23 +25,13 @@ This is work in progress and by no means complete. Specifically:
  * [GuiLabs.Language.Xml](https://www.nuget.org/packages/GuiLabs.Language.Xml)
  * [GuiLabs.Language.Xml.Editor](https://www.nuget.org/packages/GuiLabs.Language.Xml.Editor)
 
-## Sample:
+## Try it!
 
-```
-using Microsoft.Language.Xml;
+https://xmlsyntaxvisualizer.azurewebsites.net/index.html
 
-var root = Parser.ParseText(xml);
-...
-public interface IXmlElement
-{
-    string Name { get; }
-    string Value { get; }
-    IXmlElement Parent { get; }
-    IEnumerable<IXmlElement> Elements { get; }
-    IEnumerable<KeyValuePair<string, string>> Attributes { get; }
-    string this[string attributeName] { get; }
-}
-```
+The above app leverages the parser and can help you visualize the resulting syntax tree generated from an XML document.
+
+Code is available at https://github.com/garuma/XmlSyntaxVisualizer
 
 ## FAQ:
 
