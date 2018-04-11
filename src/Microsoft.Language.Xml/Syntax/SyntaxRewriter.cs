@@ -486,30 +486,30 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        //public override SyntaxNode VisitXmlPrefixName(XmlPrefixSyntax node)
-        //{
-        //    bool anyChanges = false;
-        //    var newName = ((XmlNameTokenSyntax)Visit(node.Name));
-        //    if (node.Name != newName)
-        //    {
-        //        anyChanges = true;
-        //    }
+        public override SyntaxNode VisitXmlPrefix(XmlPrefixSyntax node)
+        {
+            bool anyChanges = false;
+            var newName = ((XmlNameTokenSyntax)Visit(node.Name));
+            if (node.Name != newName)
+            {
+                anyChanges = true;
+            }
 
-        //    var newColonToken = ((PunctuationSyntax)Visit(node.ColonToken));
-        //    if (node.ColonToken != newColonToken)
-        //    {
-        //        anyChanges = true;
-        //    }
+            var newColonToken = ((PunctuationSyntax)Visit(node.ColonToken));
+            if (node.ColonToken != newColonToken)
+            {
+                anyChanges = true;
+            }
 
-        //    if (anyChanges)
-        //    {
-        //        return new XmlPrefixSyntax(newName, newColonToken);
-        //    }
-        //    else
-        //    {
-        //        return node;
-        //    }
-        //}
+            if (anyChanges)
+            {
+                return XmlPrefix(newName, newColonToken);
+            }
+            else
+            {
+                return node;
+            }
+        }
 
         public override SyntaxNode VisitXmlComment(XmlCommentSyntax node)
         {

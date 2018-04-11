@@ -9,7 +9,9 @@ namespace Microsoft.Language.Xml.Tests
     public class TestTrivia
     {
         const string ThreeSpaces = "   ";
+        const string Tab = "\t";
         const string XmlElementWithAttributeAndContent = "<foo attribute=\"value\">content</foo>";
+        const string XmlElementWithNamespacedAttributeAndContent = "<foo ns:attribute=\"value\">content</foo>";
 
         [Fact]
         public void TestXmlElementSyntaxLeadingTrivia()
@@ -29,6 +31,31 @@ namespace Microsoft.Language.Xml.Tests
             Assert.NotSame(elementWithTrivia, element);
             Assert.IsType<XmlElementSyntax>(elementWithTrivia);
             Assert.EndsWith(ThreeSpaces, elementWithTrivia.ToFullString());
+        }
+
+        [Fact]
+        public void TestXmlAttributeSyntaxLeadingTrivia ()
+        {
+            var element = (IXmlElementSyntax)GetElementSyntax (XmlElementWithAttributeAndContent);
+            var attribute = element.Attributes.First();
+            var attributeWithTrivia = attribute.WithLeadingTrivia(SyntaxFactory.WhitespaceTrivia(ThreeSpaces));
+            Assert.NotSame (attributeWithTrivia, attribute);
+            Assert.IsType<XmlAttributeSyntax> (attributeWithTrivia);
+            Assert.StartsWith (ThreeSpaces, attributeWithTrivia.ToFullString ());
+        }
+
+        [Fact]
+        public void TestXmlAttributeSyntaxLeadingTrivia_2TriviaNodes ()
+        {
+            var element = (IXmlElementSyntax)GetElementSyntax (XmlElementWithNamespacedAttributeAndContent);
+            var attribute = element.Attributes.First ();
+            var attributeWithTrivia = attribute.WithLeadingTrivia (
+                SyntaxFactory.WhitespaceTrivia (Tab),
+                SyntaxFactory.WhitespaceTrivia (ThreeSpaces)
+            );
+            Assert.NotSame (attributeWithTrivia, attribute);
+            Assert.IsType<XmlAttributeSyntax> (attributeWithTrivia);
+            Assert.StartsWith (Tab + ThreeSpaces, attributeWithTrivia.ToFullString ());
         }
 
         static XmlElementSyntax GetElementSyntax(string xml) => Parser.ParseText(xml).RootSyntax as XmlElementSyntax;
