@@ -58,6 +58,36 @@ namespace Microsoft.Language.Xml.Tests
             Assert.StartsWith (Tab + ThreeSpaces, attributeWithTrivia.ToFullString ());
         }
 
+        [Fact]
+        public void TestWithoutLeadingTrivia ()
+        {
+            var element = GetElementSyntax(ThreeSpaces + XmlElementWithAttributeAndContent);
+            Assert.NotNull(element);
+            Assert.True (element.HasLeadingTrivia);
+            Assert.Equal(ThreeSpaces, element.GetLeadingTrivia().First().Text);
+            var newElement = element.WithoutLeadingTrivia();
+            Assert.NotSame(element, newElement);
+            Assert.False(newElement.HasLeadingTrivia);
+            Assert.StartsWith("<", newElement.ToFullString());
+        }
+
+        [Fact]
+        public void TestWithoutTrailingTrivia ()
+        {
+            var element = GetElementSyntax (
+                XmlElementWithAttributeAndContent.Substring (0, XmlElementWithAttributeAndContent.Length - 1) + ThreeSpaces + ">"
+            );
+            Assert.NotNull (element);
+            var endTagName = element.EndTag.NameNode;
+            Assert.True(endTagName.HasTrailingTrivia);
+            Assert.Equal (ThreeSpaces, endTagName.GetTrailingTrivia ().First ().Text);
+            Assert.EndsWith ("foo" + ThreeSpaces, endTagName.ToFullString ());
+            var newTagName = endTagName.WithoutTrailingTrivia ();
+            Assert.NotSame (endTagName, newTagName);
+            Assert.False (newTagName.HasTrailingTrivia);
+            Assert.EndsWith ("foo", newTagName.ToFullString ());
+        }
+
         static XmlElementSyntax GetElementSyntax(string xml) => Parser.ParseText(xml).RootSyntax as XmlElementSyntax;
     }
 }

@@ -173,13 +173,13 @@ namespace Microsoft.Language.Xml
         public SyntaxToken WithLeadingTrivia(IEnumerable<SyntaxTrivia> trivia)
         {
             var greenList = trivia?.Select(t => t.GreenNode);
-            return WithLeadingTriviaCore(GreenNode.CreateList(greenList).CreateRed());
+            return WithLeadingTriviaCore(GreenNode.CreateList(greenList)?.CreateRed());
         }
 
         public SyntaxToken WithTrailingTrivia(IEnumerable<SyntaxTrivia> trivia)
         {
             var greenList = trivia?.Select(t => t.GreenNode);
-            return WithTrailingTriviaCore(GreenNode.CreateList(greenList).CreateRed());
+            return WithTrailingTriviaCore(GreenNode.CreateList(greenList)?.CreateRed());
         }
 
         internal override sealed SyntaxNode GetCachedSlot(int index)

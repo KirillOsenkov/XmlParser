@@ -301,6 +301,14 @@ namespace Microsoft.Language.Xml
         }
 
         /// <summary>
+        /// Creates a new node from this node with the leading trivia removed.
+        /// </summary>
+        public static TSyntax WithoutLeadingTrivia<TSyntax> (this TSyntax node) where TSyntax : SyntaxNode
+        {
+            return node.WithLeadingTrivia ((IEnumerable<SyntaxTrivia>)null);
+        }
+
+        /// <summary>
         /// Creates a new node from this node with the trailing trivia replaced.
         /// </summary>
         public static TSyntax WithTrailingTrivia<TSyntax>(
@@ -332,6 +340,14 @@ namespace Microsoft.Language.Xml
             params SyntaxTrivia[] trivia) where TSyntax : SyntaxNode
         {
             return node.WithTrailingTrivia((IEnumerable<SyntaxTrivia>)trivia);
+        }
+
+        /// <summary>
+        /// Creates a new node from this node with the leading trivia removed.
+        /// </summary>
+        public static TSyntax WithoutTrailingTrivia<TSyntax> (this TSyntax node) where TSyntax : SyntaxNode
+        {
+            return node.WithTrailingTrivia ((IEnumerable<SyntaxTrivia>)null);
         }
 
         /// <summary>

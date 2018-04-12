@@ -36,12 +36,12 @@
 
         internal override SyntaxToken WithLeadingTriviaCore(SyntaxNode trivia)
         {
-            return (PunctuationSyntax)new Green(Kind, Text, trivia.GreenNode, GetTrailingTrivia().Node?.GreenNode).CreateRed(Parent, Start);
+            return (PunctuationSyntax)new Green(Kind, Text, trivia?.GreenNode, GetTrailingTrivia().Node?.GreenNode).CreateRed(Parent, Start);
         }
 
         internal override SyntaxToken WithTrailingTriviaCore(SyntaxNode trivia)
         {
-            return (PunctuationSyntax)new Green(Kind, Text, GetLeadingTrivia().Node?.GreenNode, trivia.GreenNode).CreateRed(Parent, Start);
+            return (PunctuationSyntax)new Green(Kind, Text, GetLeadingTrivia().Node?.GreenNode, trivia?.GreenNode).CreateRed(Parent, Start);
         }
     }
 }
