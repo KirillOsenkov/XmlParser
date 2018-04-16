@@ -2,7 +2,7 @@
 
 namespace Microsoft.Language.Xml.InternalSyntax
 {
-    internal struct SeparatedSyntaxListBuilder<TNode> where TNode : GreenNode
+    internal readonly struct SeparatedSyntaxListBuilder<TNode> where TNode : GreenNode
     {
         private readonly SyntaxListBuilder _builder;
 

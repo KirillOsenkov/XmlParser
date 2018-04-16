@@ -137,7 +137,7 @@ namespace Microsoft.Language.Xml
             ReplaceOldWithNew
         }
 
-        private struct DiffAction
+        private readonly struct DiffAction
         {
             public readonly DiffOp Operation;
             public readonly int Count;
@@ -458,7 +458,7 @@ namespace Microsoft.Language.Xml
             return node1.Kind == node2.Kind;
         }
 
-        private struct ChangeRecord
+        private readonly struct ChangeRecord
         {
             public readonly TextChangeRange Range;
             public readonly Queue<SyntaxNode> OldNodes;
@@ -685,7 +685,7 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        private struct ChangeRangeWithText
+        private readonly struct ChangeRangeWithText
         {
             public readonly TextChangeRange Range;
             public readonly string NewText;

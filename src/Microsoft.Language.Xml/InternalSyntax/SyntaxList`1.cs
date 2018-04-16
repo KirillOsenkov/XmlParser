@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Microsoft.Language.Xml.InternalSyntax
 {
-    internal struct SyntaxList<TNode>
+    internal readonly struct SyntaxList<TNode>
         where TNode : GreenNode
     {
         private readonly GreenNode _node;

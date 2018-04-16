@@ -9,11 +9,11 @@ namespace Microsoft.Language.Xml
     using InternalSyntax;
     using static InternalSyntax.SyntaxFactory;
 
-    internal struct XmlContext
+    internal readonly struct XmlContext
     {
-        private XmlElementStartTagSyntax.Green _start;
-        private InternalSyntax.SyntaxListBuilder<XmlNodeSyntax.Green> _content;
-        private SyntaxListPool _pool;
+        private readonly XmlElementStartTagSyntax.Green _start;
+        private readonly InternalSyntax.SyntaxListBuilder<XmlNodeSyntax.Green> _content;
+        private readonly SyntaxListPool _pool;
 
         public XmlContext(SyntaxListPool pool, XmlElementStartTagSyntax.Green start)
         {

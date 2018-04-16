@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Microsoft.Language.Xml
 {
-    internal struct SyntaxListBuilder<TNode>
+    internal readonly struct SyntaxListBuilder<TNode>
         where TNode : SyntaxNode
     {
         private readonly SyntaxListBuilder _builder;

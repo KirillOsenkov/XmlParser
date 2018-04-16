@@ -6,7 +6,7 @@ namespace Microsoft.Language.Xml
     /// <summary>
     /// Represents the change to a span of text.
     /// </summary>
-    public struct TextChangeRange : IEquatable<TextChangeRange>
+    public readonly struct TextChangeRange : IEquatable<TextChangeRange>
     {
         /// <summary>
         /// The span of text before the edit which is being changed

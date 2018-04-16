@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace Microsoft.Language.Xml
 {
-    internal struct SeparatedSyntaxListBuilder<TNode>
+    internal readonly struct SeparatedSyntaxListBuilder<TNode>
         where TNode : SyntaxNode
     {
-        private SyntaxListBuilder builder;
+        private readonly SyntaxListBuilder builder;
+
         public SeparatedSyntaxListBuilder(int size) : this(new SyntaxListBuilder(size))
         {
         }

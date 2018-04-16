@@ -13,7 +13,7 @@ namespace Microsoft.Language.Xml
     /// Represents a read-only list of <see cref="SyntaxTrivia"/>.
     /// </summary>
     [StructLayout(LayoutKind.Auto)]
-    public partial struct SyntaxTriviaList : IEquatable<SyntaxTriviaList>, IReadOnlyList<SyntaxTrivia>
+    public readonly struct SyntaxTriviaList : IEquatable<SyntaxTriviaList>, IReadOnlyList<SyntaxTrivia>
     {
         public static SyntaxTriviaList Empty => default(SyntaxTriviaList);
 
@@ -196,7 +196,7 @@ namespace Microsoft.Language.Xml
 
         public Enumerator GetEnumerator()
         {
-            return new Enumerator(ref this);
+            return new Enumerator(this);
         }
 
         public int IndexOf(SyntaxTrivia triviaInList)
@@ -402,7 +402,7 @@ namespace Microsoft.Language.Xml
                 return SpecializedCollections.EmptyEnumerator<SyntaxTrivia>();
             }
 
-            return new EnumeratorImpl(ref this);
+            return new EnumeratorImpl(this);
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -412,7 +412,7 @@ namespace Microsoft.Language.Xml
                 return SpecializedCollections.EmptyEnumerator<SyntaxTrivia>();
             }
 
-            return new EnumeratorImpl(ref this);
+            return new EnumeratorImpl(this);
         }
 
         /// <summary>
@@ -653,7 +653,7 @@ namespace Microsoft.Language.Xml
             private SyntaxNode _current;
             private int _position;
 
-            internal Enumerator(ref SyntaxTriviaList list)
+            internal Enumerator(SyntaxTriviaList list)
             {
                 _singleNodeOrList = list.Node;
                 _baseIndex = list.Index;
@@ -756,9 +756,9 @@ namespace Microsoft.Language.Xml
             private Enumerator _enumerator;
 
             // SyntaxTriviaList is a relatively big struct so is passed as ref
-            internal EnumeratorImpl(ref SyntaxTriviaList list)
+            internal EnumeratorImpl(SyntaxTriviaList list)
             {
-                _enumerator = new Enumerator(ref list);
+                _enumerator = new Enumerator(list);
             }
 
             public SyntaxTrivia Current => _enumerator.Current;

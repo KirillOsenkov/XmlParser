@@ -111,7 +111,7 @@ namespace Microsoft.Language.Xml
         private const int CacheSize = 1 << CacheSizeBits;
         private const int CacheMask = CacheSize - 1;
 
-        private struct Entry
+        private readonly struct Entry
         {
             public readonly int hash;
             public readonly GreenNode node;

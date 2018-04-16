@@ -8,7 +8,7 @@ namespace Microsoft.Language.Xml
 {
     using InternalSyntax;
 
-    public partial struct ChildSyntaxList : IEquatable<ChildSyntaxList>, IReadOnlyList<SyntaxNode>
+    public readonly struct ChildSyntaxList : IEquatable<ChildSyntaxList>, IReadOnlyList<SyntaxNode>
     {
         private readonly SyntaxNode _node;
         private readonly int _count;

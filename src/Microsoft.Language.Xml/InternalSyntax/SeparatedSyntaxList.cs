@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace Microsoft.Language.Xml.InternalSyntax
 {
-    internal struct SeparatedSyntaxList<TNode> : IEquatable<SeparatedSyntaxList<TNode>> where TNode : GreenNode
+    internal readonly struct SeparatedSyntaxList<TNode> : IEquatable<SeparatedSyntaxList<TNode>> where TNode : GreenNode
     {
         private readonly SyntaxList<GreenNode> _list;
 

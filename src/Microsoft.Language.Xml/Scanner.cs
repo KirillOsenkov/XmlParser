@@ -998,11 +998,12 @@ namespace Microsoft.Language.Xml
             return 0;
         }
 
-        public struct XmlCharResult
+        public readonly struct XmlCharResult
         {
             public readonly int Length;
             public readonly char Char1;
             public readonly char Char2;
+
             public XmlCharResult(char ch)
             {
                 Length = 1;
@@ -2217,7 +2218,7 @@ namespace Microsoft.Language.Xml
             return _lineBufferOffset < _bufferLen;
         }
 
-        protected struct ScannerToken
+        protected readonly struct ScannerToken
         {
             internal ScannerToken(int lineBufferOffset, int endOfTerminatorTrivia, SyntaxToken.Green token, ScannerState state)
             {
@@ -2352,7 +2353,7 @@ namespace Microsoft.Language.Xml
         ;
         private const int CHARPROP_LENGTH = 0x180;
         internal const int MAXTOKENSIZE = 42;
-        public struct QuickScanResult
+        public readonly struct QuickScanResult
         {
             public QuickScanResult(int start, int length, char[] chars, int hashCode, byte terminatorLength)
             {

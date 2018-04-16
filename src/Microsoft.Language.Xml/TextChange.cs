@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Microsoft.Language.Xml
 {
-    public struct TextChange : IEquatable<TextChange>
+    public readonly struct TextChange : IEquatable<TextChange>
     {
         /// <summary>
         /// The original span of the changed text. 

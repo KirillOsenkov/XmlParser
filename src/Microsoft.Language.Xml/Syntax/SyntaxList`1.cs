@@ -9,7 +9,7 @@ namespace Microsoft.Language.Xml
 {
     using InternalSyntax;
 
-    public struct SyntaxList<TNode> : IReadOnlyList<TNode>, IEquatable<SyntaxList<TNode>>
+    public readonly struct SyntaxList<TNode> : IReadOnlyList<TNode>, IEquatable<SyntaxList<TNode>>
         where TNode : SyntaxNode
     {
         private readonly SyntaxNode _node;
