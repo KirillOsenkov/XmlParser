@@ -8,6 +8,6 @@
     <ProjectReference Include="..\Microsoft.Language.Xml\Microsoft.Language.Xml.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="BenchmarkDotNet" Version="0.10.13" />
+    <PackageReference Include="BenchmarkDotNet" Version="0.10.14" />
   </ItemGroup>
 </Project>
