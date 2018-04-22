@@ -390,7 +390,7 @@ namespace Microsoft.Language.Xml
         /// </summary>
         public Enumerator GetEnumerator()
         {
-            return new Enumerator(this);
+            return new Enumerator(in this);
         }
 
         IEnumerator<TNode> IEnumerable<TNode>.GetEnumerator()
@@ -527,10 +527,10 @@ namespace Microsoft.Language.Xml
 
         public struct Enumerator
         {
-            private SyntaxList<TNode> _list;
+            private readonly SyntaxList<TNode> _list;
             private int _index;
 
-            internal Enumerator(SyntaxList<TNode> list)
+            internal Enumerator(in SyntaxList<TNode> list)
             {
                 _list = list;
                 _index = -1;
@@ -576,9 +576,9 @@ namespace Microsoft.Language.Xml
         {
             private Enumerator _e;
 
-            internal EnumeratorImpl(SyntaxList<TNode> list)
+            internal EnumeratorImpl(in SyntaxList<TNode> list)
             {
-                _e = new Enumerator(list);
+                _e = new Enumerator(in list);
             }
 
             public bool MoveNext()

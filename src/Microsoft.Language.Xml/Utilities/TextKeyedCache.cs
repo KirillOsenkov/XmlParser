@@ -123,17 +123,16 @@ namespace Microsoft.Language.Xml
 
         internal T FindItem(string chars, int start, int len, int hashCode)
         {
-            // capture array to avoid extra range checks
-            var arr = _localTable;
-            var idx = LocalIdxFromHash(hashCode);
+            // get direct element reference to avoid extra range checks
+            ref var localSlot = ref _localTable[LocalIdxFromHash (hashCode)];
 
-            var text = arr[idx].Text;
+            var text = localSlot.Text;
 
-            if (text != null && arr[idx].HashCode == hashCode)
+            if (text != null && localSlot.HashCode == hashCode)
             {
                 if (StringTable.TextEquals(text, chars, start, len))
                 {
-                    return arr[idx].Item;
+                    return localSlot.Item;
                 }
             }
 
@@ -143,11 +142,11 @@ namespace Microsoft.Language.Xml
                 // PERF: the following code does element-wise assignment of a struct
                 //       because current JIT produces better code compared to
                 //       arr[idx] = new LocalEntry(...)
-                arr[idx].HashCode = hashCode;
-                arr[idx].Text = e.Text;
+                localSlot.HashCode = hashCode;
+                localSlot.Text = e.Text;
 
                 var tk = e.Item;
-                arr[idx].Item = tk;
+                localSlot.Item = tk;
 
                 return tk;
             }
@@ -199,11 +198,10 @@ namespace Microsoft.Language.Xml
             AddSharedEntry(hashCode, e);
 
             // add to the local table too
-            var arr = _localTable;
-            var idx = LocalIdxFromHash(hashCode);
-            arr[idx].HashCode = hashCode;
-            arr[idx].Text = text;
-            arr[idx].Item = item;
+            ref var localSlot = ref _localTable[LocalIdxFromHash (hashCode)];
+            localSlot.HashCode = hashCode;
+            localSlot.Text = text;
+            localSlot.Item = item;
         }
 
         private void AddSharedEntry(int hashCode, SharedEntryValue e)

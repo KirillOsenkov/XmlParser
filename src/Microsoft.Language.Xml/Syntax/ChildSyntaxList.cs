@@ -470,10 +470,11 @@ namespace Microsoft.Language.Xml
                 _childIndex = -1;
             }
 
-            internal bool TryMoveNextAndGetCurrent(ref SyntaxNode current)
+            internal bool TryMoveNextAndGetCurrent(out SyntaxNode current)
             {
                 if (!MoveNext())
                 {
+                    current = default;
                     return false;
                 }
 

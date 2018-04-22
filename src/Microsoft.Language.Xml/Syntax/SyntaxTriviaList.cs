@@ -508,14 +508,14 @@ namespace Microsoft.Language.Xml
         {
             private SyntaxTriviaList _list;
 
-            public Reversed(SyntaxTriviaList list)
+            public Reversed(in SyntaxTriviaList list)
             {
                 _list = list;
             }
 
             public Enumerator GetEnumerator()
             {
-                return new Enumerator(ref _list);
+                return new Enumerator(in _list);
             }
 
             IEnumerator<SyntaxTrivia> IEnumerable<SyntaxTrivia>.GetEnumerator()
@@ -525,7 +525,7 @@ namespace Microsoft.Language.Xml
                     return SpecializedCollections.EmptyEnumerator<SyntaxTrivia>();
                 }
 
-                return new ReversedEnumeratorImpl(ref _list);
+                return new ReversedEnumeratorImpl(in _list);
             }
 
             IEnumerator
@@ -536,7 +536,7 @@ namespace Microsoft.Language.Xml
                     return SpecializedCollections.EmptyEnumerator<SyntaxTrivia>();
                 }
 
-                return new ReversedEnumeratorImpl(ref _list);
+                return new ReversedEnumeratorImpl(in _list);
             }
 
             public override int GetHashCode()
@@ -565,7 +565,7 @@ namespace Microsoft.Language.Xml
                 private SyntaxNode _current;
                 private int _position;
 
-                public Enumerator(ref SyntaxTriviaList list)
+                public Enumerator(in SyntaxTriviaList list)
                     : this()
                 {
                     if (list.Any())
@@ -617,9 +617,9 @@ namespace Microsoft.Language.Xml
                 private Enumerator _enumerator;
 
                 // SyntaxTriviaList is a relatively big struct so is passed as ref
-                internal ReversedEnumeratorImpl(ref SyntaxTriviaList list)
+                internal ReversedEnumeratorImpl(in SyntaxTriviaList list)
                 {
-                    _enumerator = new Enumerator(ref list);
+                    _enumerator = new Enumerator(in list);
                 }
 
                 public SyntaxTrivia Current => _enumerator.Current;
@@ -653,7 +653,7 @@ namespace Microsoft.Language.Xml
             private SyntaxNode _current;
             private int _position;
 
-            internal Enumerator(SyntaxTriviaList list)
+            internal Enumerator(in SyntaxTriviaList list)
             {
                 _singleNodeOrList = list.Node;
                 _baseIndex = list.Index;
@@ -678,7 +678,7 @@ namespace Microsoft.Language.Xml
             // PERF: Used to initialize an enumerator for leading trivia directly from a token.
             // This saves constructing an intermediate SyntaxTriviaList. Also, passing token
             // by ref since it's a non-trivial struct
-            internal void InitializeFromLeadingTrivia(ref SyntaxToken token)
+            internal void InitializeFromLeadingTrivia(in SyntaxToken token)
             {
                 InitializeFrom(token.GetLeadingTrivia().Node, 0, token.Start);
             }
@@ -686,7 +686,7 @@ namespace Microsoft.Language.Xml
             // PERF: Used to initialize an enumerator for trailing trivia directly from a token.
             // This saves constructing an intermediate SyntaxTriviaList. Also, passing token
             // by ref since it's a non-trivial struct
-            internal void InitializeFromTrailingTrivia(ref SyntaxToken token)
+            internal void InitializeFromTrailingTrivia(in SyntaxToken token)
             {
                 var leading = token.GetLeadingTrivia().Node;
                 int index = 0;
@@ -739,10 +739,11 @@ namespace Microsoft.Language.Xml
                 }
             }
 
-            internal bool TryMoveNextAndGetCurrent(ref SyntaxTrivia current)
+            internal bool TryMoveNextAndGetCurrent(out SyntaxTrivia current)
             {
                 if (!MoveNext())
                 {
+                    current = default;
                     return false;
                 }
 
@@ -756,7 +757,7 @@ namespace Microsoft.Language.Xml
             private Enumerator _enumerator;
 
             // SyntaxTriviaList is a relatively big struct so is passed as ref
-            internal EnumeratorImpl(SyntaxTriviaList list)
+            internal EnumeratorImpl(in SyntaxTriviaList list)
             {
                 _enumerator = new Enumerator(list);
             }

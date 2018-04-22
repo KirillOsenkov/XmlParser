@@ -71,12 +71,12 @@ namespace Microsoft.Language.Xml.InternalSyntax
             return _list;
         }
 
-        public static bool operator ==(SeparatedSyntaxList<TNode> left, SeparatedSyntaxList<TNode> right)
+        public static bool operator ==(in SeparatedSyntaxList<TNode> left, in SeparatedSyntaxList<TNode> right)
         {
             return left.Equals(right);
         }
 
-        public static bool operator !=(SeparatedSyntaxList<TNode> left, SeparatedSyntaxList<TNode> right)
+        public static bool operator !=(in SeparatedSyntaxList<TNode> left, in SeparatedSyntaxList<TNode> right)
         {
             return !left.Equals(right);
         }
