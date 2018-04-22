@@ -41,6 +41,24 @@ namespace Microsoft.Language.Xml
                 AdjustWidth(eof);
             }
 
+            internal Green(XmlDeclarationSyntax.Green prologue, GreenNode precedingMisc, XmlNodeSyntax.Green body, GreenNode followingMisc, SkippedTokensTriviaSyntax.Green skippedTokens, SyntaxToken.Green eof, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
+                : base(SyntaxKind.XmlDocument, diagnostics, annotations)
+            {
+                this.SlotCount = 6;
+                this.prologue = prologue;
+                AdjustWidth(prologue);
+                this.precedingMisc = precedingMisc;
+                AdjustWidth(precedingMisc);
+                this.body = body;
+                AdjustWidth(body);
+                this.followingMisc = followingMisc;
+                AdjustWidth(followingMisc);
+                this.skippedTokens = skippedTokens;
+                AdjustWidth(skippedTokens);
+                this.eof = eof;
+                AdjustWidth(eof);
+            }
+
             internal override SyntaxNode CreateRed(SyntaxNode parent, int position) => new XmlDocumentSyntax(this, parent, position);
 
             internal override GreenNode GetSlot(int index)
@@ -60,6 +78,16 @@ namespace Microsoft.Language.Xml
             internal override GreenNode Accept(InternalSyntax.SyntaxVisitor visitor)
             {
                 return visitor.VisitXmlDocument(this);
+            }
+
+            internal override GreenNode SetDiagnostics(DiagnosticInfo[] diagnostics)
+            {
+                return new Green(prologue, precedingMisc, body, followingMisc, skippedTokens, eof, diagnostics, GetAnnotations());
+            }
+
+            internal override GreenNode SetAnnotations(SyntaxAnnotation[] annotations)
+            {
+                return new Green(prologue, precedingMisc, body, followingMisc, skippedTokens, eof, GetDiagnostics(), annotations);
             }
         }
 

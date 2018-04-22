@@ -13,6 +13,11 @@ namespace Microsoft.Language.Xml
             {
             }
 
+            internal Green(string name, GreenNode leadingTrivia, GreenNode trailingTrivia, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
+                : base(SyntaxKind.XmlNameToken, name, leadingTrivia, trailingTrivia, diagnostics, annotations)
+            {
+            }
+
             internal override SyntaxNode CreateRed(SyntaxNode parent, int position) => new XmlNameTokenSyntax(this, parent, position);
 
             public override SyntaxToken.Green WithLeadingTrivia(GreenNode trivia)
@@ -23,6 +28,16 @@ namespace Microsoft.Language.Xml
             public override SyntaxToken.Green WithTrailingTrivia(GreenNode trivia)
             {
                 return new Green(Text, LeadingTrivia, trivia);
+            }
+
+            internal override GreenNode SetDiagnostics(DiagnosticInfo[] diagnostics)
+            {
+                return new Green(Text, LeadingTrivia, TrailingTrivia, diagnostics, GetAnnotations());
+            }
+
+            internal override GreenNode SetAnnotations(SyntaxAnnotation[] annotations)
+            {
+                return new Green(Text, LeadingTrivia, TrailingTrivia, GetDiagnostics(), annotations);
             }
         }
 

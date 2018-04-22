@@ -22,7 +22,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
 
         static readonly DiagnosticInfo[] s_noDiagnostics = Array.Empty<DiagnosticInfo>();
         static readonly SyntaxAnnotation[] s_noAnnotations = Array.Empty<SyntaxAnnotation>();
-        //static readonly IEnumerable<SyntaxAnnotation> s_noAnnotationsEnumerable = SpecializedCollections.EmptyEnumerable<SyntaxAnnotation> ();
+        static readonly IEnumerable<SyntaxAnnotation> s_noAnnotationsEnumerable = SpecializedCollections.EmptyEnumerable<SyntaxAnnotation>();
 
         internal int FullWidth => fullWidth;
         internal SyntaxKind Kind { get; }
@@ -38,6 +38,11 @@ namespace Microsoft.Language.Xml.InternalSyntax
             if (fullWidth == -1)
                 throw new InvalidOperationException();
             this.fullWidth = fullWidth;
+        }
+
+        protected GreenNode(SyntaxKind kind, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
+            : this(kind, 0, diagnostics, annotations)
+        {
         }
 
         protected GreenNode(SyntaxKind kind, int fullWidth, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
@@ -337,6 +342,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
             }
         }
 
+        #region Diagnostics
         internal DiagnosticInfo[] GetDiagnostics()
         {
             if (this.ContainsDiagnostics)
@@ -348,7 +354,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
                 }
             }
 
-            return Array.Empty<DiagnosticInfo>();
+            return s_noDiagnostics;
         }
 
         internal GreenNode SetDiagnostic(DiagnosticInfo diagnostic)
@@ -356,11 +362,127 @@ namespace Microsoft.Language.Xml.InternalSyntax
             return SetDiagnostics(new[] { diagnostic });
         }
 
-        // TODO
-        //internal abstract GreenNode SetDiagnostics (DiagnosticInfo[] diagnostics);
-        internal virtual GreenNode SetDiagnostics(DiagnosticInfo[] diagnostics)
+        internal GreenNode AddError(DiagnosticInfo err)
         {
+            // TODO
             return this;
+        }
+
+        internal abstract GreenNode SetDiagnostics(DiagnosticInfo[] diagnostics);
+        #endregion
+
+        #region Annotations 
+        public bool HasAnnotations(string annotationKind)
+        {
+            var annotations = this.GetAnnotations();
+            if (annotations == s_noAnnotations)
+            {
+                return false;
+            }
+
+            foreach (var a in annotations)
+            {
+                if (a.Kind == annotationKind)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public bool HasAnnotations(IEnumerable<string> annotationKinds)
+        {
+            var annotations = this.GetAnnotations();
+            if (annotations == s_noAnnotations)
+            {
+                return false;
+            }
+
+            foreach (var a in annotations)
+            {
+                if (annotationKinds.Contains(a.Kind))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public bool HasAnnotation(SyntaxAnnotation annotation)
+        {
+            var annotations = this.GetAnnotations();
+            if (annotations == s_noAnnotations)
+            {
+                return false;
+            }
+
+            foreach (var a in annotations)
+            {
+                if (a == annotation)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public IEnumerable<SyntaxAnnotation> GetAnnotations(string annotationKind)
+        {
+            if (string.IsNullOrWhiteSpace(annotationKind))
+            {
+                throw new ArgumentNullException(nameof(annotationKind));
+            }
+
+            var annotations = this.GetAnnotations();
+
+            if (annotations == s_noAnnotations)
+            {
+                return s_noAnnotationsEnumerable;
+            }
+
+            return GetAnnotationsSlow(annotations, annotationKind);
+        }
+
+        private static IEnumerable<SyntaxAnnotation> GetAnnotationsSlow(SyntaxAnnotation[] annotations, string annotationKind)
+        {
+            foreach (var annotation in annotations)
+            {
+                if (annotation.Kind == annotationKind)
+                {
+                    yield return annotation;
+                }
+            }
+        }
+
+        public IEnumerable<SyntaxAnnotation> GetAnnotations(IEnumerable<string> annotationKinds)
+        {
+            if (annotationKinds == null)
+            {
+                throw new ArgumentNullException(nameof(annotationKinds));
+            }
+
+            var annotations = this.GetAnnotations();
+
+            if (annotations == s_noAnnotations)
+            {
+                return s_noAnnotationsEnumerable;
+            }
+
+            return GetAnnotationsSlow(annotations, annotationKinds);
+        }
+
+        private static IEnumerable<SyntaxAnnotation> GetAnnotationsSlow(SyntaxAnnotation[] annotations, IEnumerable<string> annotationKinds)
+        {
+            foreach (var annotation in annotations)
+            {
+                if (annotationKinds.Contains(annotation.Kind))
+                {
+                    yield return annotation;
+                }
+            }
         }
 
         public SyntaxAnnotation[] GetAnnotations()
@@ -375,21 +497,12 @@ namespace Microsoft.Language.Xml.InternalSyntax
                 }
             }
 
-            return Array.Empty<SyntaxAnnotation>();
+            return s_noAnnotations;
         }
 
-        // TODO
-        //internal abstract GreenNode SetAnnotations (SyntaxAnnotation[] annotations);
-        internal virtual GreenNode SetAnnotations(SyntaxAnnotation[] annotations)
-        {
-            return this;
-        }
+        internal abstract GreenNode SetAnnotations(SyntaxAnnotation[] annotations);
 
-        internal GreenNode AddError(DiagnosticInfo err)
-        {
-            // TODO
-            return this;
-        }
+        #endregion
 
         internal virtual GreenNode Accept(InternalSyntax.SyntaxVisitor visitor)
         {
@@ -400,57 +513,61 @@ namespace Microsoft.Language.Xml.InternalSyntax
 
         internal const int MaxCachedChildNum = 3;
 
-        internal bool IsCacheable {
-            get {
+        internal bool IsCacheable
+        {
+            get
+            {
                 return ((this.flags & NodeFlags.InheritMask) == NodeFlags.None) &&
                     this.SlotCount <= GreenNode.MaxCachedChildNum;
             }
         }
 
-        internal int GetCacheHash ()
+        internal int GetCacheHash()
         {
-            Debug.Assert (this.IsCacheable);
+            Debug.Assert(this.IsCacheable);
 
             int code = (int)(this.flags) ^ (int)this.Kind;
             int cnt = this.SlotCount;
-            for (int i = 0; i < cnt; i++) {
-                var child = GetSlot (i);
-                if (child != null) {
-                    code = Hash.Combine (RuntimeHelpers.GetHashCode (child), code);
+            for (int i = 0; i < cnt; i++)
+            {
+                var child = GetSlot(i);
+                if (child != null)
+                {
+                    code = Hash.Combine(RuntimeHelpers.GetHashCode(child), code);
                 }
             }
 
             return code & Int32.MaxValue;
         }
 
-        internal bool IsCacheEquivalent (SyntaxKind kind, NodeFlags flags, GreenNode child1)
+        internal bool IsCacheEquivalent(SyntaxKind kind, NodeFlags flags, GreenNode child1)
         {
-            Debug.Assert (this.IsCacheable);
+            Debug.Assert(this.IsCacheable);
 
             return this.Kind == kind &&
                 this.flags == flags &&
-                this.GetSlot (0) == child1;
+                this.GetSlot(0) == child1;
         }
 
-        internal bool IsCacheEquivalent (SyntaxKind kind, NodeFlags flags, GreenNode child1, GreenNode child2)
+        internal bool IsCacheEquivalent(SyntaxKind kind, NodeFlags flags, GreenNode child1, GreenNode child2)
         {
-            Debug.Assert (this.IsCacheable);
+            Debug.Assert(this.IsCacheable);
 
             return this.Kind == kind &&
                 this.flags == flags &&
-                this.GetSlot (0) == child1 &&
-                this.GetSlot (1) == child2;
+                this.GetSlot(0) == child1 &&
+                this.GetSlot(1) == child2;
         }
 
-        internal bool IsCacheEquivalent (SyntaxKind kind, NodeFlags flags, GreenNode child1, GreenNode child2, GreenNode child3)
+        internal bool IsCacheEquivalent(SyntaxKind kind, NodeFlags flags, GreenNode child1, GreenNode child2, GreenNode child3)
         {
-            Debug.Assert (this.IsCacheable);
+            Debug.Assert(this.IsCacheable);
 
             return this.Kind == kind &&
                 this.flags == flags &&
-                this.GetSlot (0) == child1 &&
-                this.GetSlot (1) == child2 &&
-                this.GetSlot (2) == child3;
+                this.GetSlot(0) == child1 &&
+                this.GetSlot(1) == child2 &&
+                this.GetSlot(2) == child3;
         }
         #endregion //Caching
     }

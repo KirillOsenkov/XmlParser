@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace Microsoft.Language.Xml
@@ -303,9 +304,9 @@ namespace Microsoft.Language.Xml
         /// <summary>
         /// Creates a new node from this node with the leading trivia removed.
         /// </summary>
-        public static TSyntax WithoutLeadingTrivia<TSyntax> (this TSyntax node) where TSyntax : SyntaxNode
+        public static TSyntax WithoutLeadingTrivia<TSyntax>(this TSyntax node) where TSyntax : SyntaxNode
         {
-            return node.WithLeadingTrivia ((IEnumerable<SyntaxTrivia>)null);
+            return node.WithLeadingTrivia((IEnumerable<SyntaxTrivia>)null);
         }
 
         /// <summary>
@@ -345,9 +346,9 @@ namespace Microsoft.Language.Xml
         /// <summary>
         /// Creates a new node from this node with the leading trivia removed.
         /// </summary>
-        public static TSyntax WithoutTrailingTrivia<TSyntax> (this TSyntax node) where TSyntax : SyntaxNode
+        public static TSyntax WithoutTrailingTrivia<TSyntax>(this TSyntax node) where TSyntax : SyntaxNode
         {
-            return node.WithTrailingTrivia ((IEnumerable<SyntaxTrivia>)null);
+            return node.WithTrailingTrivia((IEnumerable<SyntaxTrivia>)null);
         }
 
         /// <summary>
@@ -394,7 +395,96 @@ namespace Microsoft.Language.Xml
             return (TNode)node.GreenNode.SetAnnotations(annotations).CreateRed();
         }
 
-        public static IEnumerable<IXmlElementSyntax> AncestorsAndSelf(this SyntaxNode node)
+        /// <summary>
+        /// Creates a new node identical to this node with the specified annotations attached.
+        /// </summary>
+        /// <param name="node">Original node.</param>
+        /// <param name="annotations">Annotations to be added to the new node.</param>
+        public static TNode WithAdditionalAnnotations<TNode>(this TNode node, params SyntaxAnnotation[] annotations)
+            where TNode : SyntaxNode
+        {
+            return (TNode)node.WithAdditionalAnnotationsInternal(annotations);
+        }
+
+        /// <summary>
+        /// Creates a new node identical to this node with the specified annotations attached.
+        /// </summary>
+        /// <param name="node">Original node.</param>
+        /// <param name="annotations">Annotations to be added to the new node.</param>
+        public static TNode WithAdditionalAnnotations<TNode>(this TNode node, IEnumerable<SyntaxAnnotation> annotations)
+            where TNode : SyntaxNode
+        {
+            return (TNode)node.WithAdditionalAnnotationsInternal(annotations);
+        }
+
+        /// <summary>
+        /// Creates a new node identical to this node with the specified annotations removed.
+        /// </summary>
+        /// <param name="node">Original node.</param>
+        /// <param name="annotations">Annotations to be removed from the new node.</param>
+        public static TNode WithoutAnnotations<TNode>(this TNode node, params SyntaxAnnotation[] annotations)
+            where TNode : SyntaxNode
+        {
+            return (TNode)node.GetNodeWithoutAnnotations(annotations);
+        }
+
+        /// <summary>
+        /// Creates a new node identical to this node with the specified annotations removed.
+        /// </summary>
+        /// <param name="node">Original node.</param>
+        /// <param name="annotations">Annotations to be removed from the new node.</param>
+        public static TNode WithoutAnnotations<TNode>(this TNode node, IEnumerable<SyntaxAnnotation> annotations)
+            where TNode : SyntaxNode
+        {
+            return (TNode)node.GetNodeWithoutAnnotations(annotations);
+        }
+
+        /// <summary>
+        /// Creates a new node identical to this node with the annotations of the specified kind removed.
+        /// </summary>
+        /// <param name="node">Original node.</param>
+        /// <param name="annotationKind">The kind of annotation to remove.</param>
+        public static TNode WithoutAnnotations<TNode>(this TNode node, string annotationKind)
+            where TNode : SyntaxNode
+        {
+            if (node.HasAnnotations(annotationKind))
+            {
+                return node.WithoutAnnotations<TNode>(node.GetAnnotations(annotationKind).ToArray());
+            }
+            else
+            {
+                return node;
+            }
+        }
+
+        /// <summary>
+        /// create a new root node from the given root after adding annotations to the tokens
+        /// 
+        /// tokens should belong to the given root
+        /// </summary>
+        public static SyntaxNode AddAnnotations(this SyntaxNode root, IEnumerable<Tuple<SyntaxToken, SyntaxAnnotation>> pairs)
+        {
+            var tokenMap = pairs.GroupBy(p => p.Item1, p => p.Item2).ToDictionary(g => g.Key, g => g.ToArray());
+            return root.ReplaceTokens(tokenMap.Keys, (o, n) => o.WithAdditionalAnnotations(tokenMap[o]));
+        }
+
+        /// <summary>
+        /// create a new root node from the given root after adding annotations to the nodes
+        /// 
+        /// nodes should belong to the given root
+        /// </summary>
+        public static SyntaxNode AddAnnotations(this SyntaxNode root, IEnumerable<Tuple<SyntaxNode, SyntaxAnnotation>> pairs)
+        {
+            var tokenMap = pairs.GroupBy(p => p.Item1, p => p.Item2).ToDictionary(g => g.Key, g => g.ToArray());
+            return root.ReplaceNodes(tokenMap.Keys, (o, n) => o.WithAdditionalAnnotations(tokenMap[o]));
+        }
+
+        public static IEnumerable<T> GetAnnotatedNodes<T>(this SyntaxNode node, SyntaxAnnotation syntaxAnnotation) where T : SyntaxNode
+        {
+            return node.GetAnnotatedNodesAndTokens(syntaxAnnotation).OfType<T>();
+        }
+
+        /*public static IEnumerable<IXmlElementSyntax> AncestorsAndSelf(this SyntaxNode node)
         {
             return GetAncestorsInternal(node, includeSelf: true);
         }
@@ -475,7 +565,7 @@ namespace Microsoft.Language.Xml
                         yield return (IXmlElementSyntax)stackTop;
                 }
             }
-        }
+        }*/
 
         public static int GetLeadingTriviaWidth(this SyntaxNode node) => node.GetLeadingTriviaSpan().Length;
         public static int GetTrailingTriviaWidth(this SyntaxNode node) => node.GetTrailingTriviaSpan().Length;

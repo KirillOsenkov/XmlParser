@@ -28,6 +28,18 @@ namespace Microsoft.Language.Xml
                 AdjustWidth(valueNode);
             }
 
+            internal Green(XmlNameSyntax.Green nameNode, SyntaxToken.Green equalsSyntax, XmlNodeSyntax.Green valueNode, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
+                : base(SyntaxKind.XmlAttribute, diagnostics, annotations)
+            {
+                this.SlotCount = 3;
+                this.nameNode = nameNode;
+                AdjustWidth(nameNode);
+                this.equalsSyntax = equalsSyntax;
+                AdjustWidth(equalsSyntax);
+                this.valueNode = valueNode;
+                AdjustWidth(valueNode);
+            }
+
             internal override SyntaxNode CreateRed(SyntaxNode parent, int position) => new XmlAttributeSyntax(this, parent, position);
 
             internal override GreenNode GetSlot(int index)
@@ -44,6 +56,16 @@ namespace Microsoft.Language.Xml
             internal override GreenNode Accept(InternalSyntax.SyntaxVisitor visitor)
             {
                 return visitor.VisitXmlAttribute(this);
+            }
+
+            internal override GreenNode SetDiagnostics(DiagnosticInfo[] diagnostics)
+            {
+                return new Green(nameNode, equalsSyntax, valueNode, diagnostics, GetAnnotations());
+            }
+
+            internal override GreenNode SetAnnotations(SyntaxAnnotation[] annotations)
+            {
+                return new Green(nameNode, equalsSyntax, valueNode, GetDiagnostics(), annotations);
             }
         }
 

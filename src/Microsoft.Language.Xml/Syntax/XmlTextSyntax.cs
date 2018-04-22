@@ -20,6 +20,14 @@ namespace Microsoft.Language.Xml
                 AdjustWidth(value);
             }
 
+            internal Green(GreenNode value, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
+                : base(SyntaxKind.XmlText, diagnostics, annotations)
+            {
+                this.SlotCount = 1;
+                this.value = value;
+                AdjustWidth(value);
+            }
+
             internal override SyntaxNode CreateRed(SyntaxNode parent, int position) => new XmlTextSyntax(this, parent, position);
 
             internal override GreenNode GetSlot(int index)
@@ -34,6 +42,16 @@ namespace Microsoft.Language.Xml
             internal override GreenNode Accept(InternalSyntax.SyntaxVisitor visitor)
             {
                 return visitor.VisitXmlText(this);
+            }
+
+            internal override GreenNode SetDiagnostics(DiagnosticInfo[] diagnostics)
+            {
+                return new Green(value, diagnostics, GetAnnotations());
+            }
+
+            internal override GreenNode SetAnnotations(SyntaxAnnotation[] annotations)
+            {
+                return new Green(value, GetDiagnostics(), annotations);
             }
         }
 

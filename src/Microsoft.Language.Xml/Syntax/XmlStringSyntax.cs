@@ -30,6 +30,18 @@ namespace Microsoft.Language.Xml
                 AdjustWidth(endQuoteToken);
             }
 
+            internal Green(PunctuationSyntax.Green startQuoteToken, GreenNode value, PunctuationSyntax.Green endQuoteToken, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
+                : base(SyntaxKind.XmlString, diagnostics, annotations)
+            {
+                this.SlotCount = 3;
+                this.startQuoteToken = startQuoteToken;
+                AdjustWidth(startQuoteToken);
+                this.value = value;
+                AdjustWidth(value);
+                this.endQuoteToken = endQuoteToken;
+                AdjustWidth(endQuoteToken);
+            }
+
             internal override SyntaxNode CreateRed(SyntaxNode parent, int position) => new XmlStringSyntax(this, parent, position);
 
             internal override GreenNode GetSlot(int index)
@@ -46,6 +58,16 @@ namespace Microsoft.Language.Xml
             internal override GreenNode Accept(InternalSyntax.SyntaxVisitor visitor)
             {
                 return visitor.VisitXmlString(this);
+            }
+
+            internal override GreenNode SetDiagnostics(DiagnosticInfo[] diagnostics)
+            {
+                return new Green(startQuoteToken, value, endQuoteToken, diagnostics, GetAnnotations());
+            }
+
+            internal override GreenNode SetAnnotations(SyntaxAnnotation[] annotations)
+            {
+                return new Green(startQuoteToken, value, endQuoteToken, GetDiagnostics(), annotations);
             }
         }
 

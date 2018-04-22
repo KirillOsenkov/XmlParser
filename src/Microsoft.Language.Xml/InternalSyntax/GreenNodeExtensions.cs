@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace Microsoft.Language.Xml.InternalSyntax
@@ -349,16 +350,89 @@ namespace Microsoft.Language.Xml.InternalSyntax
 
         internal static TNode WithAdditionalDiagnostics<TNode>(this TNode node, params DiagnosticInfo[] diagnostics) where TNode : GreenNode
         {
-            return node;
-            ////DiagnosticInfo[] current = node.GetDiagnostics();
-            ////if (current != null)
-            ////{
-            ////    return ((TNode)node.SetDiagnostics(current.Concat(diagnostics).ToArray()));
-            ////}
-            ////else
-            ////{
-            ////    return node.WithDiagnostics(diagnostics);
-            ////}
+            DiagnosticInfo[] current = node.GetDiagnostics();
+            if (current != null)
+            {
+                return ((TNode)node.SetDiagnostics(current.Concat(diagnostics).ToArray()));
+            }
+            else
+            {
+                return node.WithDiagnostics(diagnostics);
+            }
+        }
+
+        public static TNode WithAdditionalAnnotationsGreen<TNode>(this TNode node, IEnumerable<SyntaxAnnotation> annotations) where TNode : GreenNode
+        {
+            var existingAnnotations = node.GetAnnotations();
+
+            if (annotations == null)
+            {
+                return node;
+            }
+
+            var newAnnotations = new List<SyntaxAnnotation>();
+            newAnnotations.AddRange(existingAnnotations);
+
+            foreach (var candidate in annotations)
+            {
+                if (!newAnnotations.Contains(candidate))
+                {
+                    newAnnotations.Add(candidate);
+                }
+            }
+
+            if (newAnnotations.Count == existingAnnotations.Length)
+            {
+                return node;
+            }
+            else
+            {
+                return (TNode)node.SetAnnotations(newAnnotations.ToArray());
+            }
+        }
+
+        public static TNode WithoutAnnotationsGreen<TNode>(this TNode node, IEnumerable<SyntaxAnnotation> annotations) where TNode : GreenNode
+        {
+            var existingAnnotations = node.GetAnnotations();
+
+            if (annotations == null || existingAnnotations.Length == 0)
+            {
+                return node;
+            }
+
+            var removalAnnotations = new List<SyntaxAnnotation>();
+            removalAnnotations.AddRange(annotations);
+            if (removalAnnotations.Count == 0)
+            {
+                return node;
+            }
+
+            var newAnnotations = new List<SyntaxAnnotation>();
+            foreach (var candidate in existingAnnotations)
+            {
+                if (!removalAnnotations.Contains(candidate))
+                {
+                    newAnnotations.Add(candidate);
+                }
+            }
+
+            return (TNode)node.SetAnnotations(newAnnotations.ToArray());
+        }
+
+        public static TNode WithDiagnostics<TNode>(this TNode node, DiagnosticInfo[] diagnostics) where TNode : GreenNode
+        {
+            return (TNode)node.SetDiagnostics(diagnostics);
+        }
+
+        public static TNode WithoutDiagnostics<TNode>(this TNode node) where TNode : GreenNode
+        {
+            var current = node.GetDiagnostics();
+            if (current == null || current.Length == 0)
+            {
+                return node;
+            }
+
+            return (TNode)node.SetDiagnostics(null);
         }
     }
 }

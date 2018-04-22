@@ -14,6 +14,12 @@
                 Value = value;
             }
 
+            internal Green(string text, string value, GreenNode leadingTrivia, GreenNode trailingTrivia, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
+                : base(SyntaxKind.XmlEntityLiteralToken, text, leadingTrivia, trailingTrivia, diagnostics, annotations)
+            {
+                Value = value;
+            }
+
             internal override SyntaxNode CreateRed(SyntaxNode parent, int position) => new XmlEntityTokenSyntax(this, parent, position);
         }
 

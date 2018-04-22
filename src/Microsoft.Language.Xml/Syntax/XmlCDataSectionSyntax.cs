@@ -28,6 +28,18 @@ namespace Microsoft.Language.Xml
                 AdjustWidth(endCData);
             }
 
+            internal Green(PunctuationSyntax.Green beginCData, GreenNode value, PunctuationSyntax.Green endCData, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
+                : base(SyntaxKind.XmlCDataSection, diagnostics, annotations)
+            {
+                this.SlotCount = 3;
+                this.beginCData = beginCData;
+                AdjustWidth(beginCData);
+                this.value = value;
+                AdjustWidth(value);
+                this.endCData = endCData;
+                AdjustWidth(endCData);
+            }
+
             internal override SyntaxNode CreateRed(SyntaxNode parent, int position) => new XmlCDataSectionSyntax(this, parent, position);
 
             internal override GreenNode GetSlot(int index)
@@ -44,6 +56,16 @@ namespace Microsoft.Language.Xml
             internal override GreenNode Accept(InternalSyntax.SyntaxVisitor visitor)
             {
                 return visitor.VisitXmlCDataSection(this);
+            }
+
+            internal override GreenNode SetDiagnostics(DiagnosticInfo[] diagnostics)
+            {
+                return new Green(beginCData, value, endCData, diagnostics, GetAnnotations());
+            }
+
+            internal override GreenNode SetAnnotations(SyntaxAnnotation[] annotations)
+            {
+                return new Green(beginCData, value, endCData, GetDiagnostics(), annotations);
             }
         }
 

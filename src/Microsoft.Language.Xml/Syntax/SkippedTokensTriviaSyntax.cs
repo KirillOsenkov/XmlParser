@@ -18,6 +18,14 @@ namespace Microsoft.Language.Xml
                 AdjustWidth(tokens);
             }
 
+            internal Green(GreenNode tokens, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
+                : base(SyntaxKind.SkippedTokensTrivia, diagnostics, annotations)
+            {
+                this.SlotCount = 1;
+                this.tokens = tokens;
+                AdjustWidth(tokens);
+            }
+
             internal override SyntaxNode CreateRed(SyntaxNode parent, int position) => new SkippedTokensTriviaSyntax(this, parent, position);
 
             internal override GreenNode GetSlot(int index)
@@ -32,6 +40,16 @@ namespace Microsoft.Language.Xml
             internal override GreenNode Accept(InternalSyntax.SyntaxVisitor visitor)
             {
                 return visitor.VisitSkippedTokensTrivia(this);
+            }
+
+            internal override GreenNode SetDiagnostics(DiagnosticInfo[] diagnostics)
+            {
+                return new Green(tokens, diagnostics, GetAnnotations());
+            }
+
+            internal override GreenNode SetAnnotations(SyntaxAnnotation[] annotations)
+            {
+                return new Green(tokens, GetDiagnostics(), annotations);
             }
         }
 

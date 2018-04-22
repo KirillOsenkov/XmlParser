@@ -17,6 +17,11 @@ namespace Microsoft.Language.Xml
             {
             }
 
+            protected Green(SyntaxKind kind, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
+                : base(kind, diagnostics, annotations)
+            {
+            }
+
             internal override InternalSyntax.GreenNode Accept(InternalSyntax.SyntaxVisitor visitor)
             {
                 return visitor.VisitXmlNode(this);

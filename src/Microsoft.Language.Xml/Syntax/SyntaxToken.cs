@@ -26,6 +26,16 @@ namespace Microsoft.Language.Xml
                 AdjustWidth(trailingTrivia);
             }
 
+            internal Green(SyntaxKind tokenKind, string text, GreenNode leadingTrivia, GreenNode trailingTrivia, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
+                : base(tokenKind, text.Length, diagnostics, annotations)
+            {
+                Text = text;
+                LeadingTrivia = leadingTrivia;
+                AdjustWidth(leadingTrivia);
+                TrailingTrivia = trailingTrivia;
+                AdjustWidth(trailingTrivia);
+            }
+
             internal override bool IsToken => true;
 
             public override int Width => Text.Length;

@@ -23,6 +23,16 @@ namespace Microsoft.Language.Xml
                 AdjustWidth(colonToken);
             }
 
+            internal Green(XmlNameTokenSyntax.Green name, PunctuationSyntax.Green colonToken, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
+                : base(SyntaxKind.XmlPrefix, diagnostics, annotations)
+            {
+                this.SlotCount = 2;
+                this.name = name;
+                AdjustWidth(name);
+                this.colonToken = colonToken;
+                AdjustWidth(colonToken);
+            }
+
             internal override SyntaxNode CreateRed(SyntaxNode parent, int position) => new XmlPrefixSyntax(this, parent, position);
 
             internal override GreenNode GetSlot(int index)
@@ -39,6 +49,16 @@ namespace Microsoft.Language.Xml
             internal override GreenNode Accept(InternalSyntax.SyntaxVisitor visitor)
             {
                 return visitor.VisitXmlPrefix(this);
+            }
+
+            internal override GreenNode SetDiagnostics(DiagnosticInfo[] diagnostics)
+            {
+                return new Green(name, colonToken, diagnostics, GetAnnotations());
+            }
+
+            internal override GreenNode SetAnnotations(SyntaxAnnotation[] annotations)
+            {
+                return new Green(name, colonToken, GetDiagnostics(), annotations);
             }
         }
 

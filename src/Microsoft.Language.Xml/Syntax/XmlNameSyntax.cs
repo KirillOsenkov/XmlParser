@@ -24,6 +24,16 @@ namespace Microsoft.Language.Xml
                 AdjustWidth(localName);
             }
 
+            internal Green(XmlPrefixSyntax.Green xmlPrefix, XmlNameTokenSyntax.Green localName, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
+                : base(SyntaxKind.XmlName, diagnostics, annotations)
+            {
+                this.SlotCount = 2;
+                this.xmlPrefix = xmlPrefix;
+                AdjustWidth(xmlPrefix);
+                this.localName = localName;
+                AdjustWidth(localName);
+            }
+
             internal override SyntaxNode CreateRed(SyntaxNode parent, int position) => new XmlNameSyntax(this, parent, position);
 
             internal override GreenNode GetSlot(int index)
@@ -40,6 +50,16 @@ namespace Microsoft.Language.Xml
             internal override GreenNode Accept(InternalSyntax.SyntaxVisitor visitor)
             {
                 return visitor.VisitXmlName(this);
+            }
+
+            internal override GreenNode SetDiagnostics(DiagnosticInfo[] diagnostics)
+            {
+                return new Green(xmlPrefix, localName, diagnostics, GetAnnotations());
+            }
+
+            internal override GreenNode SetAnnotations(SyntaxAnnotation[] annotations)
+            {
+                return new Green(xmlPrefix, localName, GetDiagnostics(), annotations);
             }
         }
 

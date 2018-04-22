@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -9,7 +10,7 @@ namespace Microsoft.Language.Xml
 {
     using InternalSyntax;
 
-    public abstract class SyntaxNode
+    public abstract partial class SyntaxNode
     {
         public SyntaxNode Parent { get; }
         public int Start { get; }
@@ -213,6 +214,22 @@ namespace Microsoft.Language.Xml
             return lastToken == null ? default(SyntaxTriviaList) : lastToken.GetTrailingTrivia();
         }
 
+        /// <summary>
+        /// Get a list of all the trivia associated with the descendant nodes and tokens.
+        /// </summary>
+        public IEnumerable<SyntaxTrivia> DescendantTrivia(Func<SyntaxNode, bool> descendIntoChildren = null, bool descendIntoTrivia = false)
+        {
+            return DescendantTriviaImpl(this.FullSpan, descendIntoChildren, descendIntoTrivia);
+        }
+
+        /// <summary>
+        /// Get a list of all the trivia associated with the descendant nodes and tokens.
+        /// </summary>
+        public IEnumerable<SyntaxTrivia> DescendantTrivia(TextSpan span, Func<SyntaxNode, bool> descendIntoChildren = null, bool descendIntoTrivia = false)
+        {
+            return DescendantTriviaImpl(span, descendIntoChildren, descendIntoTrivia);
+        }
+
         public virtual void GetIndexAndOffset(int targetOffset, out int index, out int offset)
         {
             index = 0;
@@ -296,6 +313,131 @@ namespace Microsoft.Language.Xml
                 yield return parentElement;
                 parentElement = (XmlNodeSyntax)parentElement.ParentElement;
             }
+        }
+
+        /// <summary>
+        /// Gets a list of ancestor nodes
+        /// </summary>
+        public IEnumerable<SyntaxNode> Ancestors(bool ascendOutOfTrivia = true)
+        {
+            return this.Parent?
+                .AncestorsAndSelf(ascendOutOfTrivia) ??
+                SpecializedCollections.EmptyEnumerable<SyntaxNode>();
+        }
+
+        /// <summary>
+        /// Gets a list of ancestor nodes (including this node) 
+        /// </summary>
+        public IEnumerable<SyntaxNode> AncestorsAndSelf(bool ascendOutOfTrivia = true)
+        {
+            for (var node = this; node != null; node = GetParent(node, ascendOutOfTrivia))
+            {
+                yield return node;
+            }
+        }
+
+        private static SyntaxNode GetParent(SyntaxNode node, bool ascendOutOfTrivia) => node.Parent;
+
+        /// <summary>
+        /// Gets the first node of type TNode that matches the predicate.
+        /// </summary>
+        public TNode FirstAncestorOrSelf<TNode>(Func<TNode, bool> predicate = null, bool ascendOutOfTrivia = true)
+            where TNode : SyntaxNode
+        {
+            for (var node = this; node != null; node = GetParent(node, ascendOutOfTrivia))
+            {
+                var tnode = node as TNode;
+                if (tnode != null && (predicate == null || predicate(tnode)))
+                {
+                    return tnode;
+                }
+            }
+
+            return default(TNode);
+        }
+
+        /// <summary>
+        /// Gets a list of descendant nodes in prefix document order.
+        /// </summary>
+        /// <param name="descendIntoChildren">An optional function that determines if the search descends into the argument node's children.</param>
+        /// <param name="descendIntoTrivia">Determines if nodes that are part of structured trivia are included in the list.</param>
+        public IEnumerable<SyntaxNode> DescendantNodes(Func<SyntaxNode, bool> descendIntoChildren = null, bool descendIntoTrivia = false)
+        {
+            return DescendantNodesImpl(this.FullSpan, descendIntoChildren, descendIntoTrivia, includeSelf: false);
+        }
+
+        /// <summary>
+        /// Gets a list of descendant nodes in prefix document order.
+        /// </summary>
+        /// <param name="span">The span the node's full span must intersect.</param>
+        /// <param name="descendIntoChildren">An optional function that determines if the search descends into the argument node's children.</param>
+        /// <param name="descendIntoTrivia">Determines if nodes that are part of structured trivia are included in the list.</param>
+        public IEnumerable<SyntaxNode> DescendantNodes(TextSpan span, Func<SyntaxNode, bool> descendIntoChildren = null, bool descendIntoTrivia = false)
+        {
+            return DescendantNodesImpl(span, descendIntoChildren, descendIntoTrivia, includeSelf: false);
+        }
+
+        /// <summary>
+        /// Gets a list of descendant nodes (including this node) in prefix document order.
+        /// </summary>
+        /// <param name="descendIntoChildren">An optional function that determines if the search descends into the argument node's children.</param>
+        /// <param name="descendIntoTrivia">Determines if nodes that are part of structured trivia are included in the list.</param>
+        public IEnumerable<SyntaxNode> DescendantNodesAndSelf(Func<SyntaxNode, bool> descendIntoChildren = null, bool descendIntoTrivia = false)
+        {
+            return DescendantNodesImpl(this.FullSpan, descendIntoChildren, descendIntoTrivia, includeSelf: true);
+        }
+
+        /// <summary>
+        /// Gets a list of descendant nodes (including this node) in prefix document order.
+        /// </summary>
+        /// <param name="span">The span the node's full span must intersect.</param>
+        /// <param name="descendIntoChildren">An optional function that determines if the search descends into the argument node's children.</param>
+        /// <param name="descendIntoTrivia">Determines if nodes that are part of structured trivia are included in the list.</param>
+        public IEnumerable<SyntaxNode> DescendantNodesAndSelf(TextSpan span, Func<SyntaxNode, bool> descendIntoChildren = null, bool descendIntoTrivia = false)
+        {
+            return DescendantNodesImpl(span, descendIntoChildren, descendIntoTrivia, includeSelf: true);
+        }
+
+        /// <summary>
+        /// Gets a list of descendant nodes and tokens in prefix document order.
+        /// </summary>
+        /// <param name="descendIntoChildren">An optional function that determines if the search descends into the argument node's children.</param>
+        /// <param name="descendIntoTrivia">Determines if nodes that are part of structured trivia are included in the list.</param>
+        public IEnumerable<SyntaxNode> DescendantNodesAndTokens(Func<SyntaxNode, bool> descendIntoChildren = null, bool descendIntoTrivia = false)
+        {
+            return DescendantNodesAndTokensImpl(this.FullSpan, descendIntoChildren, descendIntoTrivia, includeSelf: false);
+        }
+
+        /// <summary>
+        /// Gets a list of the descendant nodes and tokens in prefix document order.
+        /// </summary>
+        /// <param name="span">The span the node's full span must intersect.</param>
+        /// <param name="descendIntoChildren">An optional function that determines if the search descends into the argument node's children.</param>
+        /// <param name="descendIntoTrivia">Determines if nodes that are part of structured trivia are included in the list.</param>
+        public IEnumerable<SyntaxNode> DescendantNodesAndTokens(TextSpan span, Func<SyntaxNode, bool> descendIntoChildren = null, bool descendIntoTrivia = false)
+        {
+            return DescendantNodesAndTokensImpl(span, descendIntoChildren, descendIntoTrivia, includeSelf: false);
+        }
+
+        /// <summary>
+        /// Gets a list of descendant nodes and tokens (including this node) in prefix document order.
+        /// </summary>
+        /// <param name="descendIntoChildren">An optional function that determines if the search descends into the argument node's children.</param>
+        /// <param name="descendIntoTrivia">Determines if nodes that are part of structured trivia are included in the list.</param>
+        public IEnumerable<SyntaxNode> DescendantNodesAndTokensAndSelf(Func<SyntaxNode, bool> descendIntoChildren = null, bool descendIntoTrivia = false)
+        {
+            return DescendantNodesAndTokensImpl(this.FullSpan, descendIntoChildren, descendIntoTrivia, includeSelf: true);
+        }
+
+        /// <summary>
+        /// Gets a list of the descendant nodes and tokens (including this node) in prefix document order.
+        /// </summary>
+        /// <param name="span">The span the node's full span must intersect.</param>
+        /// <param name="descendIntoChildren">An optional function that determines if the search descends into the argument node's children.</param>
+        /// <param name="descendIntoTrivia">Determines if nodes that are part of structured trivia are included in the list.</param>
+        public IEnumerable<SyntaxNode> DescendantNodesAndTokensAndSelf(TextSpan span, Func<SyntaxNode, bool> descendIntoChildren = null, bool descendIntoTrivia = false)
+        {
+            return DescendantNodesAndTokensImpl(span, descendIntoChildren, descendIntoTrivia, includeSelf: true);
         }
 
         public virtual string ToFullString()
@@ -407,26 +549,198 @@ namespace Microsoft.Language.Xml
             }
         }*/
 
-        private static readonly DiagnosticInfo[] NoDiagnostics = new DiagnosticInfo[0];
+        internal DiagnosticInfo[] GetDiagnostics() => GreenNode.GetDiagnostics();
 
-        internal DiagnosticInfo[] GetDiagnostics()
+        public bool ContainsDiagnostics => GreenNode.ContainsDiagnostics;
+
+        #region Annotations
+
+        /// <summary>
+        /// Determines whether this node or any sub node, token or trivia has annotations.
+        /// </summary>
+        public bool ContainsAnnotations
         {
-            ////if (this.ContainsDiagnostics)
-            ////{
-            ////    DiagnosticInfo[] diags;
-            ////    if (diagnosticsTable.TryGetValue(this, out diags))
-            ////    {
-            ////        return diags;
-            ////    }
-            ////}
-
-            return NoDiagnostics;
+            get { return this.GreenNode.ContainsAnnotations; }
         }
+
+        /// <summary>
+        /// Determines whether this node has any annotations with the specific annotation kind.
+        /// </summary>
+        public bool HasAnnotations(string annotationKind)
+        {
+            return this.GreenNode.HasAnnotations(annotationKind);
+        }
+
+        /// <summary>
+        /// Determines whether this node has any annotations with any of the specific annotation kinds.
+        /// </summary>
+        public bool HasAnnotations(IEnumerable<string> annotationKinds)
+        {
+            return this.GreenNode.HasAnnotations(annotationKinds);
+        }
+
+        /// <summary>
+        /// Determines whether this node has the specific annotation.
+        /// </summary>
+        public bool HasAnnotation(SyntaxAnnotation annotation)
+        {
+            return this.GreenNode.HasAnnotation(annotation);
+        }
+
+        /// <summary>
+        /// Gets all the annotations with the specified annotation kind. 
+        /// </summary>
+        public IEnumerable<SyntaxAnnotation> GetAnnotations(string annotationKind)
+        {
+            return this.GreenNode.GetAnnotations(annotationKind);
+        }
+
+        /// <summary>
+        /// Gets all the annotations with the specified annotation kinds. 
+        /// </summary>
+        public IEnumerable<SyntaxAnnotation> GetAnnotations(IEnumerable<string> annotationKinds)
+        {
+            return this.GreenNode.GetAnnotations(annotationKinds);
+        }
+
+        internal SyntaxAnnotation[] GetAnnotations()
+        {
+            return this.GreenNode.GetAnnotations();
+        }
+
+        /// <summary>
+        /// Gets all nodes and tokens with an annotation of the specified annotation kind.
+        /// </summary>
+        public IEnumerable<SyntaxNode> GetAnnotatedNodesAndTokens(string annotationKind)
+        {
+            return this.DescendantNodesAndTokensAndSelf(n => n.ContainsAnnotations, descendIntoTrivia: true)
+                .Where(t => t.HasAnnotations(annotationKind));
+        }
+
+        /// <summary>
+        /// Gets all nodes and tokens with an annotation of the specified annotation kinds.
+        /// </summary>
+        public IEnumerable<SyntaxNode> GetAnnotatedNodesAndTokens(params string[] annotationKinds)
+        {
+            return this.DescendantNodesAndTokensAndSelf(n => n.ContainsAnnotations, descendIntoTrivia: true)
+                .Where(t => t.HasAnnotations(annotationKinds));
+        }
+
+        /// <summary>
+        /// Gets all nodes and tokens with the specified annotation.
+        /// </summary>
+        public IEnumerable<SyntaxNode> GetAnnotatedNodesAndTokens(SyntaxAnnotation annotation)
+        {
+            return this.DescendantNodesAndTokensAndSelf(n => n.ContainsAnnotations, descendIntoTrivia: true)
+                .Where(t => t.HasAnnotation(annotation));
+        }
+
+        /// <summary>
+        /// Gets all nodes with the specified annotation.
+        /// </summary>
+        public IEnumerable<SyntaxNode> GetAnnotatedNodes(SyntaxAnnotation syntaxAnnotation)
+        {
+            return this.GetAnnotatedNodesAndTokens(syntaxAnnotation).Where(n => n.IsNode);
+        }
+
+        /// <summary>
+        /// Gets all nodes with the specified annotation kind.
+        /// </summary>
+        /// <param name="annotationKind"></param>
+        /// <returns></returns>
+        public IEnumerable<SyntaxNode> GetAnnotatedNodes(string annotationKind)
+        {
+            return this.GetAnnotatedNodesAndTokens(annotationKind).Where(n => !n.IsToken);
+        }
+
+        /// <summary>
+        /// Gets all tokens with the specified annotation.
+        /// </summary>
+        public IEnumerable<SyntaxToken> GetAnnotatedTokens(SyntaxAnnotation syntaxAnnotation)
+        {
+            return this.GetAnnotatedNodesAndTokens(syntaxAnnotation).Where(n => n.IsToken).Cast<SyntaxToken>();
+        }
+
+        /// <summary>
+        /// Gets all tokens with the specified annotation kind.
+        /// </summary>
+        public IEnumerable<SyntaxToken> GetAnnotatedTokens(string annotationKind)
+        {
+            return this.GetAnnotatedNodesAndTokens(annotationKind).Where(n => n.IsToken).Cast<SyntaxToken>();
+        }
+
+        /// <summary>
+        /// Gets all trivia with an annotation of the specified annotation kind.
+        /// </summary>
+        public IEnumerable<SyntaxTrivia> GetAnnotatedTrivia(string annotationKind)
+        {
+            return this.DescendantTrivia(n => n.ContainsAnnotations, descendIntoTrivia: true)
+                       .Where(tr => tr.HasAnnotations(annotationKind));
+        }
+
+        /// <summary>
+        /// Gets all trivia with an annotation of the specified annotation kinds.
+        /// </summary>
+        public IEnumerable<SyntaxTrivia> GetAnnotatedTrivia(params string[] annotationKinds)
+        {
+            return this.DescendantTrivia(n => n.ContainsAnnotations, descendIntoTrivia: true)
+                       .Where(tr => tr.HasAnnotations(annotationKinds));
+        }
+
+        /// <summary>
+        /// Gets all trivia with the specified annotation.
+        /// </summary>
+        public IEnumerable<SyntaxTrivia> GetAnnotatedTrivia(SyntaxAnnotation annotation)
+        {
+            return this.DescendantTrivia(n => n.ContainsAnnotations, descendIntoTrivia: true)
+                       .Where(tr => tr.HasAnnotation(annotation));
+        }
+
+        internal SyntaxNode WithAdditionalAnnotationsInternal(IEnumerable<SyntaxAnnotation> annotations)
+        {
+            return this.GreenNode.WithAdditionalAnnotationsGreen(annotations).CreateRed();
+        }
+
+        internal SyntaxNode GetNodeWithoutAnnotations(IEnumerable<SyntaxAnnotation> annotations)
+        {
+            return this.GreenNode.WithoutAnnotationsGreen(annotations).CreateRed();
+        }
+
+        /// <summary>
+        /// Copies all SyntaxAnnotations, if any, from this SyntaxNode instance and attaches them to a new instance based on <paramref name="node" />.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// If no annotations are copied, just returns <paramref name="node" />.
+        /// </para>
+        /// <para>
+        /// It can also be used manually to preserve annotations in a more complex tree
+        /// modification, even if the type of a node changes.
+        /// </para>
+        /// </remarks>
+        public T CopyAnnotationsTo<T>(T node) where T : SyntaxNode
+        {
+            if (node == null)
+            {
+                return default(T);
+            }
+
+            var annotations = this.GreenNode.GetAnnotations();
+            if (annotations?.Length > 0)
+            {
+                return (T)(node.GreenNode.WithAdditionalAnnotationsGreen(annotations)).CreateRed();
+            }
+            return node;
+        }
+
+        #endregion
 
         public bool IsList => GreenNode.IsList;
 
         internal bool IsMissing => GreenNode.IsMissing;
 
         public virtual bool IsToken => GreenNode.IsToken;
+
+        public bool IsNode => !IsToken;
     }
 }

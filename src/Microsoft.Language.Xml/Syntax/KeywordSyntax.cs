@@ -11,6 +11,11 @@
             {
             }
 
+            internal Green(string name, GreenNode leadingTrivia, GreenNode trailingTrivia, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
+                : base(SyntaxKind.XmlKeyword, name, leadingTrivia, trailingTrivia, diagnostics, annotations)
+            {
+            }
+
             internal override SyntaxNode CreateRed(SyntaxNode parent, int position) => new KeywordSyntax(this, parent, position);
 
             public override SyntaxToken.Green WithLeadingTrivia(GreenNode trivia)
@@ -21,6 +26,16 @@
             public override SyntaxToken.Green WithTrailingTrivia(GreenNode trivia)
             {
                 return new Green(Text, LeadingTrivia, trivia);
+            }
+
+            internal override GreenNode SetDiagnostics(DiagnosticInfo[] diagnostics)
+            {
+                return new Green(Text, LeadingTrivia, TrailingTrivia, diagnostics, GetAnnotations());
+            }
+
+            internal override GreenNode SetAnnotations(SyntaxAnnotation[] annotations)
+            {
+                return new Green(Text, LeadingTrivia, TrailingTrivia, GetDiagnostics(), annotations);
             }
         }
 

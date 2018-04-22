@@ -12,6 +12,11 @@ namespace Microsoft.Language.Xml.InternalSyntax
         {
         }
 
+        internal SyntaxList(DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
+            : base(SyntaxKind.List, diagnostics, annotations)
+        {
+        }
+
         internal override bool IsList => true;
 
         internal static GreenNode List(GreenNode child)
@@ -129,6 +134,15 @@ namespace Microsoft.Language.Xml.InternalSyntax
                 _child1 = child1;
             }
 
+            internal WithTwoChildren(DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations, GreenNode child0, GreenNode child1)
+            {
+                this.SlotCount = 2;
+                this.AdjustWidth(child0);
+                _child0 = child0;
+                this.AdjustWidth(child1);
+                _child1 = child1;
+            }
+
             internal override GreenNode GetSlot(int index)
             {
                 switch (index)
@@ -152,6 +166,16 @@ namespace Microsoft.Language.Xml.InternalSyntax
             {
                 return new Xml.SyntaxList.WithTwoChildren(this, parent, position);
             }
+
+            internal override GreenNode SetDiagnostics(DiagnosticInfo[] errors)
+            {
+                return new WithTwoChildren(errors, this.GetAnnotations(), _child0, _child1);
+            }
+
+            internal override GreenNode SetAnnotations(SyntaxAnnotation[] annotations)
+            {
+                return new WithTwoChildren(GetDiagnostics(), annotations, _child0, _child1);
+            }
         }
 
         internal class WithThreeChildren : SyntaxList
@@ -161,6 +185,18 @@ namespace Microsoft.Language.Xml.InternalSyntax
             private readonly GreenNode _child2;
 
             internal WithThreeChildren(GreenNode child0, GreenNode child1, GreenNode child2)
+            {
+                this.SlotCount = 3;
+                this.AdjustWidth(child0);
+                _child0 = child0;
+                this.AdjustWidth(child1);
+                _child1 = child1;
+                this.AdjustWidth(child2);
+                _child2 = child2;
+            }
+
+            internal WithThreeChildren(DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations, GreenNode child0, GreenNode child1, GreenNode child2)
+                : base(diagnostics, annotations)
             {
                 this.SlotCount = 3;
                 this.AdjustWidth(child0);
@@ -197,6 +233,16 @@ namespace Microsoft.Language.Xml.InternalSyntax
             {
                 return new Xml.SyntaxList.WithThreeChildren(this, parent, position);
             }
+
+            internal override GreenNode SetDiagnostics(DiagnosticInfo[] errors)
+            {
+                return new WithThreeChildren(errors, this.GetAnnotations(), _child0, _child1, _child2);
+            }
+
+            internal override GreenNode SetAnnotations(SyntaxAnnotation[] annotations)
+            {
+                return new WithThreeChildren(GetDiagnostics(), annotations, _child0, _child1, _child2);
+            }
         }
 
         internal abstract class WithManyChildrenBase : SyntaxList
@@ -204,6 +250,13 @@ namespace Microsoft.Language.Xml.InternalSyntax
             internal readonly ArrayElement<GreenNode>[] children;
 
             internal WithManyChildrenBase(ArrayElement<GreenNode>[] children)
+            {
+                this.children = children;
+                this.InitializeChildren();
+            }
+
+            internal WithManyChildrenBase(DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations, ArrayElement<GreenNode>[] children)
+                : base(diagnostics, annotations)
             {
                 this.children = children;
                 this.InitializeChildren();
@@ -254,6 +307,21 @@ namespace Microsoft.Language.Xml.InternalSyntax
                 : base(children)
             {
             }
+
+            internal WithManyChildren(DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations, ArrayElement<GreenNode>[] children)
+                : base(diagnostics, annotations, children)
+            {
+            }
+
+            internal override GreenNode SetDiagnostics(DiagnosticInfo[] errors)
+            {
+                return new WithManyChildren(errors, this.GetAnnotations(), children);
+            }
+
+            internal override GreenNode SetAnnotations(SyntaxAnnotation[] annotations)
+            {
+                return new WithManyChildren(GetDiagnostics(), annotations, children);
+            }
         }
 
         internal sealed class WithLotsOfChildren : WithManyChildrenBase
@@ -264,6 +332,12 @@ namespace Microsoft.Language.Xml.InternalSyntax
                 : base(children)
             {
                 _childOffsets = CalculateOffsets(children);
+            }
+
+            internal WithLotsOfChildren(DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations, ArrayElement<GreenNode>[] children, int[] childOffsets)
+                : base(diagnostics, annotations, children)
+            {
+                _childOffsets = childOffsets;
             }
 
             public override int GetSlotOffset(int index)
@@ -297,6 +371,16 @@ namespace Microsoft.Language.Xml.InternalSyntax
                     offset += children[i].Value.FullWidth;
                 }
                 return childOffsets;
+            }
+
+            internal override GreenNode SetDiagnostics(DiagnosticInfo[] errors)
+            {
+                return new WithLotsOfChildren(errors, this.GetAnnotations(), children, _childOffsets);
+            }
+
+            internal override GreenNode SetAnnotations(SyntaxAnnotation[] annotations)
+            {
+                return new WithLotsOfChildren(GetDiagnostics(), annotations, children, _childOffsets);
             }
         }
     }

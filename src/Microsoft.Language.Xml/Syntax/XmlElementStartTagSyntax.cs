@@ -32,6 +32,20 @@ namespace Microsoft.Language.Xml
                 AdjustWidth(slashGreaterThanToken);
             }
 
+            internal Green(SyntaxToken.Green lessThanToken, XmlNameSyntax.Green name, GreenNode attributes, SyntaxToken.Green slashGreaterThanToken, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
+                : base(SyntaxKind.XmlElementStartTag, diagnostics, annotations)
+            {
+                this.SlotCount = 4;
+                this.lessThanToken = lessThanToken;
+                AdjustWidth(lessThanToken);
+                this.name = name;
+                AdjustWidth(name);
+                this.attributes = attributes;
+                AdjustWidth(attributes);
+                this.slashGreaterThanToken = slashGreaterThanToken;
+                AdjustWidth(slashGreaterThanToken);
+            }
+
             internal override SyntaxNode CreateRed(SyntaxNode parent, int position) => new XmlElementStartTagSyntax(this, parent, position);
 
             internal override GreenNode GetSlot(int index)
@@ -49,6 +63,16 @@ namespace Microsoft.Language.Xml
             internal override GreenNode Accept(InternalSyntax.SyntaxVisitor visitor)
             {
                 return visitor.VisitXmlElementStartTag(this);
+            }
+
+            internal override GreenNode SetDiagnostics(DiagnosticInfo[] diagnostics)
+            {
+                return new Green(lessThanToken, name, attributes, slashGreaterThanToken, diagnostics, GetAnnotations());
+            }
+
+            internal override GreenNode SetAnnotations(SyntaxAnnotation[] annotations)
+            {
+                return new Green(lessThanToken, name, attributes, slashGreaterThanToken, GetDiagnostics(), annotations);
             }
         }
 

@@ -28,6 +28,18 @@ namespace Microsoft.Language.Xml
                 AdjustWidth(endComment);
             }
 
+            internal Green(PunctuationSyntax.Green beginComment, GreenNode content, PunctuationSyntax.Green endComment, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
+                : base(SyntaxKind.XmlComment, diagnostics, annotations)
+            {
+                this.SlotCount = 3;
+                this.beginComment = beginComment;
+                AdjustWidth(beginComment);
+                this.content = content;
+                AdjustWidth(content);
+                this.endComment = endComment;
+                AdjustWidth(endComment);
+            }
+
             internal override SyntaxNode CreateRed(SyntaxNode parent, int position) => new XmlCommentSyntax(this, parent, position);
 
             internal override GreenNode GetSlot(int index)
@@ -44,6 +56,16 @@ namespace Microsoft.Language.Xml
             internal override GreenNode Accept(InternalSyntax.SyntaxVisitor visitor)
             {
                 return visitor.VisitXmlNode(this);
+            }
+
+            internal override GreenNode SetDiagnostics(DiagnosticInfo[] diagnostics)
+            {
+                return new Green(beginComment, content, endComment, diagnostics, GetAnnotations());
+            }
+
+            internal override GreenNode SetAnnotations(SyntaxAnnotation[] annotations)
+            {
+                return new Green(beginComment, content, endComment, GetDiagnostics(), annotations);
             }
         }
 

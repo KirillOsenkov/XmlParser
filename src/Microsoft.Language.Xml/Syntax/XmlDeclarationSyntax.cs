@@ -26,11 +26,34 @@ namespace Microsoft.Language.Xml
             internal PunctuationSyntax.Green QuestionGreaterThanToken => questionGreaterThanToken;
 
             internal Green(PunctuationSyntax.Green lessThanQuestionToken,
-                            GreenNode xmlKeyword, XmlDeclarationOptionSyntax.Green version,
-                            XmlDeclarationOptionSyntax.Green encoding,
-                            XmlDeclarationOptionSyntax.Green standalone,
-                            PunctuationSyntax.Green questionGreaterThanToken)
+                           GreenNode xmlKeyword, XmlDeclarationOptionSyntax.Green version,
+                           XmlDeclarationOptionSyntax.Green encoding,
+                           XmlDeclarationOptionSyntax.Green standalone,
+                           PunctuationSyntax.Green questionGreaterThanToken)
                 : base(SyntaxKind.XmlDeclaration)
+            {
+                this.SlotCount = 6;
+                this.lessThanQuestionToken = lessThanQuestionToken;
+                AdjustWidth(lessThanQuestionToken);
+                this.xmlKeyword = xmlKeyword;
+                AdjustWidth(xmlKeyword);
+                this.version = version;
+                AdjustWidth(version);
+                this.encoding = encoding;
+                AdjustWidth(encoding);
+                this.standalone = standalone;
+                AdjustWidth(standalone);
+                this.questionGreaterThanToken = questionGreaterThanToken;
+                AdjustWidth(questionGreaterThanToken);
+            }
+
+            internal Green(PunctuationSyntax.Green lessThanQuestionToken,
+                           GreenNode xmlKeyword, XmlDeclarationOptionSyntax.Green version,
+                           XmlDeclarationOptionSyntax.Green encoding,
+                           XmlDeclarationOptionSyntax.Green standalone,
+                           PunctuationSyntax.Green questionGreaterThanToken,
+                           DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
+                : base(SyntaxKind.XmlDeclaration, diagnostics, annotations)
             {
                 this.SlotCount = 6;
                 this.lessThanQuestionToken = lessThanQuestionToken;
@@ -66,6 +89,16 @@ namespace Microsoft.Language.Xml
             internal override GreenNode Accept(InternalSyntax.SyntaxVisitor visitor)
             {
                 return visitor.VisitXmlDeclaration(this);
+            }
+
+            internal override GreenNode SetDiagnostics(DiagnosticInfo[] diagnostics)
+            {
+                return new Green(lessThanQuestionToken, xmlKeyword, version, encoding, standalone, questionGreaterThanToken, diagnostics, GetAnnotations());
+            }
+
+            internal override GreenNode SetAnnotations(SyntaxAnnotation[] annotations)
+            {
+                return new Green(lessThanQuestionToken, xmlKeyword, version, encoding, standalone, questionGreaterThanToken, GetDiagnostics(), annotations);
             }
         }
 

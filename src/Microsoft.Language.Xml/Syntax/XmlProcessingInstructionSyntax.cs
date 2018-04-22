@@ -22,10 +22,29 @@ namespace Microsoft.Language.Xml
             internal PunctuationSyntax.Green QuestionGreaterThanToken => questionGreaterThanToken;
 
             internal Green(PunctuationSyntax.Green lessThanQuestionToken,
+                           XmlNameTokenSyntax.Green name,
+                           GreenNode textTokens,
+                           PunctuationSyntax.Green questionGreaterThanToken)
+                : base(SyntaxKind.XmlProcessingInstruction)
+            {
+                this.SlotCount = 4;
+                this.lessThanQuestionToken = lessThanQuestionToken;
+                AdjustWidth(lessThanQuestionToken);
+                this.name = name;
+                AdjustWidth(name);
+                this.textTokens = textTokens;
+                AdjustWidth(textTokens);
+                this.questionGreaterThanToken = questionGreaterThanToken;
+                AdjustWidth(questionGreaterThanToken);
+            }
+
+            internal Green(PunctuationSyntax.Green lessThanQuestionToken,
                             XmlNameTokenSyntax.Green name,
                             GreenNode textTokens,
-                            PunctuationSyntax.Green questionGreaterThanToken)
-                : base(SyntaxKind.XmlProcessingInstruction)
+                            PunctuationSyntax.Green questionGreaterThanToken,
+                            DiagnosticInfo[] diagnostics,
+                            SyntaxAnnotation[] annotations)
+                : base(SyntaxKind.XmlProcessingInstruction, diagnostics, annotations)
             {
                 this.SlotCount = 4;
                 this.lessThanQuestionToken = lessThanQuestionToken;
@@ -55,6 +74,16 @@ namespace Microsoft.Language.Xml
             internal override GreenNode Accept(InternalSyntax.SyntaxVisitor visitor)
             {
                 return visitor.VisitXmlProcessingInstruction(this);
+            }
+
+            internal override GreenNode SetDiagnostics(DiagnosticInfo[] diagnostics)
+            {
+                return new Green(lessThanQuestionToken, name, textTokens, questionGreaterThanToken, diagnostics, GetAnnotations());
+            }
+
+            internal override GreenNode SetAnnotations(SyntaxAnnotation[] annotations)
+            {
+                return new Green(lessThanQuestionToken, name, textTokens, questionGreaterThanToken, GetDiagnostics(), annotations);
             }
         }
 

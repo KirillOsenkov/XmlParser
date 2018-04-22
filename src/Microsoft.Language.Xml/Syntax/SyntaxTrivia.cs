@@ -18,6 +18,12 @@ namespace Microsoft.Language.Xml
                 Text = text;
             }
 
+            internal Green(SyntaxKind kind, string text, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
+                : base(kind, text.Length, diagnostics, annotations)
+            {
+                Text = text;
+            }
+
             public override int Width => Text.Length;
 
             internal override void WriteToOrFlatten(TextWriter writer, Stack<GreenNode> stack)
@@ -42,6 +48,16 @@ namespace Microsoft.Language.Xml
             internal override GreenNode Accept(InternalSyntax.SyntaxVisitor visitor)
             {
                 return visitor.VisitSyntaxTrivia(this);
+            }
+
+            internal override GreenNode SetDiagnostics(DiagnosticInfo[] diagnostics)
+            {
+                return new Green(Kind, Text, diagnostics, GetAnnotations());
+            }
+
+            internal override GreenNode SetAnnotations(SyntaxAnnotation[] annotations)
+            {
+                return new Green(Kind, Text, GetDiagnostics(), annotations);
             }
         }
 
