@@ -484,14 +484,14 @@ namespace Microsoft.Language.Xml
             return node.GetAnnotatedNodesAndTokens(syntaxAnnotation).OfType<T>();
         }
 
-        /*public static IEnumerable<IXmlElementSyntax> AncestorsAndSelf(this SyntaxNode node)
+        public static IEnumerable<IXmlElementSyntax> AncestorsAndSelf(this SyntaxNode node)
         {
-            return GetAncestorsInternal(node, includeSelf: true);
+            return node.AncestorNodesAndSelf().Where(n => n.IsElement()).Cast<IXmlElementSyntax>();
         }
 
         public static IEnumerable<IXmlElementSyntax> Ancestors(this SyntaxNode node)
         {
-            return GetAncestorsInternal(node, includeSelf: false);
+            return node.AncestorNodes().Where(n => n.IsElement()).Cast<IXmlElementSyntax>();
         }
 
         public static IEnumerable<IXmlElementSyntax> AncestorsAndSelf(this IXmlElementSyntax element)
@@ -504,29 +504,14 @@ namespace Microsoft.Language.Xml
             return element.AsNode.Ancestors();
         }
 
-        private static IEnumerable<IXmlElementSyntax> GetAncestorsInternal(SyntaxNode node, bool includeSelf)
-        {
-            if (includeSelf && node.IsElement())
-            {
-                yield return (IXmlElementSyntax)node;
-            }
-
-            var parent = node.ParentElement;
-            while (parent != null)
-            {
-                yield return parent;
-                parent = parent.Parent;
-            }
-        }
-
         public static IEnumerable<IXmlElementSyntax> DescendantsAndSelf(this SyntaxNode node)
         {
-            return GetDescendantsInternal(node, includeSelf: true);
+            return node.DescendantNodesAndSelf().Where(n => n.IsElement()).Cast<IXmlElementSyntax>();
         }
 
         public static IEnumerable<IXmlElementSyntax> Descendants(this SyntaxNode node)
         {
-            return GetDescendantsInternal(node, includeSelf: false);
+            return node.DescendantNodes().Where(n => n.IsElement()).Cast<IXmlElementSyntax>();
         }
 
         public static IEnumerable<IXmlElementSyntax> DescendantsAndSelf(this IXmlElementSyntax element)
@@ -538,34 +523,6 @@ namespace Microsoft.Language.Xml
         {
             return element.AsNode.Descendants();
         }
-
-        private static IEnumerable<IXmlElementSyntax> GetDescendantsInternal(SyntaxNode node, bool includeSelf)
-        {
-            if (includeSelf && node.IsElement())
-            {
-                yield return (IXmlElementSyntax)node;
-            }
-
-            var childStack = new Stack<SyntaxNode>();
-            childStack.Push(node);
-
-            while (childStack.Count > 0)
-            {
-                var c = childStack.Pop();
-                for (int i = c.GreenNode.SlotCount - 1; i >= 0; i--)
-                {
-                    var child = c.GetNodeSlot(i);
-                    if (child != null)
-                        childStack.Push(child);
-                }
-                if (childStack.Count > 0)
-                {
-                    var stackTop = childStack.Peek();
-                    if (stackTop != null && stackTop.IsElement())
-                        yield return (IXmlElementSyntax)stackTop;
-                }
-            }
-        }*/
 
         public static int GetLeadingTriviaWidth(this SyntaxNode node) => node.GetLeadingTriviaSpan().Length;
         public static int GetTrailingTriviaWidth(this SyntaxNode node) => node.GetTrailingTriviaSpan().Length;

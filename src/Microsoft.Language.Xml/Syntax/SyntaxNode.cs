@@ -318,17 +318,17 @@ namespace Microsoft.Language.Xml
         /// <summary>
         /// Gets a list of ancestor nodes
         /// </summary>
-        public IEnumerable<SyntaxNode> Ancestors(bool ascendOutOfTrivia = true)
+        public IEnumerable<SyntaxNode> AncestorNodes(bool ascendOutOfTrivia = true)
         {
             return this.Parent?
-                .AncestorsAndSelf(ascendOutOfTrivia) ??
-                SpecializedCollections.EmptyEnumerable<SyntaxNode>();
+                       .AncestorNodesAndSelf(ascendOutOfTrivia) ??
+                       SpecializedCollections.EmptyEnumerable<SyntaxNode>();
         }
 
         /// <summary>
         /// Gets a list of ancestor nodes (including this node) 
         /// </summary>
-        public IEnumerable<SyntaxNode> AncestorsAndSelf(bool ascendOutOfTrivia = true)
+        public IEnumerable<SyntaxNode> AncestorNodesAndSelf(bool ascendOutOfTrivia = true)
         {
             for (var node = this; node != null; node = GetParent(node, ascendOutOfTrivia))
             {
