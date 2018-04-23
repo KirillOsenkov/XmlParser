@@ -7,26 +7,6 @@ namespace Microsoft.Language.Xml
 {
     internal class TextKeyedCache<T> where T : class
     {
-        // entry in the local cache
-        private struct LocalEntry
-        {
-            // full text of the item
-            public string Text;
-
-            // hash code of the entry
-            public int HashCode;
-
-            // item
-            public T Item;
-        }
-
-        // entry in the shared cache
-        private struct SharedEntry
-        {
-            public int HashCode;
-            public SharedEntryValue Entry;
-        }
-
         // immutable tuple - text and corresponding item
         // reference type because we want atomic assignments
         private class SharedEntryValue
@@ -63,17 +43,17 @@ namespace Microsoft.Language.Xml
         // local cache
         // simple fast and not threadsafe cache 
         // with limited size and "last add wins" expiration policy
-        private readonly LocalEntry[] _localTable = new LocalEntry[LocalSize];
+        private readonly (string Text, int HashCode, T Item)[] _localTable = new(string Text, int HashCode, T Item)[LocalSize];
 
         // shared threadsafe cache
         // slightly slower than local cache
         // we read this cache when having a miss in local cache
         // writes to local cache will update shared cache as well.
-        private static readonly SharedEntry[] s_sharedTable = new SharedEntry[SharedSize];
+        private static readonly (int HashCode, SharedEntryValue Entry)[] s_sharedTable = new(int HashCode, SharedEntryValue Entry)[SharedSize];
 
         // store a reference to shared cache locally
         // accessing a static field of a generic type could be nontrivial
-        private readonly SharedEntry[] _sharedTableInst = s_sharedTable;
+        private readonly (int HashCode, SharedEntryValue Entry)[] _sharedTableInst = s_sharedTable;
 
         private readonly StringTable _strings;
 
@@ -160,12 +140,13 @@ namespace Microsoft.Language.Xml
             int idx = SharedIdxFromHash(hashCode);
 
             SharedEntryValue e = null;
+            int hash;
+
             // we use quadratic probing here
             // bucket positions are (n^2 + n)/2 relative to the masked hashcode
             for (int i = 1; i < SharedBucketSize + 1; i++)
             {
-                e = arr[idx].Entry;
-                int hash = arr[idx].HashCode;
+                (hash, e) = arr[idx];
 
                 if (e != null)
                 {

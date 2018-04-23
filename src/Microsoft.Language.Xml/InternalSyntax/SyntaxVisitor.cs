@@ -104,15 +104,10 @@ namespace Microsoft.Language.Xml.InternalSyntax
             return VisitXmlNode(node);
         }
 
-        ////public virtual SyntaxToken Visit(SyntaxToken token)
-        ////{
-        ////    return token;
-        ////}
-
-        ////public virtual GreenNode Visit(SyntaxList list)
-        ////{
-        ////    return list;
-        ////}
+        public virtual GreenNode VisitList(SyntaxList list)
+        {
+            return list;
+        }
 
         public virtual SyntaxToken.Green VisitSyntaxToken(SyntaxToken.Green token)
         {

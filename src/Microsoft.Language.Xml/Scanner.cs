@@ -381,10 +381,10 @@ namespace Microsoft.Language.Xml
 
                             var errInfo = ErrorFactory.ErrorInfo(isSingle ? ERRID.ERR_ExpectedSQuote : ERRID.ERR_ExpectedQuote);
                             result = data;
-                            ////result = ((SyntaxToken)data.SetDiagnostics(new[]
-                            ////{
-                            ////    errInfo
-                            ////}));
+                            result = ((SyntaxToken.Green)data.SetDiagnostics(new[]
+                            {
+                                errInfo
+                            }));
                             goto CleanUp;
                         }
                     case '&':
@@ -943,8 +943,8 @@ namespace Microsoft.Language.Xml
                 var name = XmlMakeXmlNCNameToken(precedingTrivia.Node, Here);
                 if (err != ERRID.ERR_None)
                 {
-                    ////name = name.WithDiagnostics(ErrorFactory.ErrorInfo(
-                    ////    err, errChar, string.Format("&H{0:X}", errUnicode)));
+                    name = name.WithDiagnostics(ErrorFactory.ErrorInfo(
+                        err, errChar, string.Format("&H{0:X}", errUnicode)));
                 }
 
                 return name;

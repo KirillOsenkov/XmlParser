@@ -8,12 +8,17 @@ namespace Microsoft.Language.Xml
 
     public class ErrorFactory
     {
-        internal static DiagnosticInfo ErrorInfo(ERRID eRR_ExpectedSColon)
+        internal static DiagnosticInfo ErrorInfo(ERRID errID)
         {
             return new DiagnosticInfo();
         }
 
         internal static DiagnosticInfo ErrorInfo(ERRID id, char xmlCh, string v)
+        {
+            return new DiagnosticInfo();
+        }
+
+        internal static DiagnosticInfo ErrorInfo(ERRID id, string xmlCh, string v)
         {
             return new DiagnosticInfo();
         }

@@ -142,6 +142,23 @@ namespace Microsoft.Language.Xml.InternalSyntax
             return string.IsNullOrEmpty(token.Text);
         }
 
+        internal static TSyntax AddLeadingSyntax<TSyntax>(this TSyntax node, GreenNode unexpected) where TSyntax : GreenNode
+        {
+            if (unexpected != null) {
+                var trivia = CreateSkippedTrivia(unexpected,
+                                                 preserveDiagnostics: true,
+                                                 addDiagnosticToFirstTokenOnly: false,
+                                                 addDiagnostic: null);
+                return AddLeadingTrivia(node, trivia);
+            }
+            return node;
+        }
+
+        internal static TSyntax AddLeadingSyntax<TSyntax>(this TSyntax node, SyntaxList<SyntaxToken.Green> unexpected) where TSyntax : GreenNode
+        {
+            return node.AddLeadingSyntax(unexpected.Node);
+        }
+
         internal static TSyntax AddLeadingSyntax<TSyntax>(this TSyntax node, GreenNode unexpected, ERRID errorId) where TSyntax : GreenNode
         {
             var diagnostic = ErrorFactory.ErrorInfo(errorId);
@@ -242,7 +259,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
                 // already skipped trivia
                 if (addDiagnostic != null)
                 {
-                    ////node = node.AddError(addDiagnostic); TODO
+                    node = node.AddError(addDiagnostic);
                 }
 
                 return node;
@@ -370,7 +387,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
                 return node;
             }
 
-            var newAnnotations = new List<SyntaxAnnotation>();
+            var newAnnotations = ArrayBuilder<SyntaxAnnotation>.GetInstance ();
             newAnnotations.AddRange(existingAnnotations);
 
             foreach (var candidate in annotations)
@@ -387,7 +404,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
             }
             else
             {
-                return (TNode)node.SetAnnotations(newAnnotations.ToArray());
+                return (TNode)node.SetAnnotations(newAnnotations.ToArrayAndFree());
             }
         }
 
@@ -400,26 +417,33 @@ namespace Microsoft.Language.Xml.InternalSyntax
                 return node;
             }
 
-            var removalAnnotations = new List<SyntaxAnnotation>();
+            var removalAnnotations = ArrayBuilder<SyntaxAnnotation>.GetInstance ();
             removalAnnotations.AddRange(annotations);
-            if (removalAnnotations.Count == 0)
+            try
             {
-                return node;
-            }
-
-            var newAnnotations = new List<SyntaxAnnotation>();
-            foreach (var candidate in existingAnnotations)
-            {
-                if (!removalAnnotations.Contains(candidate))
+                if (removalAnnotations.Count == 0)
                 {
-                    newAnnotations.Add(candidate);
+                    return node;
                 }
-            }
 
-            return (TNode)node.SetAnnotations(newAnnotations.ToArray());
+                var newAnnotations = ArrayBuilder<SyntaxAnnotation>.GetInstance();
+                foreach (var candidate in existingAnnotations)
+                {
+                    if (!removalAnnotations.Contains(candidate))
+                    {
+                        newAnnotations.Add(candidate);
+                    }
+                }
+
+                return (TNode)node.SetAnnotations(newAnnotations.ToArrayAndFree());
+            }
+            finally
+            {
+                removalAnnotations.Free();
+            }
         }
 
-        public static TNode WithDiagnostics<TNode>(this TNode node, DiagnosticInfo[] diagnostics) where TNode : GreenNode
+        public static TNode WithDiagnostics<TNode>(this TNode node, params DiagnosticInfo[] diagnostics) where TNode : GreenNode
         {
             return (TNode)node.SetDiagnostics(diagnostics);
         }

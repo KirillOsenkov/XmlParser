@@ -608,10 +608,14 @@ namespace Microsoft.Language.Xml
             return XmlComment(beginComment, result, endComment);
         }
 
-        private T ReportSyntaxError<T>(T xml, ERRID eRR_XmlEndElementNoMatchingStart, params object[] parameters) where T : GreenNode
+        private static T ReportSyntaxError<T> (T xml, ERRID errID) where T : GreenNode
         {
-            return xml;
-            // TODO: Implement.
+            return (T)xml.AddError(ErrorFactory.ErrorInfo(errID));
+        }
+
+        private static T ReportSyntaxError<T>(T xml, ERRID errID, params object[] parameters) where T : GreenNode
+        {
+            return (T)xml.AddError (ErrorFactory.ErrorInfo (errID));
         }
 
         private XmlNodeSyntax.Green ParseXmlElementStartTag(ScannerState enclosingState)
@@ -702,10 +706,10 @@ namespace Microsoft.Language.Xml
                     greaterThan = MissingPunctuation(SyntaxKind.GreaterThanToken);
                     if (unexpectedSyntax.Node == null)
                     {
-                        ////if (!(attributes.Node != null && attributes.Node.ContainsDiagnostics))
-                        ////{
-                        ////    greaterThan = Parser.ReportSyntaxError(greaterThan, ERRID.ERR_ExpectedGreater);
-                        ////}
+                        if (!(attributes.Node != null && attributes.Node.ContainsDiagnostics))
+                        {
+                            greaterThan = Parser.ReportSyntaxError(greaterThan, ERRID.ERR_ExpectedGreater);
+                        }
                     }
                     else
                     {
@@ -1092,11 +1096,11 @@ namespace Microsoft.Language.Xml
 
             if (unexpected.Node != null)
             {
-                ////if (unexpected.Node.ContainsDiagnostics())
-                ////{
-                ////    beginEndElement = beginEndElement.AddLeadingSyntax(unexpected);
-                ////}
-                ////else
+                if (unexpected.Node.ContainsDiagnostics)
+                {
+                    beginEndElement = beginEndElement.AddLeadingSyntax(unexpected);
+                }
+                else
                 {
                     beginEndElement = beginEndElement.AddLeadingSyntax(unexpected, ERRID.ERR_ExpectedLT);
                 }

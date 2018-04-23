@@ -104,15 +104,10 @@ namespace Microsoft.Language.Xml
             return VisitXmlNode(node);
         }
 
-        ////public virtual SyntaxToken Visit(SyntaxToken token)
-        ////{
-        ////    return token;
-        ////}
-
-        ////public virtual SyntaxNode Visit(SyntaxList list)
-        ////{
-        ////    return list;
-        ////}
+        public virtual SyntaxList<TNode> VisitList<TNode> (SyntaxList<TNode> list) where TNode : SyntaxNode
+        {
+            return list;
+        }
 
         public virtual SyntaxToken VisitSyntaxToken(SyntaxToken token)
         {

@@ -6,7 +6,7 @@ namespace Microsoft.Language.Xml
 
     public class SyntaxRewriter : SyntaxVisitor
     {
-        public virtual SyntaxList<TNode> VisitList<TNode>(SyntaxList<TNode> list) where TNode : SyntaxNode
+        public override SyntaxList<TNode> VisitList<TNode>(SyntaxList<TNode> list)
         {
             SyntaxListBuilder<TNode> alternate = default(SyntaxListBuilder<TNode>);
             int i = 0;

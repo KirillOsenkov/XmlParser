@@ -185,7 +185,7 @@ namespace Microsoft.Language.Xml
 
             private ChildSyntaxListEnumeratorStack _nodeStack;
             private TriviaListEnumeratorStack _triviaStack;
-            private readonly List<Which> _discriminatorStack;
+            private readonly ArrayBuilder<Which> _discriminatorStack;
 
             public TwoEnumeratorListStack(SyntaxNode startingNode, Func<SyntaxNode, bool> descendIntoChildren)
             {
@@ -193,7 +193,7 @@ namespace Microsoft.Language.Xml
                 _triviaStack = new TriviaListEnumeratorStack();
                 if (_nodeStack.IsNotEmpty)
                 {
-                    _discriminatorStack = new List<Which>();
+                    _discriminatorStack = ArrayBuilder<Which>.GetInstance ();
                     _discriminatorStack.Add(Which.Node);
                 }
                 else
@@ -256,6 +256,7 @@ namespace Microsoft.Language.Xml
             {
                 _nodeStack.Dispose();
                 _triviaStack.Dispose();
+                _discriminatorStack?.Free ();
             }
         }
 
@@ -270,8 +271,8 @@ namespace Microsoft.Language.Xml
 
             private ChildSyntaxListEnumeratorStack _nodeStack;
             private TriviaListEnumeratorStack _triviaStack;
-            private readonly List<SyntaxNode> _tokenStack;
-            private readonly List<Which> _discriminatorStack;
+            private readonly ArrayBuilder<SyntaxNode> _tokenStack;
+            private readonly ArrayBuilder<Which> _discriminatorStack;
 
             public ThreeEnumeratorListStack(SyntaxNode startingNode, Func<SyntaxNode, bool> descendIntoChildren)
             {
@@ -279,8 +280,8 @@ namespace Microsoft.Language.Xml
                 _triviaStack = new TriviaListEnumeratorStack();
                 if (_nodeStack.IsNotEmpty)
                 {
-                    _tokenStack = new List<SyntaxNode>();
-                    _discriminatorStack = new List<Which>();
+                    _tokenStack = ArrayBuilder<SyntaxNode>.GetInstance ();
+                    _discriminatorStack = ArrayBuilder<Which>.GetInstance ();
 
                     _discriminatorStack.Add(Which.Node);
                 }
@@ -359,6 +360,8 @@ namespace Microsoft.Language.Xml
             {
                 _nodeStack.Dispose();
                 _triviaStack.Dispose();
+                _tokenStack?.Free ();
+                _discriminatorStack?.Free ();
             }
         }
 
