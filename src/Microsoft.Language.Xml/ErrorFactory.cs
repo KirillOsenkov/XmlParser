@@ -2,25 +2,21 @@
 
 namespace Microsoft.Language.Xml
 {
-    public class DiagnosticInfo
-    {
-    }
-
     public class ErrorFactory
     {
         internal static DiagnosticInfo ErrorInfo(ERRID errID)
         {
-            return new DiagnosticInfo();
+            return new DiagnosticInfo(errID);
         }
 
-        internal static DiagnosticInfo ErrorInfo(ERRID id, char xmlCh, string v)
+        internal static DiagnosticInfo ErrorInfo(ERRID errID, char xmlCh, string v)
         {
-            return new DiagnosticInfo();
+            return new DiagnosticInfo(errID, new object[] { xmlCh, v });
         }
 
-        internal static DiagnosticInfo ErrorInfo(ERRID id, string xmlCh, string v)
+        internal static DiagnosticInfo ErrorInfo(ERRID errID, string xmlCh, string v)
         {
-            return new DiagnosticInfo();
+            return new DiagnosticInfo(errID, new object[] { xmlCh, v });
         }
     }
 }
