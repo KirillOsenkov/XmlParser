@@ -117,6 +117,9 @@ namespace Microsoft.Language.Xml
             if (prefix != this.PrefixNode || localName != this.LocalNameNode)
             {
                 var newNode = SyntaxFactory.XmlName(prefix, localName);
+                var annotations = this.GetAnnotations();
+                if (annotations != null && annotations.Length > 0)
+                    return newNode.WithAnnotations(annotations);
                 return newNode;
             }
 

@@ -143,9 +143,9 @@ namespace Microsoft.Language.Xml
             if (name != this.NameNode || equalsToken != this.Equals || value != this.ValueNode)
             {
                 var newNode = SyntaxFactory.XmlAttribute(name, equalsToken, value);
-                /*var annotations = this.GetAnnotations ();
-				if (annotations != null && annotations.Length > 0)
-					return newNode.WithAnnotations (annotations);*/
+                var annotations = this.GetAnnotations();
+                if (annotations != null && annotations.Length > 0)
+                    return newNode.WithAnnotations(annotations);
                 return newNode;
             }
 

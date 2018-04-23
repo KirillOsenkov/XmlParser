@@ -204,9 +204,9 @@ namespace Microsoft.Language.Xml
             if (lessThanToken != this.LessThanToken || name != this.NameNode || attributes != this.AttributesNode || slashGreaterThanToken != this.SlashGreaterThanToken)
             {
                 var newNode = SyntaxFactory.XmlEmptyElement(lessThanToken, name, attributes, slashGreaterThanToken);
-                /*var annotations = this.GetAnnotations ();
-				if (annotations != null && annotations.Length > 0)
-					return newNode.WithAnnotations (annotations);*/
+                var annotations = this.GetAnnotations();
+                if (annotations != null && annotations.Length > 0)
+                    return newNode.WithAnnotations(annotations);
                 return newNode;
             }
 

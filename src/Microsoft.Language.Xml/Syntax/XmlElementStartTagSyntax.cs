@@ -130,9 +130,9 @@ namespace Microsoft.Language.Xml
             if (lessThanToken != this.LessThanToken || name != this.NameNode || attributes != this.AttributesNode || greaterThanToken != this.GreaterThanToken)
             {
                 var newNode = SyntaxFactory.XmlElementStartTag(lessThanToken, name, attributes, greaterThanToken);
-                /*var annotations = this.GetAnnotations ();
-				if (annotations != null && annotations.Length > 0)
-					return newNode.WithAnnotations (annotations);*/
+                var annotations = this.GetAnnotations();
+                if (annotations != null && annotations.Length > 0)
+                    return newNode.WithAnnotations(annotations);
                 return newNode;
             }
 

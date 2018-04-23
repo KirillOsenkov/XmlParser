@@ -203,9 +203,9 @@ namespace Microsoft.Language.Xml
             if (startTag != this.StartTag || content != this.Content || endTag != this.EndTag)
             {
                 var newNode = SyntaxFactory.XmlElement(startTag, content, endTag);
-                /*var annotations = this.GetAnnotations ();
-				if (annotations != null && annotations.Length > 0)
-					return newNode.WithAnnotations (annotations);*/
+                var annotations = this.GetAnnotations();
+                if (annotations != null && annotations.Length > 0)
+                    return newNode.WithAnnotations(annotations);
                 return newNode;
             }
 

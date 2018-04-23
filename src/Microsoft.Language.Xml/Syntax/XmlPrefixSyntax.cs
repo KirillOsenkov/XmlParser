@@ -105,6 +105,9 @@ namespace Microsoft.Language.Xml
             if (name != this.Name || colonToken != this.ColonToken)
             {
                 var newNode = SyntaxFactory.XmlPrefix(name, colonToken);
+                var annotations = this.GetAnnotations();
+                if (annotations != null && annotations.Length > 0)
+                    return newNode.WithAnnotations(annotations);
                 return newNode;
             }
 

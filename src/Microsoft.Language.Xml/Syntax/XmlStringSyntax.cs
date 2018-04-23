@@ -119,9 +119,9 @@ namespace Microsoft.Language.Xml
             if (startQuoteToken != this.StartQuoteToken || textTokens != this.TextTokens || endQuoteToken != this.EndQuoteToken)
             {
                 var newNode = SyntaxFactory.XmlString(startQuoteToken, textTokens, endQuoteToken);
-                /*var annotations = this.GetAnnotations ();
-				if (annotations != null && annotations.Length > 0)
-					return newNode.WithAnnotations (annotations);*/
+                var annotations = this.GetAnnotations();
+                if (annotations != null && annotations.Length > 0)
+                    return newNode.WithAnnotations(annotations);
                 return newNode;
             }
 
