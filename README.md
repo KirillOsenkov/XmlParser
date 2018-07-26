@@ -19,7 +19,7 @@ A Roslyn-inspired full-fidelity XML parser with no dependencies and a simple Vis
 This is work in progress and by no means complete. Specifically:
  * XML DTD is not supported (Roslyn didn't support it either)
  * Code wasn't tuned for performance and allocations, I'm sure a lot can be done to reduce memory consumption by the resulting tree. It should be pretty efficient though.
- * I reserve the right to accept only very high quality pull requests. I have very limited time to work on this so I ask everybody to please respect that.
+ * We reserve the right to accept only very high quality pull requests. We have very limited time to work on this so I ask everybody to please respect that.
 
 ## Download from NuGet:
  * [GuiLabs.Language.Xml](https://www.nuget.org/packages/GuiLabs.Language.Xml)
@@ -32,6 +32,12 @@ https://xmlsyntaxvisualizer.azurewebsites.net/index.html
 The above app leverages the parser and can help you visualize the resulting syntax tree generated from an XML document.
 
 Code is available at https://github.com/garuma/XmlSyntaxVisualizer
+
+Also see the blog post: 
+https://blog.neteril.org/blog/2018/03/21/xml-parsing-roslyn/
+
+Resources about Immutable Syntax Trees:
+https://github.com/KirillOsenkov/Bliki/wiki/Roslyn-Immutable-Trees
 
 ## FAQ:
 
