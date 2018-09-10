@@ -196,6 +196,7 @@ namespace Microsoft.Language.Xml
         IXmlElementSyntax IXmlElementSyntax.WithContent(SyntaxList<SyntaxNode> newContent) => WithContent(newContent);
 
         IXmlElementSyntax IXmlElementSyntax.WithAttributes(IEnumerable<XmlAttributeSyntax> newAttributes) => WithAttributes(new SyntaxList<XmlAttributeSyntax>(newAttributes));
+        IXmlElementSyntax IXmlElementSyntax.WithAttributes(SyntaxList<XmlAttributeSyntax> newAttributes) => WithAttributes(newAttributes);
 
         #endregion
 

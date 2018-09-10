@@ -10,6 +10,7 @@ namespace Microsoft.Language.Xml
         IXmlElementSyntax Parent { get; }
         IEnumerable<IXmlElementSyntax> Elements { get; }
         IEnumerable<XmlAttributeSyntax> Attributes { get; }
+        SyntaxList<XmlAttributeSyntax> AttributesNode { get; }
         XmlAttributeSyntax GetAttribute(string localName, string prefix = null);
         string GetAttributeValue(string localName, string prefix = null);
         IXmlElement AsElement { get; }
@@ -19,5 +20,6 @@ namespace Microsoft.Language.Xml
         IXmlElementSyntax WithName(XmlNameSyntax newName);
         IXmlElementSyntax WithContent(SyntaxList<SyntaxNode> newContent);
         IXmlElementSyntax WithAttributes(IEnumerable<XmlAttributeSyntax> newAttributes);
+        IXmlElementSyntax WithAttributes(SyntaxList<XmlAttributeSyntax> newAttributes);
     }
 }
