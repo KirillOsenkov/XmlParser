@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Microsoft.Language.Xml
 {
@@ -38,6 +39,15 @@ namespace Microsoft.Language.Xml
             return attribute.WithName(existingName.WithPrefix(existingPrefix.WithName(newName)));
         }
 
+        public static XmlAttributeSyntax WithLocalName(this XmlAttributeSyntax attribute, string localName)
+        {
+            var existingName = attribute.NameNode;
+            var existingLocalName = existingName.LocalNameNode;
+            var newName = SyntaxFactory.XmlNameToken(localName, null, null);
+
+            return attribute.WithName(existingName.WithLocalName(newName));
+        }
+
         public static IXmlElementSyntax AddChild(this IXmlElementSyntax parent, IXmlElementSyntax child)
         {
             return parent.WithContent(parent.Content.Add(child.AsNode));
@@ -67,6 +77,26 @@ namespace Microsoft.Language.Xml
                     return true;
                 default: return false;
             }
+        }
+
+        public static IXmlElementSyntax AddAttributes(this IXmlElementSyntax self, params XmlAttributeSyntax[] attributes)
+        {
+            return self.WithAttributes(self.AttributesNode.AddRange(attributes));
+        }
+
+        public static IXmlElementSyntax AddAttributes(this IXmlElementSyntax self, IEnumerable<XmlAttributeSyntax> attributes)
+        {
+            return self.WithAttributes(self.AttributesNode.AddRange(attributes));
+        }
+
+        public static IXmlElementSyntax AddAttribute(this IXmlElementSyntax self, XmlAttributeSyntax attribute)
+        {
+            return self.WithAttributes(self.AttributesNode.Add(attribute));
+        }
+
+        public static IXmlElementSyntax RemoveAttribute(this IXmlElementSyntax self, XmlAttributeSyntax attribute)
+        {
+            return self.WithAttributes(self.AttributesNode.Remove(attribute));
         }
     }
 }
