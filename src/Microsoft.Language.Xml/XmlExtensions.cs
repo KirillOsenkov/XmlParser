@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace Microsoft.Language.Xml
@@ -18,6 +18,19 @@ namespace Microsoft.Language.Xml
             if (element.Content.Count == 1 && element.Content.First() is XmlCDataSectionSyntax cdata)
                 return cdata.TextTokens.ToFullString();
             return element.AsElement.Value;
+        }
+
+        /// <summary>
+        /// Return a new <see cref="IXmlElementSyntax"/> instance with
+        /// the supplied string prefix.
+        /// </summary>
+        public static IXmlElementSyntax WithPrefixName(this IXmlElementSyntax element, string prefixName)
+        {
+            var existingName = element.NameNode;
+            var existingPrefix = existingName.PrefixNode;
+            var newName = SyntaxFactory.XmlNameToken(prefixName, null, null);
+
+            return element.WithName(existingName.WithPrefix(existingPrefix.WithName(newName)));
         }
 
         /// <summary>
