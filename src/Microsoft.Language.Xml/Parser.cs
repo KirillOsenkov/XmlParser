@@ -615,7 +615,7 @@ namespace Microsoft.Language.Xml
 
         private static T ReportSyntaxError<T>(T xml, ERRID errID, params object[] parameters) where T : GreenNode
         {
-            return (T)xml.AddError (ErrorFactory.ErrorInfo (errID));
+            return (T)xml.AddError (ErrorFactory.ErrorInfo (errID, parameters));
         }
 
         private XmlNodeSyntax.Green ParseXmlElementStartTag(ScannerState enclosingState)

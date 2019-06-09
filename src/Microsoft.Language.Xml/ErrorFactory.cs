@@ -9,6 +9,11 @@ namespace Microsoft.Language.Xml
             return new DiagnosticInfo(errID);
         }
 
+        internal static DiagnosticInfo ErrorInfo(ERRID errID, object[] arguments)
+        {
+            return new DiagnosticInfo(errID, arguments);
+        }
+
         internal static DiagnosticInfo ErrorInfo(ERRID errID, char xmlCh, string v)
         {
             return new DiagnosticInfo(errID, new object[] { xmlCh, v });

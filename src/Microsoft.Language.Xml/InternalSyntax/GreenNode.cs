@@ -364,8 +364,24 @@ namespace Microsoft.Language.Xml.InternalSyntax
 
         internal GreenNode AddError(DiagnosticInfo err)
         {
-            // TODO
-            return this;
+            DiagnosticInfo[] errorInfos;
+
+            // If the green node already has errors, add those on.
+            if (GetDiagnostics() == null)
+            {
+                errorInfos = new[] { err };
+            }
+            else
+            {
+                // Add the error to the error list.
+                errorInfos = GetDiagnostics();
+                var length = errorInfos.Length;
+                Array.Resize(ref errorInfos, length + 1);
+                errorInfos[length] = err;
+            }
+
+            // Get a new green node with the errors added on.
+            return SetDiagnostics(errorInfos);
         }
 
         internal abstract GreenNode SetDiagnostics(DiagnosticInfo[] diagnostics);

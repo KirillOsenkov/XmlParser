@@ -512,44 +512,7 @@ namespace Microsoft.Language.Xml
             return node == this ? this : node;
         }
 
-        internal SyntaxNode AddError(DiagnosticInfo diagnostic)
-        {
-            return this;
-        }
-
-        public virtual SyntaxNode SetDiagnostics(params DiagnosticInfo[] diagnostics)
-        {
-            return this;
-        }
-
-        /*  <summary>
-         ''' Add all the tokens in this node and children to the build token list builder. While doing this, add any
-         ''' diagnostics not on tokens to the given diagnostic info list.
-         ''' </summary>
-        */
-        /*internal virtual void CollectConstituentTokensAndDiagnostics(SyntaxListBuilder<SyntaxToken> tokenListBuilder, IList<DiagnosticInfo> nonTokenDiagnostics)
-        {
-            DiagnosticInfo[] diagnostics = this.GetDiagnostics();
-            if (diagnostics != null && diagnostics.Length > 0)
-            {
-                foreach (var diag in diagnostics)
-                {
-                    nonTokenDiagnostics.Add(diag);
-                }
-            }
-
-            // Recurse to subtrees.
-            for (var i = 0; i < SlotCount; i++)
-            {
-                var green = GetSlot(i);
-                if (green != null)
-                {
-                    green.CollectConstituentTokensAndDiagnostics(tokenListBuilder, nonTokenDiagnostics);
-                }
-            }
-        }*/
-
-        internal DiagnosticInfo[] GetDiagnostics() => GreenNode.GetDiagnostics();
+        public DiagnosticInfo[] GetDiagnostics() => GreenNode.GetDiagnostics();
 
         public bool ContainsDiagnostics => GreenNode.ContainsDiagnostics;
 

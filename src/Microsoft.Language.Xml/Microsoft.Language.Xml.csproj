@@ -15,6 +15,19 @@
   <ItemGroup>
     <Compile Remove="Syntax\XmlElementSyntaxBase.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Update="XmlResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>XmlResources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="XmlResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>XmlResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
   <PropertyGroup>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>GuiLabs.Language.Xml</PackageId>

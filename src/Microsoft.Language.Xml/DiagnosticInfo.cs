@@ -52,6 +52,13 @@ namespace Microsoft.Language.Xml
             this.parameters = parameters;
         }
 
-        public string GetDescription() => string.Empty;
+        public string GetDescription()
+        {
+            var name = ErrorID.ToString();
+            var description = XmlResources.ResourceManager.GetString(name);
+            if (parameters != null)
+                description = string.Format(description, parameters);
+            return description;
+        }
     }
 }

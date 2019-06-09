@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+	<!-- 
+		Microsoft ResX Schema
+
+		Version 1.3
+
+		The primary goals of this format is to allow a simple XML format 
+		that is mostly human readable. The generation and parsing of the 
+		various data types are done through the TypeConverter classes 
+		associated with the data types.
+
+		Example:
+
+		... ado.net/XML headers & schema ...
+		<resheader name="resmimetype">text/microsoft-resx</resheader>
+		<resheader name="version">1.3</resheader>
+		<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+		<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+		<data name="Name1">this is my long string</data>
+		<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+		<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+			[base64 mime encoded serialized .NET Framework object]
+		</data>
+		<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+			[base64 mime encoded string representing a byte array form of the .NET Framework object]
+		</data>
+
+		There are any number of "resheader" rows that contain simple 
+		name/value pairs.
+
+		Each data row contains a name, and value. The row also contains a 
+		type or mimetype. Type corresponds to a .NET class that support 
+		text/value conversion through the TypeConverter architecture. 
+		Classes that don't support this are serialized and stored with the 
+		mimetype set.
+
+		The mimetype is used for serialized objects, and tells the 
+		ResXResourceReader how to depersist the object. This is currently not 
+		extensible. For a given mimetype the value must be set accordingly:
+
+		Note - application/x-microsoft.net.object.binary.base64 is the format 
+		that the ResXResourceWriter will generate, however the reader can 
+		read any of the formats listed below.
+
+		mimetype: application/x-microsoft.net.object.binary.base64
+		value   : The object must be serialized with 
+			: System.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+		mimetype: application/x-microsoft.net.object.soap.base64
+		value   : The object must be serialized with 
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+		mimetype: application/x-microsoft.net.object.bytearray.base64
+		value   : The object must be serialized into a byte array 
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+	
+	<xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+		<xsd:element name="root" msdata:IsDataSet="true">
+			<xsd:complexType>
+				<xsd:choice maxOccurs="unbounded">
+					<xsd:element name="data">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+								<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+							</xsd:sequence>
+							<xsd:attribute name="name" type="xsd:string" msdata:Ordinal="1" />
+							<xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+							<xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+						</xsd:complexType>
+					</xsd:element>
+					<xsd:element name="resheader">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+							</xsd:sequence>
+							<xsd:attribute name="name" type="xsd:string" use="required" />
+						</xsd:complexType>
+					</xsd:element>
+				</xsd:choice>
+			</xsd:complexType>
+		</xsd:element>
+	</xsd:schema>
+	<resheader name="resmimetype">
+		<value>text/microsoft-resx</value>
+	</resheader>
+	<resheader name="version">
+		<value>1.3</value>
+	</resheader>
+	<resheader name="reader">
+		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<resheader name="writer">
+		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+  <data name="ERR_Syntax" xml:space="preserve">
+    <value>Syntax error.</value>
+  </data>
+  <data name="ERR_IllegalChar" xml:space="preserve">
+    <value>Character is not valid.</value>
+  </data>
+  <data name="ERR_ExpectedGreater" xml:space="preserve">
+    <value>'&gt;' expected.</value>
+  </data>
+  <data name="ERR_ExpectedXmlName" xml:space="preserve">
+    <value>XML name expected.</value>
+  </data>
+  <data name="ERR_DuplicateXmlAttribute" xml:space="preserve">
+    <value>Duplicate XML attribute '{0}'.</value>
+  </data>
+  <data name="ERR_MismatchedXmlEndTag" xml:space="preserve">
+    <value>End tag &lt;/{0}{1}{2}&gt; expected.</value>
+  </data>
+  <data name="ERR_MissingXmlEndTag" xml:space="preserve">
+    <value>Element is missing an end tag.</value>
+  </data>
+  <data name="ERR_ReservedXmlPrefix" xml:space="preserve">
+    <value>XML namespace prefix '{0}' is reserved for use by XML and the namespace URI cannot be changed.</value>
+  </data>
+  <data name="ERR_MissingVersionInXmlDecl" xml:space="preserve">
+    <value>Required attribute 'version' missing from XML declaration.</value>
+  </data>
+  <data name="ERR_IllegalAttributeInXmlDecl" xml:space="preserve">
+    <value>XML declaration does not allow attribute '{0}{1}{2}'.</value>
+  </data>
+  <data name="ERR_VersionMustBeFirstInXmlDecl" xml:space="preserve">
+    <value>XML attribute 'version' must be the first attribute in XML declaration.</value>
+  </data>
+  <data name="ERR_AttributeOrder" xml:space="preserve">
+    <value>XML attribute '{0}' must appear before XML attribute '{1}'.</value>
+  </data>
+  <data name="ERR_ExpectedSQuote" xml:space="preserve">
+    <value>Expected matching closing single quote for XML attribute value.</value>
+  </data>
+  <data name="ERR_ExpectedQuote" xml:space="preserve">
+    <value>Expected matching closing double quote for XML attribute value.</value>
+  </data>
+  <data name="ERR_ExpectedLT" xml:space="preserve">
+    <value>Expected beginning '&lt;' for an XML tag.</value>
+  </data>
+  <data name="ERR_StartAttributeValue" xml:space="preserve">
+    <value>Expected quoted XML attribute value or embedded expression.</value>
+  </data>
+  <data name="ERR_IllegalXmlStartNameChar" xml:space="preserve">
+    <value>Character '{0}' ({1}) is not allowed at the beginning of an XML name.</value>
+  </data>
+  <data name="ERR_IllegalXmlNameChar" xml:space="preserve">
+    <value>Character '{0}' ({1}) is not allowed in an XML name.</value>
+  </data>
+  <data name="ERR_IllegalXmlCommentChar" xml:space="preserve">
+    <value>Character sequence '--' is not allowed in an XML comment.</value>
+  </data>
+  <data name="ERR_ExpectedXmlWhiteSpace" xml:space="preserve">
+    <value>Missing required white space.</value>
+  </data>
+  <data name="ERR_IllegalProcessingInstructionName" xml:space="preserve">
+    <value>XML processing instruction name '{0}' is not valid.</value>
+  </data>
+  <data name="ERR_DTDNotSupported" xml:space="preserve">
+    <value>XML DTDs are not supported.</value>
+  </data>
+  <data name="ERR_IllegalXmlWhiteSpace" xml:space="preserve">
+    <value>White space cannot appear here.</value>
+  </data>
+  <data name="ERR_ExpectedSColon" xml:space="preserve">
+    <value>Expected closing ';' for XML entity.</value>
+  </data>
+  <data name="ERR_XmlEntityReference" xml:space="preserve">
+    <value>XML entity references are not supported.</value>
+  </data>
+  <data name="ERR_InvalidAttributeValue1" xml:space="preserve">
+    <value>Attribute value is not valid; expecting '{0}'.</value>
+  </data>
+  <data name="ERR_InvalidAttributeValue2" xml:space="preserve">
+    <value>Attribute value is not valid; expecting '{0}' or '{1}'.</value>
+  </data>
+  <data name="ERR_XmlEndCDataNotAllowedInContent" xml:space="preserve">
+    <value>The literal string ']]&gt;' is not allowed in element content.</value>
+  </data>
+  <data name="ERR_XmlEndElementNoMatchingStart" xml:space="preserve">
+    <value>XML end element must be preceded by a matching start element.</value>
+  </data>
+</root>
