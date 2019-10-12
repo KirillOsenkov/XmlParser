@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>Microsoft.Language.Xml.Editor.Tests</AssemblyName>
-    <TargetFramework>net471</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="xunit" Version="2.4.0" />

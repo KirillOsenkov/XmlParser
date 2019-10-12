@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>Microsoft.Language.Xml.Editor</AssemblyName>
-    <TargetFramework>net471</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
     <NBGV_DoNotEmitNonVersionCustomAttributes>true</NBGV_DoNotEmitNonVersionCustomAttributes>
     <IsWindows>$([MSBuild]::IsOSPlatform('Windows'))</IsWindows>
   </PropertyGroup>

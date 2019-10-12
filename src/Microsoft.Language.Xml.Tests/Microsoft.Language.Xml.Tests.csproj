@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>Microsoft.Language.Xml.Tests</AssemblyName>
-    <TargetFramework>net471</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
     <IsWindows>$([MSBuild]::IsOSPlatform('Windows'))</IsWindows>
   </PropertyGroup>
   <PropertyGroup>

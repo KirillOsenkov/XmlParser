@@ -2,7 +2,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <AssemblyName>Microsoft.Language.Xml.ConsoleTestHost</AssemblyName>
-    <TargetFramework>net471</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.Language.Xml\Microsoft.Language.Xml.csproj" />
