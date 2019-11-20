@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -37,29 +37,65 @@ namespace Microsoft.Language.Xml
         /// <returns>The list of text spans where syntax node are stale in newText coordinates</returns>
         private static TextSpan[] ExpandToParentChain(SyntaxNode root, TextChangeRange[] changes)
         {
-            List<TextSpan> allSpans = new List<TextSpan>();
+            var allSpans = new HashSet<TextSpan>();
+
             for (int i = 0; i < changes.Length; i++)
             {
                 var change = changes[i];
                 var node = root.FindNode(change.Span.Start, includeTrivia: false);
-                var parentSpans = new Stack<TextSpan>();
-                // Find all parent of the node and mark the '<' of their start element
-                foreach (var parent in node.GetParentElementsAndAttributes())
+                MarkNodeHierarchyDirty(allSpans, node, changes, i);
+                /* Check if the position maps to the start of a node with leading trivia
+                 * or if the change affected the tail end of the buffer. In both those
+                 * cases it's more likely that the node affected by the change is
+                 * actually the previous one. In that situation we also mark that chain
+                 * as well so that we don't end up with an incorrect parsing
+                 */
+                if ((change.Span.Start > 0 && node.HasLeadingTrivia && node.Start == change.Span.Start)
+                    || change.Span.Start >= root.FullWidth)
                 {
-                    var parentStart = parent.Start;
-                    for (int j = i - 1; j >= 0; j--)
-                    {
-                        var previousChange = changes[j];
-                        if (previousChange.Span.Start < parentStart)
-                            parentStart += previousChange.NewLength - previousChange.Span.Length;
-                    }
-                    parentSpans.Push(new TextSpan(parentStart, 0));
+                    node = root.FindNode(change.Span.Start - 1, includeTrivia: false);
+                    MarkNodeHierarchyDirty(allSpans, node, changes, i);
                 }
-                allSpans.AddRange(parentSpans);
+
                 // Add the changed node span itself
-                allSpans.Add(new TextSpan(change.Span.Start, change.NewLength));
+                var changeSpan = new TextSpan(change.Span.Start, change.NewLength);
+                // expand it by the lookahead and lookbehind values
+                allSpans.Add(ExpandByLookAheadAndBehind(root, changeSpan));
             }
-            return allSpans.ToArray();
+
+            var spans = new TextSpan[allSpans.Count];
+            allSpans.CopyTo(spans);
+            Array.Sort(spans);
+
+            return spans;
+        }
+
+        private static void MarkNodeHierarchyDirty (HashSet<TextSpan> allSpans, SyntaxNode node, TextChangeRange[] changes, int currentChangeIndex)
+        {
+            /* Find all parent of the node and mark the '<' of their start element
+             * or the start of the whole attribute as dirty
+             */
+            foreach (var parent in node.GetParentElementsAndAttributes())
+            {
+                var parentStart = parent.Start;
+                for (int j = currentChangeIndex - 1; j >= 0; j--)
+                {
+                    var previousChange = changes[j];
+                    if (previousChange.Span.Start < parentStart)
+                        parentStart += previousChange.NewLength - previousChange.Span.Length;
+                }
+                allSpans.Add (new TextSpan(parentStart, 0));
+            }
+            // Add the node
+            allSpans.Add(new TextSpan(node.Span.Start, 0));
+        }
+
+        private static TextSpan ExpandByLookAheadAndBehind (SyntaxNode root, TextSpan span)
+        {
+            var fullWidth = root.FullWidth;
+            var start = Math.Max(0, span.Start - Scanner.MaxTokensLookAheadBeyondEOL);
+            var end = Math.Min(fullWidth - 1, span.End + Scanner.MaxCharsLookBehind);
+            return TextSpan.FromBounds(start, end);
         }
 
         internal override GreenNode GetCurrentSyntaxNode()
