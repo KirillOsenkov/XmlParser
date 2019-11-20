@@ -58,6 +58,9 @@ namespace Microsoft.Language.Xml
 
         static bool CanParseIncrementally(SyntaxNode root, Buffer newBuffer, TextChangeRange[] changes)
         {
+            if (root == null)
+                return false;
+
             foreach (var change in changes)
             {
                 // If the whole buffer changed, no need to do incremental parsing
