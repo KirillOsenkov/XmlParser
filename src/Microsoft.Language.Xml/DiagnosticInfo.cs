@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Globalization;
+using System.Resources;
 
 namespace Microsoft.Language.Xml
 {
@@ -41,21 +42,23 @@ namespace Microsoft.Language.Xml
         public ERRID ErrorID { get; }
         public DiagnosticSeverity Severity => DiagnosticSeverity.Error;
 
-        public DiagnosticInfo (ERRID errID)
+        public DiagnosticInfo(ERRID errID)
         {
             ErrorID = errID;
         }
 
         public DiagnosticInfo(ERRID errID, object[] parameters)
-            : this (errID)
+            : this(errID)
         {
             this.parameters = parameters;
         }
 
-        public string GetDescription()
+        public string GetDescription() => GetDescription(XmlResources.ResourceManager);
+
+        public string GetDescription(ResourceManager resourceManager)
         {
             var name = ErrorID.ToString();
-            var description = XmlResources.ResourceManager.GetString(name);
+            var description = resourceManager.GetString(name);
             if (parameters != null)
                 description = string.Format(description, parameters);
             return description;
