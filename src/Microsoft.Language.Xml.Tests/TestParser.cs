@@ -81,6 +81,12 @@ namespace Microsoft.Language.Xml.Tests
         }
 
         [Fact]
+        public void WrongClosingTagRecovery()
+        {
+            T("<X><n:></a><b></X>");
+        }
+
+        [Fact]
         public void ExhaustiveSubstring()
         {
             for (int start = 0; start < allXml.Length; start++)
