@@ -201,6 +201,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
                 case SyntaxKind.SlashGreaterThanToken:
                 case SyntaxKind.EndCDataToken:
                 case SyntaxKind.MinusMinusGreaterThanToken:
+                case SyntaxKind.XmlTextLiteralToken:
                     return new PunctuationSyntax.Green(kind, string.Empty, precedingTrivia.Node, null);
                 case SyntaxKind.XmlNameToken:
                     return new XmlNameTokenSyntax.Green(string.Empty, null, null);
