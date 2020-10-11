@@ -87,6 +87,12 @@ namespace Microsoft.Language.Xml.Tests
         }
 
         [Fact]
+        public void WrongDoctypeParse()
+        {
+            T("<x><!DOCTYPE");
+        }
+
+        [Fact]
         public void ExhaustiveSubstring()
         {
             for (int start = 0; start < allXml.Length; start++)
