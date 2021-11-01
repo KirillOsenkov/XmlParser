@@ -18,6 +18,9 @@
     <PackageReference Include="Microsoft.VisualStudio.Text.UI.Wpf" Version="15.8.519" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All"/>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)\..\..\language_xml_logo.png" Pack="true" PackagePath=""/>
+  </ItemGroup>
   <PropertyGroup>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>GuiLabs.Language.Xml.Editor</PackageId>
@@ -25,11 +28,11 @@
     <Company>Microsoft</Company>
     <Summary>A simple XML language service for the Visual Studio editor</Summary>
     <Description>Currently includes a classifier, outlining and smart indent.</Description>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/KirillOsenkov/XmlParser/1e413eb67/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/KirillOsenkov/XmlParser</PackageProjectUrl>
     <RepositoryUrl>https://github.com/KirillOsenkov/XmlParser</RepositoryUrl>
     <PackageTags>Xml Parser LanguageService Classifier VS VisualStudio Editor</PackageTags>
-    <PackageIconUrl>http://neteril.org/~jeremie/language_xml_logo.png</PackageIconUrl>
+    <PackageIcon>language_xml_logo.png</PackageIcon>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>

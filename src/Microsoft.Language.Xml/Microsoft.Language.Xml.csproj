@@ -14,9 +14,6 @@
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All"/>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="InternalSyntax\" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Remove="Syntax\XmlElementSyntaxBase.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -32,6 +29,9 @@
       <LastGenOutput>XmlResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)\..\..\language_xml_logo.png" Pack="true" PackagePath=""/>
+  </ItemGroup>
   <PropertyGroup>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>GuiLabs.Language.Xml</PackageId>
@@ -39,11 +39,11 @@
     <Company>Microsoft</Company>
     <Summary>A full-fidelity XML parser</Summary>
     <Description>A full-fidelity XML parser. Produces a syntax tree from XML text, preserves all whitespace and provides low-level API to examine the exact structure of the source text.</Description>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/KirillOsenkov/XmlParser/1e413eb67/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/KirillOsenkov/XmlParser</PackageProjectUrl>
     <RepositoryUrl>https://github.com/KirillOsenkov/XmlParser</RepositoryUrl>
+    <PackageIcon>language_xml_logo.png</PackageIcon>
     <PackageTags>Xml Parser</PackageTags>
-    <PackageIconUrl>http://neteril.org/~jeremie/language_xml_logo.png</PackageIconUrl>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
