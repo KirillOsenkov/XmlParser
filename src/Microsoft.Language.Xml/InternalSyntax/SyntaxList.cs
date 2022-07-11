@@ -135,6 +135,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
             }
 
             internal WithTwoChildren(DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations, GreenNode child0, GreenNode child1)
+                : base(diagnostics, annotations)
             {
                 this.SlotCount = 2;
                 this.AdjustWidth(child0);
