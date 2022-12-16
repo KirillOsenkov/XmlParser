@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -1374,7 +1374,11 @@ namespace Microsoft.Language.Xml
                         InternalSyntax.SyntaxList<GreenNode> precedingTrivia = null;
                         if (Here != 0)
                         {
-                            if (!IsAllWhitespace)
+                            var isCommentContent = (CanGetCharAtOffset(Here + 1) && PeekAheadChar(Here + 1) == '!'
+                                    && CanGetCharAtOffset(Here + 2) && PeekAheadChar(Here + 2) == '-'
+                                    && CanGetCharAtOffset(Here + 3) && PeekAheadChar(Here + 3) == '-');
+
+                            if (!IsAllWhitespace || isCommentContent)
                             {
                                 return XmlMakeTextLiteralToken(null, Here, scratch);
                             }

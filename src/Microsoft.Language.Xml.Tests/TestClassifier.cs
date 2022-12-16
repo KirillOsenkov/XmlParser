@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -143,6 +143,28 @@ namespace Microsoft.Language.Xml.Tests
         }
 
         [Fact]
+        public void ClassifyWindow5()
+        {
+            const string xml =
+@"<WhitespaceOptInControl> 
+	<!-- X --> 
+	</WhitespaceOptInControl>";
+            int len = xml.Length;
+            T(xml, 0, len,
+                XmlClassificationTypes.XmlDelimiter,
+                XmlClassificationTypes.XmlName,
+                XmlClassificationTypes.XmlDelimiter,
+                XmlClassificationTypes.XmlText,
+                XmlClassificationTypes.XmlDelimiter,
+                XmlClassificationTypes.XmlComment,
+                XmlClassificationTypes.XmlDelimiter,
+                XmlClassificationTypes.XmlDelimiter,
+                XmlClassificationTypes.XmlName,
+                XmlClassificationTypes.XmlDelimiter
+            );
+        }
+
+        [Fact]
         public void ClassifyAllInOne()
         {
             T(TestParser.allXml,
@@ -216,6 +238,7 @@ namespace Microsoft.Language.Xml.Tests
                 XmlClassificationTypes.XmlDelimiter,
                 XmlClassificationTypes.XmlName,
                 XmlClassificationTypes.XmlDelimiter,
+                XmlClassificationTypes.XmlText,
                 XmlClassificationTypes.XmlDelimiter,
                 XmlClassificationTypes.XmlComment,
                 XmlClassificationTypes.XmlDelimiter,
