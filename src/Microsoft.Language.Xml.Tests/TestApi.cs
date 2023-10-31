@@ -13,6 +13,21 @@ namespace Microsoft.Language.Xml.Tests
             Assert.Equal("", attributeValue);
         }
 
+        /// <summary>
+        /// 2.2.12 [XML] Section 3.3.3, Attribute-Value Normalization
+        /// <seealso href="https://learn.microsoft.com/en-us/openspecs/ie_standards/ms-xml/389b8ef1-e19e-40ac-80de-eec2cd0c58ae" />
+        /// </summary>
+        [Fact]
+        public void TestAttributeValueNormalization()
+        {
+            const string AllWhitespace = " \n\t";
+            var xml = $"<ContentControl Content=\"{AllWhitespace}X{AllWhitespace}\" />";
+            var root = Parser.ParseText(xml)?.RootSyntax;
+
+            var attributeValue = root.Attributes.First().Value;
+            Assert.Equal("   X   ", attributeValue);
+        }
+
         [Fact]
         public void TestContent()
         {
