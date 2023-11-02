@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -358,7 +358,8 @@ namespace Microsoft.Language.Xml
                     case UCH_LF:
                         Here = SkipLineBreak(c, Here);
                         scratch.Append(UCH_SPACE);
-                        break;
+                        result = XmlMakeAttributeDataToken(precedingTrivia, Here, scratch);
+                        goto CleanUp;
                     case UCH_TAB:
                         scratch.Append(UCH_SPACE);
                         Here += 1;
@@ -445,7 +446,7 @@ namespace Microsoft.Language.Xml
 
         private XmlTextTokenSyntax.Green XmlMakeAttributeDataToken(InternalSyntax.SyntaxList<GreenNode> precedingTrivia, int tokenWidth, StringBuilder scratch)
         {
-            return XmlMakeAttributeTextLiteralToken(precedingTrivia, tokenWidth, scratch);
+            return XmlMakeTextLiteralToken(precedingTrivia, tokenWidth, scratch);
         }
 
         private SyntaxToken.Green ScanXmlStringDouble()
@@ -1330,15 +1331,6 @@ namespace Microsoft.Language.Xml
             var value = _stringTable.Add(Scratch);
             Scratch.Clear();
             return XmlTextToken(text, precedingTrivia.Node, null);
-        }
-
-        private XmlTextTokenSyntax.Green XmlMakeAttributeTextLiteralToken(InternalSyntax.SyntaxList<GreenNode> precedingTrivia, int TokenWidth, StringBuilder Scratch)
-        {
-            Debug.Assert(TokenWidth > 0);
-            _ = GetText(TokenWidth);
-            var value = _stringTable.Add(Scratch);
-            Scratch.Clear();
-            return XmlTextToken(value, precedingTrivia.Node, null);
         }
 
         internal SyntaxToken.Green ScanXmlContent()

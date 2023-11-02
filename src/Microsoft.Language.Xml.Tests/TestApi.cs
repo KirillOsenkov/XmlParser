@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using Xunit;
 
 namespace Microsoft.Language.Xml.Tests
@@ -24,7 +24,7 @@ namespace Microsoft.Language.Xml.Tests
             var xml = $"<ContentControl Content=\"{AllWhitespace}X{AllWhitespace}\" />";
             var root = Parser.ParseText(xml)?.RootSyntax;
 
-            var attributeValue = root.Attributes.First().Value;
+            var attributeValue = root.Attributes.First().NormalizedValue;
             Assert.Equal("   X   ", attributeValue);
         }
 

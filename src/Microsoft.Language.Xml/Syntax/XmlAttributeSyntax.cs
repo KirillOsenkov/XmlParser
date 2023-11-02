@@ -1,7 +1,9 @@
-﻿using System;
+using System;
 
 namespace Microsoft.Language.Xml
 {
+    using System.IO;
+    using System.Text;
     using InternalSyntax;
 
     public class XmlAttributeSyntax : XmlNodeSyntax, INamedXmlNode
@@ -96,7 +98,7 @@ namespace Microsoft.Language.Xml
                     return null;
                 }
 
-                var xmlString = ValueNode as XmlStringSyntax;
+                var xmlString = ValueNode;
                 if (xmlString == null)
                 {
                     return null;
@@ -110,6 +112,14 @@ namespace Microsoft.Language.Xml
                 return xmlString.TextTokens.Node.ToFullString();
             }
         }
+
+        /// <summary>
+        /// Get Normalized <see cref="Value"/> of <see cref="XmlStringSyntax"/>
+        /// </summary>
+        /// <remarks>
+        /// Spec <seealso href="https://learn.microsoft.com/en-us/openspecs/ie_standards/ms-xml/389b8ef1-e19e-40ac-80de-eec2cd0c58ae">2.2.12 [XML] Section 3.3.3</seealso/>
+        /// </remarks>
+        public string NormalizedValue => Value.Replace("\r", " ").Replace("\n", " ").Replace("\t", " ");
 
         public override SyntaxNode Accept(SyntaxVisitor visitor)
         {
