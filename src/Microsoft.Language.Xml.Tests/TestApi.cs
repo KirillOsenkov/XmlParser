@@ -21,10 +21,10 @@ namespace Microsoft.Language.Xml.Tests
         public void TestAttributeValueNormalization()
         {
             const string AllWhitespace = " \n\t";
-            var xml = $"<ContentControl Content=\"{AllWhitespace}X{AllWhitespace}\" />";
+            var xml = $"<A B=\"{AllWhitespace}X{AllWhitespace}\" />";
             var root = Parser.ParseText(xml)?.RootSyntax;
 
-            var attributeValue = root.Attributes.First().NormalizedValue;
+            var attributeValue = root.Attributes.First().Value;
             Assert.Equal("   X   ", attributeValue);
         }
 

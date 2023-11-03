@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -376,7 +376,7 @@ namespace Microsoft.Language.Xml
                             var data = MissingToken(null, SyntaxKind.SingleQuoteToken);
                             if (precedingTrivia.Count > 0)
                             {
-                                data = data.WithLeadingTrivia(precedingTrivia.ToListNode());
+                                data = (SyntaxToken.Green)data.WithLeadingTrivia(precedingTrivia.ToListNode());
                             }
 
                             var errInfo = ErrorFactory.ErrorInfo(isSingle ? ERRID.ERR_ExpectedSQuote : ERRID.ERR_ExpectedQuote);

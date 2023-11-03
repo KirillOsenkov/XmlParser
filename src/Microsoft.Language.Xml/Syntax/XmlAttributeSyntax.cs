@@ -1,8 +1,8 @@
 using System;
-
 namespace Microsoft.Language.Xml
 {
     using InternalSyntax;
+    using Microsoft.Language.Xml.Utilities;
 
     public class XmlAttributeSyntax : XmlNodeSyntax, INamedXmlNode
     {
@@ -87,93 +87,25 @@ namespace Microsoft.Language.Xml
 
         public bool IsNamespaceDeclaration => string.Equals(NameNode?.Prefix, "xmlns", StringComparison.Ordinal);
 
-        public string Value
-        {
-            get
-            {
-                if (ValueNode == null)
-                {
-                    return null;
-                }
-
-                var xmlString = ValueNode;
-                if (xmlString == null)
-                {
-                    return null;
-                }
-
-                if (xmlString.TextTokens.Node == null)
-                {
-                    return "";
-                }
-
-                return xmlString.TextTokens.Node.ToFullString();
-            }
-        }
-
         /// <summary>
-        /// Get Normalized <see cref="Value"/> of <see cref="XmlStringSyntax"/>
+        /// Get attribute normalized value
         /// </summary>
         /// <remarks>
         /// Normalization specs:
         /// <seealso href="https://www.w3.org/TR/2006/REC-xml11-20060816/#sec-line-ends">2.2.12 [XML] Section 3.3.3</seealso/>
         /// <seealso href="https://learn.microsoft.com/en-us/openspecs/ie_standards/ms-xml/389b8ef1-e19e-40ac-80de-eec2cd0c58ae">2.11 [XML} End-of-Line Handling</seealso/>
         /// </remarks>
-        public string NormalizedValue
+        public string Value
         {
             get
             {
-                if (ValueNode is { } xmlString)
+                if (ValueNode is XmlStringSyntax xmlString)
                 {
-                    if (xmlString.TextTokens.Node is null)
+                    return xmlString.TextTokens.Node switch
                     {
-                        return "";
-                    }
-
-                    var sb = PooledStringBuilder.GetInstance();
-
-                    var tokens = xmlString.TextTokens;
-                    var ntokens = tokens.Count;
-
-                    for (int tokenIndex = 0; tokenIndex < ntokens; tokenIndex++)
-                    {
-                        char lastChar = default;
-                        if (tokens[tokenIndex] is XmlTextTokenSyntax token)
-                        {
-                            var width = token.Width;
-
-                            for (int charIndex = 0; charIndex < width; charIndex++)
-                            {
-                                var c = token.Text[charIndex];
-                                switch (c)
-                                {
-                                    // If there is a sequence of CR and LF or CR 0x85 or CR 0x2028 replace them with a space (0x32)
-                                    case '\r' when (charIndex + 1 < width && (token.Text[charIndex + 1] is '\n' or '\x85' or '\x2028')):
-                                        sb.Builder.Append(' ');
-                                        charIndex++; // Skip next onece
-                                        break;
-                                    // If current char is single CR or 0x85 or 0x2028 replace with a space(0x32)
-                                    case '\r':
-                                    case '\x85':
-                                    case '\x2000':
-                                        sb.Builder.Append(' ');
-                                        break;
-                                    // if current char is LF and previus not is LF or CR 
-                                    case '\n' when lastChar != '\n' && lastChar != '\r':
-                                        sb.Builder.Append(' ');
-                                        break;
-                                    case '\t':
-                                        sb.Builder.Append(' ');
-                                        break;
-                                    default:
-                                        sb.Builder.Append(c);
-                                        break;
-                                }
-                                lastChar = c;
-                            }
-                        }
-                    }
-                    return sb.ToStringAndFree();
+                        SyntaxNode node => node.GetNormalizedAttributeValue(),
+                        _ => string.Empty
+                    };
                 }
                 return null;
             }
