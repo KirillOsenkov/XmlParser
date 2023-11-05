@@ -1,8 +1,8 @@
-﻿using System;
-
+using System;
 namespace Microsoft.Language.Xml
 {
     using InternalSyntax;
+    using Microsoft.Language.Xml.Utilities;
 
     public class XmlAttributeSyntax : XmlNodeSyntax, INamedXmlNode
     {
@@ -87,27 +87,27 @@ namespace Microsoft.Language.Xml
 
         public bool IsNamespaceDeclaration => string.Equals(NameNode?.Prefix, "xmlns", StringComparison.Ordinal);
 
+        /// <summary>
+        /// Get attribute normalized value
+        /// </summary>
+        /// <remarks>
+        /// Normalization specs:
+        /// <seealso href="https://www.w3.org/TR/2006/REC-xml11-20060816/#sec-line-ends">2.2.12 [XML] Section 3.3.3</seealso/>
+        /// <seealso href="https://learn.microsoft.com/en-us/openspecs/ie_standards/ms-xml/389b8ef1-e19e-40ac-80de-eec2cd0c58ae">2.11 [XML} End-of-Line Handling</seealso/>
+        /// </remarks>
         public string Value
         {
             get
             {
-                if (ValueNode == null)
+                if (ValueNode is XmlStringSyntax xmlString)
                 {
-                    return null;
+                    return xmlString.TextTokens.Node switch
+                    {
+                        SyntaxNode node => node.GetNormalizedAttributeValue(),
+                        _ => string.Empty
+                    };
                 }
-
-                var xmlString = ValueNode as XmlStringSyntax;
-                if (xmlString == null)
-                {
-                    return null;
-                }
-
-                if (xmlString.TextTokens.Node == null)
-                {
-                    return "";
-                }
-
-                return xmlString.TextTokens.Node.ToFullString();
+                return null;
             }
         }
 
