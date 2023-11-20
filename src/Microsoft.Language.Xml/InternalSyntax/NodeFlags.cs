@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 
 namespace Microsoft.Language.Xml.InternalSyntax
 {
     [Flags]
-    public enum NodeFlags : byte
+    internal enum NodeFlags : byte
     {
         None = 0,
         ContainsDiagnostics = 1 << 0,
