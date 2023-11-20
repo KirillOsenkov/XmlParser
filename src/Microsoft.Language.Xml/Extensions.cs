@@ -1,8 +1,6 @@
-﻿using System;
-
 namespace Microsoft.Language.Xml
 {
-    public static class Extensions
+    internal static class Extensions
     {
         /// <summary>
         /// Search a sorted integer array for the target value in O(log N) time.
@@ -13,7 +11,7 @@ namespace Microsoft.Language.Xml
         /// inserted in order to maintain the sorted order. All values to the right of this position will be
         /// strictly greater than <paramref name="value"/>. Note that this may return a position off the end
         /// of the array if all elements are less than or equal to <paramref name="value"/>.</returns>
-        internal static int BinarySearchUpperBound(this int[] array, int value)
+        public static int BinarySearchUpperBound(this int[] array, int value)
         {
             int low = 0;
             int high = array.Length - 1;
@@ -34,7 +32,7 @@ namespace Microsoft.Language.Xml
             return low;
         }
 
-        internal static bool OverlapsWithAny(this TextSpan span, TextSpan[] otherSpans)
+        public static bool OverlapsWithAny(this TextSpan span, TextSpan[] otherSpans)
         {
             foreach (var other in otherSpans)
             {
@@ -54,7 +52,7 @@ namespace Microsoft.Language.Xml
             return false;
         }
 
-        internal static bool AnyContainsPosition(this TextSpan[] spans, int position)
+        public static bool AnyContainsPosition(this TextSpan[] spans, int position)
         {
             foreach (var span in spans)
             {
