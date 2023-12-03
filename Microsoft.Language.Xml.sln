@@ -1,19 +1,23 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26403.0
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34321.82
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Language.Xml", "src\Microsoft.Language.Xml\Microsoft.Language.Xml.csproj", "{2989FBE6-194F-46C9-8EF4-022F62519C9A}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{79B2600B-6786-460B-85D7-1CB16DC9AE06}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Language.Xml.Editor", "src\Microsoft.Language.Xml.Editor\Microsoft.Language.Xml.Editor.csproj", "{C432B014-61DD-4F97-9D6F-966C1021F535}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Language.Xml", "src\Microsoft.Language.Xml\Microsoft.Language.Xml.csproj", "{2989FBE6-194F-46C9-8EF4-022F62519C9A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Language.Xml.Tests", "src\Microsoft.Language.Xml.Tests\Microsoft.Language.Xml.Tests.csproj", "{20B89FC2-53BD-41AF-BFE9-A029362FE49C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Language.Xml.Editor", "src\Microsoft.Language.Xml.Editor\Microsoft.Language.Xml.Editor.csproj", "{C432B014-61DD-4F97-9D6F-966C1021F535}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Language.Xml.ConsoleTestHost", "src\Microsoft.Language.Xml.ConsoleTestHost\Microsoft.Language.Xml.ConsoleTestHost.csproj", "{547C369D-8FB1-407E-BB0F-319373171E28}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{07F190D5-06B2-4F4C-B000-6EBE042AB43A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Language.Xml.Editor.Tests", "src\Microsoft.Language.Xml.Editor.Tests\Microsoft.Language.Xml.Editor.Tests.csproj", "{E3CEC50E-40AF-4E53-93AF-D7E2F2C9FF10}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Language.Xml.Tests", "test\Microsoft.Language.Xml.Tests\Microsoft.Language.Xml.Tests.csproj", "{20B89FC2-53BD-41AF-BFE9-A029362FE49C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Language.Xml.Benchmarks", "src\Microsoft.Language.Xml.Benchmarks\Microsoft.Language.Xml.Benchmarks.csproj", "{7A2B7E87-9B54-437D-A7A1-B6F38BEA0819}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Language.Xml.Editor.Tests", "test\Microsoft.Language.Xml.Editor.Tests\Microsoft.Language.Xml.Editor.Tests.csproj", "{E3CEC50E-40AF-4E53-93AF-D7E2F2C9FF10}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "benchmark", "benchmark", "{5D08C6A7-C10A-4CFD-8B6C-A278DC6C2701}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Language.Xml.Benchmarks", "benchmark\Microsoft.Language.Xml.Benchmarks\Microsoft.Language.Xml.Benchmarks.csproj", "{7A2B7E87-9B54-437D-A7A1-B6F38BEA0819}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,10 +37,6 @@ Global
 		{20B89FC2-53BD-41AF-BFE9-A029362FE49C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{20B89FC2-53BD-41AF-BFE9-A029362FE49C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{20B89FC2-53BD-41AF-BFE9-A029362FE49C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{547C369D-8FB1-407E-BB0F-319373171E28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{547C369D-8FB1-407E-BB0F-319373171E28}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{547C369D-8FB1-407E-BB0F-319373171E28}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{547C369D-8FB1-407E-BB0F-319373171E28}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E3CEC50E-40AF-4E53-93AF-D7E2F2C9FF10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E3CEC50E-40AF-4E53-93AF-D7E2F2C9FF10}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E3CEC50E-40AF-4E53-93AF-D7E2F2C9FF10}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -48,5 +48,12 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2989FBE6-194F-46C9-8EF4-022F62519C9A} = {79B2600B-6786-460B-85D7-1CB16DC9AE06}
+		{C432B014-61DD-4F97-9D6F-966C1021F535} = {79B2600B-6786-460B-85D7-1CB16DC9AE06}
+		{20B89FC2-53BD-41AF-BFE9-A029362FE49C} = {07F190D5-06B2-4F4C-B000-6EBE042AB43A}
+		{E3CEC50E-40AF-4E53-93AF-D7E2F2C9FF10} = {07F190D5-06B2-4F4C-B000-6EBE042AB43A}
+		{7A2B7E87-9B54-437D-A7A1-B6F38BEA0819} = {5D08C6A7-C10A-4CFD-8B6C-A278DC6C2701}
 	EndGlobalSection
 EndGlobal
