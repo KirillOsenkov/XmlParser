@@ -1,6 +1,7 @@
 version: 1.2.{build}
 image: Visual Studio 2022
 before_build:
+- cmd: choco install dotnet-sdk --version 8.0.100
 - cmd: dotnet restore
 build:
   project: Microsoft.Language.Xml.sln
