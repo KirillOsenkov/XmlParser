@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Microsoft.Language.Xml
 {
@@ -19,27 +19,20 @@ namespace Microsoft.Language.Xml
             return ((TTree)new FirstTokenReplacer(newItem).Visit(root));
         }
 
-        public override GreenNode VisitSyntaxNode(GreenNode node)
+        public override SyntaxToken.Green VisitSyntaxToken(SyntaxToken.Green token)
         {
-            if (node == null)
+            if (token == null)
             {
                 return null;
             }
 
-            // we are not interested in nodes that are not first
-            if (!_isFirst)
+            if (_isFirst)
             {
-                return node;
+                _isFirst = false;
+                return _newItem(token);
             }
 
-            var result = base.VisitSyntaxNode(node);
-            _isFirst = false;
-            return result;
-        }
-
-        public override SyntaxToken.Green VisitSyntaxToken(SyntaxToken.Green token)
-        {
-            return _newItem(token);
+            return token;
         }
     }
 }
