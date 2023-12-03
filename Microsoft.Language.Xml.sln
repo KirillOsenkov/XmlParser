@@ -3,6 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34321.82
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution items", "{9D11B9F6-7DFB-41A6-ACA9-E5DE89C02ED4}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		appveyor.yml = appveyor.yml
+		NuGet.config = NuGet.config
+	EndProjectSection
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{79B2600B-6786-460B-85D7-1CB16DC9AE06}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Language.Xml", "src\Microsoft.Language.Xml\Microsoft.Language.Xml.csproj", "{2989FBE6-194F-46C9-8EF4-022F62519C9A}"
