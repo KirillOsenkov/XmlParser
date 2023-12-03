@@ -135,20 +135,17 @@ namespace Microsoft.Language.Xml
         {
             var prologue = CurrentToken.Kind == SyntaxKind.LessThanQuestionToken ? ParseXmlDeclaration() : null;
 
-            GreenNode node = prologue;
-            var precedingMisc = ParseXmlMisc(true, ref node);
-            prologue = node as XmlDeclarationSyntax.Green;
-            XmlNodeSyntax.Green body = null;
-            InternalSyntax.SyntaxList<XmlNodeSyntax.Green> followingMisc = null;
+            var precedingMisc = ParseXmlMisc(out var skippedDTD);
 
-            body = ParseXmlElement(ScannerState.Misc);
+            var body = ParseXmlElement(ScannerState.Misc);
+            if (skippedDTD != null)
+            {
+                body = body.AddLeadingTrivia(skippedDTD);
+            }
 
-            node = body;
-            followingMisc = ParseXmlMisc(false, ref node);
-            body = node as XmlNodeSyntax.Green;
+            var followingMisc = ParseXmlMisc(out _);
 
             var skippedTokens = ParseSkippedTokens();
-            //Debug.Assert(CurrentToken.Kind == SyntaxKind.EndOfFileToken);
 
             return XmlDocument(prologue, precedingMisc, body, followingMisc, skippedTokens, CurrentToken);
         }
@@ -351,6 +348,9 @@ namespace Microsoft.Language.Xml
                         var textResult = textTokens.ToList();
                         _pool.Free(textTokens);
                         xml = XmlText(new InternalSyntax.SyntaxList<SyntaxToken.Green>(textResult.Node));
+                        break;
+                    case SyntaxKind.EndOfXmlToken:
+                        xml = XmlText(MissingToken(SyntaxKind.LessThanToken));
                         break;
                     case SyntaxKind.BadToken:
                         var badToken = CurrentToken as BadTokenSyntax.Green;
@@ -1132,8 +1132,10 @@ namespace Microsoft.Language.Xml
             return false;
         }
 
-        private InternalSyntax.SyntaxList<XmlNodeSyntax.Green> ParseXmlMisc(bool IsProlog, ref GreenNode outerNode)
+        private InternalSyntax.SyntaxList<XmlNodeSyntax.Green> ParseXmlMisc(out GreenNode skippedDTD)
         {
+            skippedDTD = null;
+
             var content = this._pool.Allocate<XmlNodeSyntax.Green>();
             bool exitWhile = false;
             while (!exitWhile)
@@ -1143,25 +1145,21 @@ namespace Microsoft.Language.Xml
                 {
                     case SyntaxKind.BadToken:
                         var badToken = ((BadTokenSyntax.Green)CurrentToken);
-                        GreenNode skipped;
                         if (badToken.SubKind == SyntaxSubKind.BeginDocTypeToken)
                         {
-                            skipped = ParseXmlDocType(ScannerState.Misc);
+                            skippedDTD = ParseXmlDocType(ScannerState.Misc);
                         }
                         else
                         {
-                            skipped = badToken;
+                            skippedDTD = badToken;
                             GetNextToken(ScannerState.Misc);
                         }
 
                         var count = content.Count;
                         if (count > 0)
                         {
-                            content[count - 1] = content[count - 1].AddTrailingSyntax(skipped, ERRID.ERR_DTDNotSupported);
-                        }
-                        else if (outerNode != null)
-                        {
-                            outerNode = outerNode.AddTrailingSyntax(skipped, ERRID.ERR_DTDNotSupported);
+                            content[count - 1] = content[count - 1].AddTrailingSyntax(skippedDTD, ERRID.ERR_DTDNotSupported);
+                            skippedDTD = null;
                         }
 
                         break;

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -86,6 +86,18 @@ namespace Microsoft.Language.Xml.Tests
                 XmlClassificationTypes.XmlName,
                 XmlClassificationTypes.XmlDelimiter,
                 XmlClassificationTypes.XmlDelimiter,
+                XmlClassificationTypes.XmlDelimiter,
+                XmlClassificationTypes.XmlDelimiter,
+                XmlClassificationTypes.XmlName,
+                XmlClassificationTypes.XmlDelimiter);
+        }
+
+        [Fact]
+        public void ClassifierDocType()
+        {
+            T("<!DOCTYPE html><x></x>",
+                XmlClassificationTypes.XmlDelimiter,
+                XmlClassificationTypes.XmlName,
                 XmlClassificationTypes.XmlDelimiter,
                 XmlClassificationTypes.XmlDelimiter,
                 XmlClassificationTypes.XmlName,

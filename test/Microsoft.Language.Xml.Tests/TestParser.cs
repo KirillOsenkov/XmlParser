@@ -93,6 +93,13 @@ namespace Microsoft.Language.Xml.Tests
         }
 
         [Fact]
+        public void Doctype()
+        {
+            T("<!DOCTYPE html><x></x>");
+            T("<!DOCTYPE html>a<x></x>");
+        }
+
+        [Fact]
         public void ExhaustiveSubstring()
         {
             for (int start = 0; start < allXml.Length; start++)
