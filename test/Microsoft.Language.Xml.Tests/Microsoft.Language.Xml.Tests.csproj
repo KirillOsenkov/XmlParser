@@ -18,7 +18,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Microsoft.Language.Xml\Microsoft.Language.Xml.csproj" />
+    <ProjectReference Include="..\..\src\Microsoft.Language.Xml\Microsoft.Language.Xml.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="TestXml.xml" />

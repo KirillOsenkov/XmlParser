@@ -12,7 +12,7 @@
     <Reference Include="System.ComponentModel.Composition" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Microsoft.Language.Xml\Microsoft.Language.Xml.csproj" />
-    <ProjectReference Include="..\Microsoft.Language.Xml.Editor\Microsoft.Language.Xml.Editor.csproj" />
+    <ProjectReference Include="..\..\src\Microsoft.Language.Xml\Microsoft.Language.Xml.csproj" />
+    <ProjectReference Include="..\..\src\Microsoft.Language.Xml.Editor\Microsoft.Language.Xml.Editor.csproj" />
   </ItemGroup>
 </Project>
