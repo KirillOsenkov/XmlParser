@@ -48,3 +48,36 @@ https://github.com/KirillOsenkov/XmlParser/blob/master/src/Microsoft.Language.Xm
 ```
 SyntaxLocator.FindNode(SyntaxNode node, int position);
 ```
+
+### How to replace a nore in the tree
+
+```csharp
+var original = """
+               <Project Sdk="Microsoft.NET.Sdk">
+                 <PropertyGroup>
+                   <TargetFramework>net8.0</TargetFramework>
+                 </PropertyGroup>
+               </Project>
+               """;
+
+var expected = """
+               <Project Sdk="Microsoft.NET.Sdk">
+                 <PropertyGroup>
+                   <TargetFramework>net9.0</TargetFramework>
+                 </PropertyGroup>
+               </Project>
+               """;
+
+XmlDocumentSyntax root = Parser.ParseText(original);
+XmlElementSyntax syntaxToReplace = root
+    .Descendants()
+    .OfType<XmlElementSyntax>()
+    .Single(n => n.Name == "TargetFramework");
+SyntaxNode textSyntaxToReplace = syntaxToReplace.Content.Single();
+
+XmlTextSyntax content = SyntaxFactory.XmlText(SyntaxFactory.XmlTextLiteralToken("net9.0", null, null));
+
+root = root.ReplaceNode(textSyntaxToReplace, content);
+
+Assert.Equal(expected, root.ToFullString());
+```
