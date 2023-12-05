@@ -1,12 +1,4 @@
-﻿using BenchmarkDotNet.Running;
+using BenchmarkDotNet.Running;
+using Microsoft.Language.Xml.Benchmarks;
 
-namespace Microsoft.Language.Xml.Benchmarks
-{
-    class Program
-    {
-        public static void Main(string[] args)
-        {
-            BenchmarkRunner.Run<ParserBenchmarks>();
-        }
-    }
-}
+BenchmarkRunner.Run<ParserBenchmarks>();
