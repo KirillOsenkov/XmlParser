@@ -8,21 +8,21 @@ namespace Microsoft.Language.Xml.Test
         [Fact]
         public void TestReplaceNode()
         {
-            var original = """
-                           <Project Sdk="Microsoft.NET.Sdk">
+            var original = @"
+                           <Project Sdk=""Microsoft.NET.Sdk"">
                              <PropertyGroup>
                                <TargetFramework>net8.0</TargetFramework>
                              </PropertyGroup>
                            </Project>
-                           """;
+                           ";
 
-            var expected = """
-                           <Project Sdk="Microsoft.NET.Sdk">
+            var expected = @"
+                           <Project Sdk=""Microsoft.NET.Sdk"">
                              <PropertyGroup>
                                <TargetFramework>net9.0</TargetFramework>
                              </PropertyGroup>
                            </Project>
-                           """;
+                           ";
 
             XmlDocumentSyntax root = Parser.ParseText(original);
             XmlElementSyntax syntaxToReplace = root
