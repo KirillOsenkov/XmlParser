@@ -49,7 +49,7 @@ https://github.com/KirillOsenkov/XmlParser/blob/master/src/Microsoft.Language.Xm
 SyntaxLocator.FindNode(SyntaxNode node, int position);
 ```
 
-### How to replace a nore in the tree
+### How to replace a node in the tree
 
 ```csharp
 var original = """
