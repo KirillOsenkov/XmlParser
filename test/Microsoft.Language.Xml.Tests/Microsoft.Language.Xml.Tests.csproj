@@ -1,7 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>Microsoft.Language.Xml.Tests</AssemblyName>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFrameworks>net472;net6.0;net7.0;net8.0</TargetFrameworks>
     <IsWindows>$([MSBuild]::IsOSPlatform('Windows'))</IsWindows>
   </PropertyGroup>
   <PropertyGroup>
@@ -10,9 +10,13 @@
     <DelaySign>False</DelaySign>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="xunit" Version="2.4.1" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" />
-    <PackageReference Include="xunit.runner.console" Version="2.4.1" Condition="!$(IsWindows)" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="xunit" Version="2.6.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="xunit.runner.console" Version="2.6.3" Condition="!$(IsWindows)" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
