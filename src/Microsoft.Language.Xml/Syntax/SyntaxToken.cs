@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -219,9 +219,9 @@ namespace Microsoft.Language.Xml
         public override int GetSlotCountIncludingTrivia()
         {
             int triviaSlots = 0;
-            if (GetLeadingTrivia() != null)
+            if (GetLeadingTrivia() != default)
                 triviaSlots++;
-            if (GetTrailingTrivia() != null)
+            if (GetTrailingTrivia() != default)
                 triviaSlots++;
 
             return triviaSlots;
