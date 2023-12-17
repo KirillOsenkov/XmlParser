@@ -1,4 +1,4 @@
-﻿// turns on tables that are stored as literals in this file
+// turns on tables that are stored as literals in this file
 // to generate new literals undef this constant and examine
 // result of Dump() function.
 #define XMLCHARTYPE_USE_LITERAL_TABLE

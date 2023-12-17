@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -207,7 +207,7 @@ namespace Microsoft.Language.Xml
         KeepExteriorTrivia = KeepLeadingTrivia | KeepTrailingTrivia,
 
         /// <summary>
-        /// Ensure that at least one EndOfLine trivia is kept if one was present 
+        /// Ensure that at least one EndOfLine trivia is kept if one was present
         /// </summary>
         KeepEndOfLine = 0x10,
 

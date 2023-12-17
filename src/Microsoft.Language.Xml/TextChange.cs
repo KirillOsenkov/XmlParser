@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace Microsoft.Language.Xml
@@ -6,7 +6,7 @@ namespace Microsoft.Language.Xml
     public readonly struct TextChange : IEquatable<TextChange>
     {
         /// <summary>
-        /// The original span of the changed text. 
+        /// The original span of the changed text.
         /// </summary>
         public TextSpan Span { get; }
 

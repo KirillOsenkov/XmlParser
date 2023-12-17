@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -309,7 +309,7 @@ namespace Microsoft.Language.Xml
         /// Returns the first child in the list.
         /// </summary>
         /// <returns>The first child in the list.</returns>
-        /// <exception cref="System.InvalidOperationException">The list is empty.</exception>    
+        /// <exception cref="System.InvalidOperationException">The list is empty.</exception>
         public SyntaxNode First()
         {
             if (Any())
@@ -324,7 +324,7 @@ namespace Microsoft.Language.Xml
         /// Returns the last child in the list.
         /// </summary>
         /// <returns>The last child in the list.</returns>
-        /// <exception cref="System.InvalidOperationException">The list is empty.</exception>    
+        /// <exception cref="System.InvalidOperationException">The list is empty.</exception>
         public SyntaxNode Last()
         {
             if (Any())

@@ -1,4 +1,4 @@
-﻿namespace Microsoft.Language.Xml
+namespace Microsoft.Language.Xml
 {
     /// <summary>
     /// Abstraction around text snapshot to decouple the parser from the editor
