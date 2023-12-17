@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
@@ -151,7 +151,7 @@ namespace Microsoft.Language.Xml
         /// Returns the first trivia in the list.
         /// </summary>
         /// <returns>The first trivia in the list.</returns>
-        /// <exception cref="InvalidOperationException">The list is empty.</exception>        
+        /// <exception cref="InvalidOperationException">The list is empty.</exception>
         public SyntaxTrivia First()
         {
             if (Any())
@@ -166,7 +166,7 @@ namespace Microsoft.Language.Xml
         /// Returns the last trivia in the list.
         /// </summary>
         /// <returns>The last trivia in the list.</returns>
-        /// <exception cref="InvalidOperationException">The list is empty.</exception>        
+        /// <exception cref="InvalidOperationException">The list is empty.</exception>
         public SyntaxTrivia Last()
         {
             if (Any())

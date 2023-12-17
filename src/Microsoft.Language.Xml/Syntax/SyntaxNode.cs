@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -326,7 +326,7 @@ namespace Microsoft.Language.Xml
         }
 
         /// <summary>
-        /// Gets a list of ancestor nodes (including this node) 
+        /// Gets a list of ancestor nodes (including this node)
         /// </summary>
         public IEnumerable<SyntaxNode> AncestorNodesAndSelf(bool ascendOutOfTrivia = true)
         {
@@ -551,7 +551,7 @@ namespace Microsoft.Language.Xml
         }
 
         /// <summary>
-        /// Gets all the annotations with the specified annotation kind. 
+        /// Gets all the annotations with the specified annotation kind.
         /// </summary>
         public IEnumerable<SyntaxAnnotation> GetAnnotations(string annotationKind)
         {
@@ -559,7 +559,7 @@ namespace Microsoft.Language.Xml
         }
 
         /// <summary>
-        /// Gets all the annotations with the specified annotation kinds. 
+        /// Gets all the annotations with the specified annotation kinds.
         /// </summary>
         public IEnumerable<SyntaxAnnotation> GetAnnotations(IEnumerable<string> annotationKinds)
         {

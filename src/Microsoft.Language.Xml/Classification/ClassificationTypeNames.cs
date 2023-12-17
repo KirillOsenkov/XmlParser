@@ -1,4 +1,4 @@
-﻿namespace Microsoft.Language.Xml
+namespace Microsoft.Language.Xml
 {
     public class ClassificationTypeNames
     {

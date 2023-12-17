@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -387,7 +387,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
         internal abstract GreenNode SetDiagnostics(DiagnosticInfo[] diagnostics);
         #endregion
 
-        #region Annotations 
+        #region Annotations
         public bool HasAnnotations(string annotationKind)
         {
             var annotations = this.GetAnnotations();

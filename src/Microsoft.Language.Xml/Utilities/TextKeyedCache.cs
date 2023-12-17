@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
 using System.Threading;
@@ -22,7 +22,7 @@ namespace Microsoft.Language.Xml
         }
 
         // TODO: Need to tweak the size with more scenarios.
-        //       for now this is what works well enough with 
+        //       for now this is what works well enough with
         //       Roslyn C# compiler project
 
         // Size of local cache.
@@ -41,7 +41,7 @@ namespace Microsoft.Language.Xml
         private const int SharedBucketSizeMask = SharedBucketSize - 1;
 
         // local cache
-        // simple fast and not threadsafe cache 
+        // simple fast and not threadsafe cache
         // with limited size and "last add wins" expiration policy
         private readonly (string Text, int HashCode, T Item)[] _localTable = new(string Text, int HashCode, T Item)[LocalSize];
 

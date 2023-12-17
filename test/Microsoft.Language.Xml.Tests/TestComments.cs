@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Microsoft.Language.Xml.Comments;
 using Microsoft.Language.Xml.Tests.Properties;

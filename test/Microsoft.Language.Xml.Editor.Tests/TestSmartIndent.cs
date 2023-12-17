@@ -1,4 +1,4 @@
-﻿using Microsoft.Language.Xml.Editor;
+using Microsoft.Language.Xml.Editor;
 using Xunit;
 
 namespace Microsoft.Language.Xml.Test

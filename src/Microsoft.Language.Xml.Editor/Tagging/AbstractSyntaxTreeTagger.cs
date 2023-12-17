@@ -1,4 +1,4 @@
-﻿namespace Microsoft.Language.Xml.Editor
+namespace Microsoft.Language.Xml.Editor
 {
     public abstract class AbstractSyntaxTreeTagger
     {
