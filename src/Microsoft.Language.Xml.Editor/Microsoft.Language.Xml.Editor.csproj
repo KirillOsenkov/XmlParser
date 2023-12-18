@@ -10,12 +10,12 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Nerdbank.GitVersioning" Version="2.1.84" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.VisualStudio.CoreUtility" Version="15.8.519" />
-    <PackageReference Include="Microsoft.VisualStudio.Language.StandardClassification" Version="15.8.519" />
-    <PackageReference Include="Microsoft.VisualStudio.Text.Data" Version="15.8.519" />
-    <PackageReference Include="Microsoft.VisualStudio.Text.Logic" Version="15.8.519" />
-    <PackageReference Include="Microsoft.VisualStudio.Text.UI" Version="15.8.519" />
-    <PackageReference Include="Microsoft.VisualStudio.Text.UI.Wpf" Version="15.8.519" />
+    <PackageReference Include="Microsoft.VisualStudio.CoreUtility" Version="15.8.525" />
+    <PackageReference Include="Microsoft.VisualStudio.Language.StandardClassification" Version="15.8.525" />
+    <PackageReference Include="Microsoft.VisualStudio.Text.Data" Version="15.8.525" />
+    <PackageReference Include="Microsoft.VisualStudio.Text.Logic" Version="15.8.525" />
+    <PackageReference Include="Microsoft.VisualStudio.Text.UI" Version="15.8.525" />
+    <PackageReference Include="Microsoft.VisualStudio.Text.UI.Wpf" Version="15.8.525" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All"/>
   </ItemGroup>
   <ItemGroup>
