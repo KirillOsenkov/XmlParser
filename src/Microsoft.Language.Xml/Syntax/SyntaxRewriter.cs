@@ -144,13 +144,13 @@ namespace Microsoft.Language.Xml
 
             if (anyChanges)
             {
-                return XmlDocument(
+                return node.CopyAnnotationsTo(XmlDocument(
                     newDeclaration,
                     newPrecedingMisc.Node,
                     newRoot,
                     newFollowingMisc.Node,
                     newSkippedTokens,
-                    newEof);
+                    newEof));
             }
             else
             {
@@ -199,13 +199,13 @@ namespace Microsoft.Language.Xml
 
             if (anyChanges)
             {
-                return XmlDeclaration(
+                return node.CopyAnnotationsTo(XmlDeclaration(
                     newLessThanQuestionToken,
                     newXmlKeyword,
                     newVersion,
                     newEncoding,
                     newStandalone,
-                    newQuestionGreaterThanToken);
+                    newQuestionGreaterThanToken));
             }
             else
             {
@@ -236,7 +236,7 @@ namespace Microsoft.Language.Xml
 
             if (anyChanges)
             {
-                return XmlDeclarationOption(newName, newEquals, newValue);
+                return node.CopyAnnotationsTo(XmlDeclarationOption(newName, newEquals, newValue));
             }
             else
             {
@@ -267,7 +267,7 @@ namespace Microsoft.Language.Xml
 
             if (anyChanges)
             {
-                return XmlElement(newStartTag, newContent.Node, newEndTag);
+                return node.CopyAnnotationsTo(XmlElement(newStartTag, newContent.Node, newEndTag));
             }
             else
             {
@@ -286,7 +286,7 @@ namespace Microsoft.Language.Xml
 
             if (anyChanges)
             {
-                return XmlText(newTextTokens.Node);
+                return node.CopyAnnotationsTo(XmlText(newTextTokens.Node));
             }
             else
             {
@@ -323,7 +323,7 @@ namespace Microsoft.Language.Xml
 
             if (anyChanges)
             {
-                return XmlElementStartTag(newLessThanToken, newName, newAttributes.Node, newGreaterThanToken);
+                return node.CopyAnnotationsTo(XmlElementStartTag(newLessThanToken, newName, newAttributes.Node, newGreaterThanToken));
             }
             else
             {
@@ -354,7 +354,7 @@ namespace Microsoft.Language.Xml
 
             if (anyChanges)
             {
-                return XmlElementEndTag(newLessThanSlashToken, newName, newGreaterThanToken);
+                return node.CopyAnnotationsTo(XmlElementEndTag(newLessThanSlashToken, newName, newGreaterThanToken));
             }
             else
             {
@@ -391,7 +391,7 @@ namespace Microsoft.Language.Xml
 
             if (anyChanges)
             {
-                return XmlEmptyElement(newLessThanToken, newName, newAttributes.Node, newSlashGreaterThanToken);
+                return node.CopyAnnotationsTo(XmlEmptyElement(newLessThanToken, newName, newAttributes.Node, newSlashGreaterThanToken));
             }
             else
             {
@@ -422,7 +422,7 @@ namespace Microsoft.Language.Xml
 
             if (anyChanges)
             {
-                return XmlAttribute(newName, newEqualsToken, newValue);
+                return node.CopyAnnotationsTo(XmlAttribute(newName, newEqualsToken, newValue));
             }
             else
             {
@@ -453,7 +453,7 @@ namespace Microsoft.Language.Xml
 
             if (anyChanges)
             {
-                return XmlString(newStartQuoteToken, newTextTokens.Node, newEndQuoteToken);
+                return node.CopyAnnotationsTo(XmlString(newStartQuoteToken, newTextTokens.Node, newEndQuoteToken));
             }
             else
             {
@@ -478,7 +478,7 @@ namespace Microsoft.Language.Xml
 
             if (anyChanges)
             {
-                return XmlName(newPrefix, newLocalName);
+                return node.CopyAnnotationsTo(XmlName(newPrefix, newLocalName));
             }
             else
             {
@@ -503,7 +503,7 @@ namespace Microsoft.Language.Xml
 
             if (anyChanges)
             {
-                return XmlPrefix(newName, newColonToken);
+                return node.CopyAnnotationsTo(XmlPrefix(newName, newColonToken));
             }
             else
             {
@@ -534,7 +534,7 @@ namespace Microsoft.Language.Xml
 
             if (anyChanges)
             {
-                return XmlComment(newLessThanExclamationMinusMinusToken, newTextTokens.Node, newMinusMinusGreaterThanToken);
+                return node.CopyAnnotationsTo(XmlComment(newLessThanExclamationMinusMinusToken, newTextTokens.Node, newMinusMinusGreaterThanToken));
             }
             else
             {
@@ -571,7 +571,7 @@ namespace Microsoft.Language.Xml
 
             if (anyChanges)
             {
-                return XmlProcessingInstruction(newLessThanQuestionToken, newName, newTextTokens.Node, newQuestionGreaterThanToken);
+                return node.CopyAnnotationsTo(XmlProcessingInstruction(newLessThanQuestionToken, newName, newTextTokens.Node, newQuestionGreaterThanToken));
             }
             else
             {
@@ -602,7 +602,7 @@ namespace Microsoft.Language.Xml
 
             if (anyChanges)
             {
-                return XmlCDataSection(newBeginCDataToken, newTextTokens.Node, newEndCDataToken);
+                return node.CopyAnnotationsTo(XmlCDataSection(newBeginCDataToken, newTextTokens.Node, newEndCDataToken));
             }
             else
             {

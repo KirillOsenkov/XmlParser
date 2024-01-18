@@ -236,8 +236,11 @@ namespace Microsoft.Language.Xml
             var startTag = SyntaxFactory.XmlElementStartTag(this.LessThanToken, this.NameNode, this.AttributesNode, greaterThanToken);
             var lessThanSlashToken = SyntaxFactory.Punctuation(SyntaxKind.LessThanSlashToken, "</", null, null);
             var endTag = SyntaxFactory.XmlElementEndTag(lessThanSlashToken, this.NameNode, greaterThanToken);
-
-            return SyntaxFactory.XmlElement(startTag, content, endTag);
+            var newNode = SyntaxFactory.XmlElement(startTag, content, endTag);
+            var annotations = this.GetAnnotations();
+            if (annotations != null && annotations.Length > 0)
+                return newNode.WithAnnotations(annotations);
+            return newNode;
         }
 
         public XmlEmptyElementSyntax WithSlashGreaterThanToken(PunctuationSyntax slashGreaterThanToken)
