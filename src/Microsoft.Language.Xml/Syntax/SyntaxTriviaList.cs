@@ -101,17 +101,29 @@ namespace Microsoft.Language.Xml
                     {
                         if (unchecked((uint)index < (uint)Node.SlotCount))
                         {
-                            return Node.GetNodeSlot(index) as SyntaxTrivia;
+                            return GetSyntaxTrivia(Node.GetNodeSlot(index));
                         }
                     }
                     else if (index == 0)
                     {
-                        return Node as SyntaxTrivia;
+                        return GetSyntaxTrivia(Node);
                     }
                 }
 
                 throw new ArgumentOutOfRangeException(nameof(index));
             }
+        }
+
+        private static SyntaxTrivia GetSyntaxTrivia(SyntaxNode node)
+        {
+            if (node is SyntaxTrivia trivia)
+            {
+                return trivia;
+            }
+
+            var green = new SyntaxTrivia.Green(node.Kind, node.ToFullString());
+            trivia = new SyntaxTrivia(green, node.Parent, node.Start);
+            return trivia;
         }
 
         /// <summary>
@@ -607,7 +619,7 @@ namespace Microsoft.Language.Xml
                             throw new InvalidOperationException();
                         }
 
-                        return (SyntaxTrivia)_current;
+                        return GetSyntaxTrivia(_current);
                     }
                 }
             }
@@ -735,7 +747,7 @@ namespace Microsoft.Language.Xml
                         throw new InvalidOperationException();
                     }
 
-                    return _current as SyntaxTrivia;
+                    return GetSyntaxTrivia(_current);
                 }
             }
 
@@ -747,7 +759,7 @@ namespace Microsoft.Language.Xml
                     return false;
                 }
 
-                current = _current as SyntaxTrivia;
+                current = GetSyntaxTrivia(_current);
                 return true;
             }
         }

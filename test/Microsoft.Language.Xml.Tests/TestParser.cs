@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Xunit;
 
 namespace Microsoft.Language.Xml.Tests
@@ -25,6 +26,19 @@ namespace Microsoft.Language.Xml.Tests
         public void ParserErrorTolerance2()
         {
             T("<abc></abc>");
+        }
+
+        [Fact]
+        public void TestIssue59()
+        {
+            var xml = Parser.ParseText(" <a><b><//b></a>");
+            var root = (XmlElementSyntax)xml.RootSyntax;
+            var allTrivia = root.DescendantTrivia().ToArray();
+            var b = root.EndTag;
+            var leadingTrivia = b.GetLeadingTrivia();
+            foreach (var item in leadingTrivia)
+            {
+            }
         }
 
         [Fact]
@@ -138,6 +152,9 @@ namespace Microsoft.Language.Xml.Tests
                 new KeyValuePair<int, IXmlElement>(x.Start, x))
                 .ToList();
 
+            string tokensAndTriviaConcatenated = ConcatenateAllTokensAndTrivia(root);
+            Assert.Equal(xml, tokensAndTriviaConcatenated);
+
             int last = 0;
             foreach (var descendantEntry in descendantList)
             {
@@ -159,8 +176,43 @@ namespace Microsoft.Language.Xml.Tests
 
             root.GetLeadingTrivia();
             root.GetTrailingTrivia();
+            var allTrivia = root.DescendantTrivia().ToArray();
 
             return root;
+        }
+
+        private string ConcatenateAllTokensAndTrivia(XmlDocumentSyntax root)
+        {
+            var sb = new StringBuilder();
+
+            var all = root.DescendantNodesAndTokens();
+            foreach (var item in all)
+            {
+                if (item is SyntaxToken token)
+                {
+                    var leading = token.GetLeadingTrivia();
+                    if (leading.Count > 0)
+                    {
+                        foreach (var trivia in leading)
+                        {
+                            sb.Append(trivia.ToString());
+                        }
+                    }
+
+                    sb.Append(token.Text);
+
+                    var trailing = token.GetTrailingTrivia();
+                    if (trailing.Count > 0)
+                    {
+                        foreach (var trivia in trailing)
+                        {
+                            sb.Append(trivia.ToString());
+                        }
+                    }
+                }
+            }
+
+            return sb.ToString();
         }
 
         private static void VerifyText(string xml, SyntaxNode node)
