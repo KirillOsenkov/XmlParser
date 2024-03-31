@@ -451,17 +451,17 @@ namespace Microsoft.Language.Xml
 
         private SyntaxToken.Green ScanXmlStringDouble()
         {
-            return ScanXmlString('"', '"', false);
+            return ScanXmlString('"', '"', isSingle: false);
         }
 
         private SyntaxToken.Green ScanXmlStringSmartSingle()
         {
-            return ScanXmlString(DWCH_RSMART_Q, DWCH_LSMART_Q, true);
+            return ScanXmlString(DWCH_RSMART_Q, DWCH_LSMART_Q, isSingle: true);
         }
 
         private SyntaxToken.Green ScanXmlStringSingle()
         {
-            return ScanXmlString('\'', '\'', false);
+            return ScanXmlString('\'', '\'', isSingle: true);
         }
 
         internal SyntaxToken.Green ScanXmlComment()
