@@ -25,7 +25,6 @@ namespace Microsoft.Language.Xml
             private readonly SyntaxRemoveOptions _options;
             private readonly TextSpan _searchSpan;
             private readonly SyntaxTriviaListBuilder _residualTrivia;
-            private HashSet<SyntaxNode> _directivesToKeep;
 
             public SyntaxRemover(SyntaxNode[] nodes, SyntaxRemoveOptions options)
             {
