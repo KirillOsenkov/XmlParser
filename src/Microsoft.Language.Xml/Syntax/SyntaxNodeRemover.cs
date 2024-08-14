@@ -31,7 +31,7 @@ namespace Microsoft.Language.Xml
                 this._nodesToRemove = new HashSet<SyntaxNode>(nodes);
                 this._options = options;
                 this._searchSpan = ComputeTotalSpan(nodes);
-                this._residualTrivia = null;
+                this._residualTrivia = SyntaxTriviaListBuilder.Create();
             }
 
             private static TextSpan ComputeTotalSpan(SyntaxNode[] nodes)
