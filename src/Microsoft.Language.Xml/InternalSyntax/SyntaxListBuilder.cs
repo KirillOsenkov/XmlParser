@@ -1,6 +1,8 @@
 using System;
 using System.Diagnostics;
 
+#pragma warning disable CS8625
+
 namespace Microsoft.Language.Xml.InternalSyntax
 {
     internal class SyntaxListBuilder
@@ -36,7 +38,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
             }
         }
 
-        public void Add(GreenNode item)
+        public void Add(GreenNode? item)
         {
             if (item == null) return;
 
@@ -165,7 +167,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
             return array;
         }
 
-        internal GreenNode ToListNode()
+        internal GreenNode? ToListNode()
         {
             switch (this.Count)
             {

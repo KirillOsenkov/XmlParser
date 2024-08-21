@@ -12,7 +12,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
         {
         }
 
-        internal SyntaxList(DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
+        internal SyntaxList(DiagnosticInfo[]? diagnostics, SyntaxAnnotation[] annotations)
             : base(SyntaxKind.List, diagnostics, annotations)
         {
         }
@@ -134,7 +134,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
                 _child1 = child1;
             }
 
-            internal WithTwoChildren(DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations, GreenNode child0, GreenNode child1)
+            internal WithTwoChildren(DiagnosticInfo[]? diagnostics, SyntaxAnnotation[] annotations, GreenNode child0, GreenNode child1)
                 : base(diagnostics, annotations)
             {
                 this.SlotCount = 2;
@@ -144,7 +144,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
                 _child1 = child1;
             }
 
-            internal override GreenNode GetSlot(int index)
+            internal override GreenNode? GetSlot(int index)
             {
                 switch (index)
                 {
@@ -163,12 +163,12 @@ namespace Microsoft.Language.Xml.InternalSyntax
                 array[offset + 1].Value = _child1;
             }
 
-            internal override SyntaxNode CreateRed(SyntaxNode parent, int position)
+            internal override SyntaxNode CreateRed(SyntaxNode? parent, int position)
             {
                 return new Xml.SyntaxList.WithTwoChildren(this, parent, position);
             }
 
-            internal override GreenNode SetDiagnostics(DiagnosticInfo[] errors)
+            internal override GreenNode SetDiagnostics(DiagnosticInfo[]? errors)
             {
                 return new WithTwoChildren(errors, this.GetAnnotations(), _child0, _child1);
             }
@@ -196,7 +196,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
                 _child2 = child2;
             }
 
-            internal WithThreeChildren(DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations, GreenNode child0, GreenNode child1, GreenNode child2)
+            internal WithThreeChildren(DiagnosticInfo[]? diagnostics, SyntaxAnnotation[] annotations, GreenNode child0, GreenNode child1, GreenNode child2)
                 : base(diagnostics, annotations)
             {
                 this.SlotCount = 3;
@@ -208,7 +208,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
                 _child2 = child2;
             }
 
-            internal override GreenNode GetSlot(int index)
+            internal override GreenNode? GetSlot(int index)
             {
                 switch (index)
                 {
@@ -230,12 +230,12 @@ namespace Microsoft.Language.Xml.InternalSyntax
                 array[offset + 2].Value = _child2;
             }
 
-            internal override SyntaxNode CreateRed(SyntaxNode parent, int position)
+            internal override SyntaxNode CreateRed(SyntaxNode? parent, int position)
             {
                 return new Xml.SyntaxList.WithThreeChildren(this, parent, position);
             }
 
-            internal override GreenNode SetDiagnostics(DiagnosticInfo[] errors)
+            internal override GreenNode SetDiagnostics(DiagnosticInfo[]? errors)
             {
                 return new WithThreeChildren(errors, this.GetAnnotations(), _child0, _child1, _child2);
             }
@@ -256,7 +256,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
                 this.InitializeChildren();
             }
 
-            internal WithManyChildrenBase(DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations, ArrayElement<GreenNode>[] children)
+            internal WithManyChildrenBase(DiagnosticInfo[]? diagnostics, SyntaxAnnotation[] annotations, ArrayElement<GreenNode>[] children)
                 : base(diagnostics, annotations)
             {
                 this.children = children;
@@ -296,7 +296,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
                 Array.Copy(this.children, 0, array, offset, this.children.Length);
             }
 
-            internal override SyntaxNode CreateRed(SyntaxNode parent, int position)
+            internal override SyntaxNode CreateRed(SyntaxNode? parent, int position)
             {
                 return new Xml.SyntaxList.WithManyChildren(this, parent, position);
             }
@@ -309,12 +309,12 @@ namespace Microsoft.Language.Xml.InternalSyntax
             {
             }
 
-            internal WithManyChildren(DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations, ArrayElement<GreenNode>[] children)
+            internal WithManyChildren(DiagnosticInfo[]? diagnostics, SyntaxAnnotation[] annotations, ArrayElement<GreenNode>[] children)
                 : base(diagnostics, annotations, children)
             {
             }
 
-            internal override GreenNode SetDiagnostics(DiagnosticInfo[] errors)
+            internal override GreenNode SetDiagnostics(DiagnosticInfo[]? errors)
             {
                 return new WithManyChildren(errors, this.GetAnnotations(), children);
             }
@@ -335,7 +335,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
                 _childOffsets = CalculateOffsets(children);
             }
 
-            internal WithLotsOfChildren(DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations, ArrayElement<GreenNode>[] children, int[] childOffsets)
+            internal WithLotsOfChildren(DiagnosticInfo[]? diagnostics, SyntaxAnnotation[] annotations, ArrayElement<GreenNode>[] children, int[] childOffsets)
                 : base(diagnostics, annotations, children)
             {
                 _childOffsets = childOffsets;
@@ -374,7 +374,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
                 return childOffsets;
             }
 
-            internal override GreenNode SetDiagnostics(DiagnosticInfo[] errors)
+            internal override GreenNode SetDiagnostics(DiagnosticInfo[]? errors)
             {
                 return new WithLotsOfChildren(errors, this.GetAnnotations(), children, _childOffsets);
             }

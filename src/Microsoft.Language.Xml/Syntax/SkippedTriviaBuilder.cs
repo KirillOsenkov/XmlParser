@@ -18,10 +18,10 @@ namespace Microsoft.Language.Xml
         private InternalSyntax.SyntaxListBuilder<GreenNode> skippedTokensBuilder = InternalSyntax.SyntaxListBuilder<GreenNode>.Create();
         private bool preserveExistingDiagnostics;
         private bool addDiagnosticsToFirstTokenOnly;
-        private IEnumerable<DiagnosticInfo> diagnosticsToAdd;
+        private IEnumerable<DiagnosticInfo>? diagnosticsToAdd;
 
         // Add a trivia to the triva we are accumulating.
-        private void AddTrivia(GreenNode trivia)
+        private void AddTrivia(GreenNode? trivia)
         {
             FinishInProgressTokens();
             triviaListBuilder.AddRange(trivia);
@@ -72,7 +72,7 @@ namespace Microsoft.Language.Xml
             ////    token = token.WithoutDiagnostics();
             ////}
 
-            GreenNode trailingTrivia = null;
+            GreenNode? trailingTrivia = null;
             if (token.HasTrailingTrivia && (isLast || isMissing || token.GetTrailingTrivia().TriviaListContainsStructuredTrivia()))
             {
                 trailingTrivia = token.GetTrailingTrivia();

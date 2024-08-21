@@ -8,11 +8,11 @@ namespace Microsoft.Language.Xml
     {
         internal new class Green : XmlNodeSyntax.Green
         {
-            readonly GreenNode value;
+            readonly GreenNode? value;
 
             internal InternalSyntax.SyntaxList<GreenNode> TextTokens => new InternalSyntax.SyntaxList<GreenNode>(value);
 
-            internal Green(GreenNode value)
+            internal Green(GreenNode? value)
                 : base(SyntaxKind.XmlText)
             {
                 this.SlotCount = 1;
@@ -20,7 +20,7 @@ namespace Microsoft.Language.Xml
                 AdjustWidth(value);
             }
 
-            internal Green(GreenNode value, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
+            internal Green(GreenNode? value, DiagnosticInfo[]? diagnostics, SyntaxAnnotation[] annotations)
                 : base(SyntaxKind.XmlText, diagnostics, annotations)
             {
                 this.SlotCount = 1;
@@ -28,9 +28,9 @@ namespace Microsoft.Language.Xml
                 AdjustWidth(value);
             }
 
-            internal override SyntaxNode CreateRed(SyntaxNode parent, int position) => new XmlTextSyntax(this, parent, position);
+            internal override SyntaxNode CreateRed(SyntaxNode? parent, int position) => new XmlTextSyntax(this, parent, position);
 
-            internal override GreenNode GetSlot(int index)
+            internal override GreenNode? GetSlot(int index)
             {
                 switch (index)
                 {
@@ -44,7 +44,7 @@ namespace Microsoft.Language.Xml
                 return visitor.VisitXmlText(this);
             }
 
-            internal override GreenNode SetDiagnostics(DiagnosticInfo[] diagnostics)
+            internal override GreenNode SetDiagnostics(DiagnosticInfo[]? diagnostics)
             {
                 return new Green(value, diagnostics, GetAnnotations());
             }
@@ -55,11 +55,11 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        SyntaxNode textTokens;
+        SyntaxNode? textTokens;
 
         public SyntaxList<SyntaxNode> TextTokens => new SyntaxList<SyntaxNode>(GetRed(ref textTokens, 0));
 
-        internal XmlTextSyntax(Green green, SyntaxNode parent, int position)
+        internal XmlTextSyntax(Green green, SyntaxNode? parent, int position)
             : base(green, parent, position)
         {
 
@@ -72,7 +72,7 @@ namespace Microsoft.Language.Xml
             return visitor.VisitXmlText(this);
         }
 
-        internal override SyntaxNode GetCachedSlot(int index)
+        internal override SyntaxNode? GetCachedSlot(int index)
         {
             switch (index)
             {
@@ -81,7 +81,7 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        internal override SyntaxNode GetNodeSlot(int slot)
+        internal override SyntaxNode? GetNodeSlot(int slot)
         {
             switch (slot)
             {

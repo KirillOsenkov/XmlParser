@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 
+#pragma warning disable CS8602
+
 namespace Microsoft.Language.Xml
 {
     public static class XmlExtensions

@@ -8,17 +8,17 @@ namespace Microsoft.Language.Xml
     {
         internal new class Green : XmlNodeSyntax.Green
         {
-            readonly PunctuationSyntax.Green startQuoteToken;
-            readonly GreenNode value;
-            readonly PunctuationSyntax.Green endQuoteToken;
+            readonly PunctuationSyntax.Green? startQuoteToken;
+            readonly GreenNode? value;
+            readonly PunctuationSyntax.Green? endQuoteToken;
 
-            internal PunctuationSyntax.Green StartQuoteToken => startQuoteToken;
-            internal GreenNode ValueNode => value;
-            internal PunctuationSyntax.Green EndQuoteToken => endQuoteToken;
+            internal PunctuationSyntax.Green? StartQuoteToken => startQuoteToken;
+            internal GreenNode? ValueNode => value;
+            internal PunctuationSyntax.Green? EndQuoteToken => endQuoteToken;
 
             internal InternalSyntax.SyntaxList<GreenNode> TextTokens => new InternalSyntax.SyntaxList<GreenNode>(value);
 
-            internal Green(PunctuationSyntax.Green startQuoteToken, GreenNode value, PunctuationSyntax.Green endQuoteToken)
+            internal Green(PunctuationSyntax.Green? startQuoteToken, GreenNode? value, PunctuationSyntax.Green? endQuoteToken)
                 : base(SyntaxKind.XmlString)
             {
                 this.SlotCount = 3;
@@ -30,7 +30,7 @@ namespace Microsoft.Language.Xml
                 AdjustWidth(endQuoteToken);
             }
 
-            internal Green(PunctuationSyntax.Green startQuoteToken, GreenNode value, PunctuationSyntax.Green endQuoteToken, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
+            internal Green(PunctuationSyntax.Green? startQuoteToken, GreenNode? value, PunctuationSyntax.Green? endQuoteToken, DiagnosticInfo[]? diagnostics, SyntaxAnnotation[] annotations)
                 : base(SyntaxKind.XmlString, diagnostics, annotations)
             {
                 this.SlotCount = 3;
@@ -42,9 +42,9 @@ namespace Microsoft.Language.Xml
                 AdjustWidth(endQuoteToken);
             }
 
-            internal override SyntaxNode CreateRed(SyntaxNode parent, int position) => new XmlStringSyntax(this, parent, position);
+            internal override SyntaxNode CreateRed(SyntaxNode? parent, int position) => new XmlStringSyntax(this, parent, position);
 
-            internal override GreenNode GetSlot(int index)
+            internal override GreenNode? GetSlot(int index)
             {
                 switch (index)
                 {
@@ -60,7 +60,7 @@ namespace Microsoft.Language.Xml
                 return visitor.VisitXmlString(this);
             }
 
-            internal override GreenNode SetDiagnostics(DiagnosticInfo[] diagnostics)
+            internal override GreenNode SetDiagnostics(DiagnosticInfo[]? diagnostics)
             {
                 return new Green(startQuoteToken, value, endQuoteToken, diagnostics, GetAnnotations());
             }
@@ -73,15 +73,15 @@ namespace Microsoft.Language.Xml
 
         internal new Green GreenNode => (Green)base.GreenNode;
 
-        PunctuationSyntax startQuoteToken;
-        SyntaxNode textTokens;
-        PunctuationSyntax endQuoteToken;
+        PunctuationSyntax? startQuoteToken;
+        SyntaxNode? textTokens;
+        PunctuationSyntax? endQuoteToken;
 
-        public PunctuationSyntax StartQuoteToken => GetRed(ref startQuoteToken, 0);
+        public PunctuationSyntax? StartQuoteToken => GetRed(ref startQuoteToken, 0);
         public SyntaxList<SyntaxNode> TextTokens => new SyntaxList<SyntaxNode>(GetRed(ref textTokens, 1));
-        public PunctuationSyntax EndQuoteToken => GetRed(ref endQuoteToken, 2);
+        public PunctuationSyntax? EndQuoteToken => GetRed(ref endQuoteToken, 2);
 
-        internal XmlStringSyntax(Green green, SyntaxNode parent, int position)
+        internal XmlStringSyntax(Green green, SyntaxNode? parent, int position)
             : base(green, parent, position)
         {
 
@@ -92,7 +92,7 @@ namespace Microsoft.Language.Xml
             return visitor.VisitXmlString(this);
         }
 
-        internal override SyntaxNode GetCachedSlot(int index)
+        internal override SyntaxNode? GetCachedSlot(int index)
         {
             switch (index)
             {
@@ -103,7 +103,7 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        internal override SyntaxNode GetNodeSlot(int slot)
+        internal override SyntaxNode? GetNodeSlot(int slot)
         {
             switch (slot)
             {
@@ -114,7 +114,7 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        public XmlStringSyntax Update(PunctuationSyntax startQuoteToken, SyntaxList<SyntaxNode> textTokens, PunctuationSyntax endQuoteToken)
+        public XmlStringSyntax Update(PunctuationSyntax? startQuoteToken, SyntaxList<SyntaxNode> textTokens, PunctuationSyntax? endQuoteToken)
         {
             if (startQuoteToken != this.StartQuoteToken || textTokens != this.TextTokens || endQuoteToken != this.EndQuoteToken)
             {

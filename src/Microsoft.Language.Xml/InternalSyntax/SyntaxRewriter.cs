@@ -1,5 +1,8 @@
 using System.Diagnostics;
 
+#pragma warning disable CS8602
+#pragma warning disable CS8604
+
 namespace Microsoft.Language.Xml.InternalSyntax
 {
     internal class SyntaxRewriter : SyntaxVisitor
@@ -49,8 +52,8 @@ namespace Microsoft.Language.Xml.InternalSyntax
                 var item = list[i];
                 var visitedItem = this.Visit(item);
 
-                GreenNode separator = null;
-                GreenNode visitedSeparator = null;
+                GreenNode? separator = null;
+                GreenNode? visitedSeparator = null;
 
                 if (i < separatorCount)
                 {
@@ -104,7 +107,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
         public override GreenNode VisitXmlDocument(XmlDocumentSyntax.Green node)
         {
             bool anyChanges = false;
-            var newDeclaration = ((XmlDeclarationSyntax.Green)Visit(node.Prologue));
+            var newDeclaration = ((XmlDeclarationSyntax.Green?)Visit(node.Prologue));
             if (node.Prologue != newDeclaration)
             {
                 anyChanges = true;
@@ -116,7 +119,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
                 anyChanges = true;
             }
 
-            var newRoot = ((XmlNodeSyntax.Green)Visit(node.Body));
+            var newRoot = ((XmlNodeSyntax.Green?)Visit(node.Body));
             if (node.Body != newRoot)
             {
                 anyChanges = true;
@@ -159,37 +162,37 @@ namespace Microsoft.Language.Xml.InternalSyntax
         public override GreenNode VisitXmlDeclaration(XmlDeclarationSyntax.Green node)
         {
             bool anyChanges = false;
-            var newLessThanQuestionToken = ((PunctuationSyntax.Green)Visit(node.LessThanQuestionToken));
+            var newLessThanQuestionToken = ((PunctuationSyntax.Green?)Visit(node.LessThanQuestionToken));
             if (node.LessThanQuestionToken != newLessThanQuestionToken)
             {
                 anyChanges = true;
             }
 
-            var newXmlKeyword = ((KeywordSyntax.Green)Visit(node.XmlKeyword));
+            var newXmlKeyword = ((KeywordSyntax.Green?)Visit(node.XmlKeyword));
             if (node.XmlKeyword != newXmlKeyword)
             {
                 anyChanges = true;
             }
 
-            var newVersion = ((XmlDeclarationOptionSyntax.Green)Visit(node.Version));
+            var newVersion = ((XmlDeclarationOptionSyntax.Green?)Visit(node.Version));
             if (node.Version != newVersion)
             {
                 anyChanges = true;
             }
 
-            var newEncoding = ((XmlDeclarationOptionSyntax.Green)Visit(node.Encoding));
+            var newEncoding = ((XmlDeclarationOptionSyntax.Green?)Visit(node.Encoding));
             if (node.Encoding != newEncoding)
             {
                 anyChanges = true;
             }
 
-            var newStandalone = ((XmlDeclarationOptionSyntax.Green)Visit(node.Standalone));
+            var newStandalone = ((XmlDeclarationOptionSyntax.Green?)Visit(node.Standalone));
             if (node.Standalone != newStandalone)
             {
                 anyChanges = true;
             }
 
-            var newQuestionGreaterThanToken = ((PunctuationSyntax.Green)Visit(node.QuestionGreaterThanToken));
+            var newQuestionGreaterThanToken = ((PunctuationSyntax.Green?)Visit(node.QuestionGreaterThanToken));
             if (node.QuestionGreaterThanToken != newQuestionGreaterThanToken)
             {
                 anyChanges = true;
@@ -214,19 +217,19 @@ namespace Microsoft.Language.Xml.InternalSyntax
         public override GreenNode VisitXmlDeclarationOption(XmlDeclarationOptionSyntax.Green node)
         {
             bool anyChanges = false;
-            var newName = ((XmlNameTokenSyntax.Green)Visit(node.Name));
+            var newName = ((XmlNameTokenSyntax.Green?)Visit(node.Name));
             if (node.Name != newName)
             {
                 anyChanges = true;
             }
 
-            var newEquals = ((PunctuationSyntax.Green)Visit(node.Equals));
+            var newEquals = ((PunctuationSyntax.Green?)Visit(node.Equals));
             if (node.Equals != newEquals)
             {
                 anyChanges = true;
             }
 
-            var newValue = ((XmlStringSyntax.Green)Visit(node.Value));
+            var newValue = ((XmlStringSyntax.Green?)Visit(node.Value));
             if (node.Value != newValue)
             {
                 anyChanges = true;
@@ -245,7 +248,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
         public override GreenNode VisitXmlElement(XmlElementSyntax.Green node)
         {
             bool anyChanges = false;
-            var newStartTag = ((XmlElementStartTagSyntax.Green)Visit(node.StartTag));
+            var newStartTag = ((XmlElementStartTagSyntax.Green?)Visit(node.StartTag));
             if (node.StartTag != newStartTag)
             {
                 anyChanges = true;
@@ -257,7 +260,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
                 anyChanges = true;
             }
 
-            var newEndTag = ((XmlElementEndTagSyntax.Green)Visit(node.EndTag));
+            var newEndTag = ((XmlElementEndTagSyntax.Green?)Visit(node.EndTag));
             if (node.EndTag != newEndTag)
             {
                 anyChanges = true;
@@ -295,13 +298,13 @@ namespace Microsoft.Language.Xml.InternalSyntax
         public override GreenNode VisitXmlElementStartTag(XmlElementStartTagSyntax.Green node)
         {
             bool anyChanges = false;
-            var newLessThanToken = ((PunctuationSyntax.Green)Visit(node.LessThanToken));
+            var newLessThanToken = ((PunctuationSyntax.Green?)Visit(node.LessThanToken));
             if (node.LessThanToken != newLessThanToken)
             {
                 anyChanges = true;
             }
 
-            var newName = ((XmlNameSyntax.Green)Visit(node.NameNode));
+            var newName = ((XmlNameSyntax.Green?)Visit(node.NameNode));
             if (node.NameNode != newName)
             {
                 anyChanges = true;
@@ -313,7 +316,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
                 anyChanges = true;
             }
 
-            var newGreaterThanToken = ((PunctuationSyntax.Green)Visit(node.GreaterThanToken));
+            var newGreaterThanToken = ((PunctuationSyntax.Green?)Visit(node.GreaterThanToken));
             if (node.GreaterThanToken != newGreaterThanToken)
             {
                 anyChanges = true;
@@ -332,19 +335,19 @@ namespace Microsoft.Language.Xml.InternalSyntax
         public override GreenNode VisitXmlElementEndTag(XmlElementEndTagSyntax.Green node)
         {
             bool anyChanges = false;
-            var newLessThanSlashToken = ((PunctuationSyntax.Green)Visit(node.LessThanSlashToken));
+            var newLessThanSlashToken = ((PunctuationSyntax.Green?)Visit(node.LessThanSlashToken));
             if (node.LessThanSlashToken != newLessThanSlashToken)
             {
                 anyChanges = true;
             }
 
-            var newName = ((XmlNameSyntax.Green)Visit(node.NameNode));
+            var newName = ((XmlNameSyntax.Green?)Visit(node.NameNode));
             if (node.NameNode != newName)
             {
                 anyChanges = true;
             }
 
-            var newGreaterThanToken = ((PunctuationSyntax.Green)Visit(node.GreaterThanToken));
+            var newGreaterThanToken = ((PunctuationSyntax.Green?)Visit(node.GreaterThanToken));
             if (node.GreaterThanToken != newGreaterThanToken)
             {
                 anyChanges = true;
@@ -363,13 +366,13 @@ namespace Microsoft.Language.Xml.InternalSyntax
         public override GreenNode VisitXmlEmptyElement(XmlEmptyElementSyntax.Green node)
         {
             bool anyChanges = false;
-            var newLessThanToken = ((PunctuationSyntax.Green)Visit(node.LessThanToken));
+            var newLessThanToken = ((PunctuationSyntax.Green?)Visit(node.LessThanToken));
             if (node.LessThanToken != newLessThanToken)
             {
                 anyChanges = true;
             }
 
-            var newName = ((XmlNameSyntax.Green)Visit(node.NameNode));
+            var newName = ((XmlNameSyntax.Green?)Visit(node.NameNode));
             if (node.NameNode != newName)
             {
                 anyChanges = true;
@@ -381,7 +384,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
                 anyChanges = true;
             }
 
-            var newSlashGreaterThanToken = ((PunctuationSyntax.Green)Visit(node.SlashGreaterThanToken));
+            var newSlashGreaterThanToken = ((PunctuationSyntax.Green?)Visit(node.SlashGreaterThanToken));
             if (node.SlashGreaterThanToken != newSlashGreaterThanToken)
             {
                 anyChanges = true;
@@ -400,19 +403,19 @@ namespace Microsoft.Language.Xml.InternalSyntax
         public override GreenNode VisitXmlAttribute(XmlAttributeSyntax.Green node)
         {
             bool anyChanges = false;
-            var newName = ((XmlNameSyntax.Green)Visit(node.NameNode));
+            var newName = ((XmlNameSyntax.Green?)Visit(node.NameNode));
             if (node.NameNode != newName)
             {
                 anyChanges = true;
             }
 
-            var newEqualsToken = ((PunctuationSyntax.Green)Visit(node.Equals));
+            var newEqualsToken = ((PunctuationSyntax.Green?)Visit(node.Equals));
             if (node.Equals != newEqualsToken)
             {
                 anyChanges = true;
             }
 
-            var newValue = ((XmlNodeSyntax.Green)Visit(node.ValueNode));
+            var newValue = ((XmlNodeSyntax.Green?)Visit(node.ValueNode));
             if (node.ValueNode != newValue)
             {
                 anyChanges = true;
@@ -431,7 +434,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
         public override GreenNode VisitXmlString(XmlStringSyntax.Green node)
         {
             bool anyChanges = false;
-            var newStartQuoteToken = ((PunctuationSyntax.Green)Visit(node.StartQuoteToken));
+            var newStartQuoteToken = ((PunctuationSyntax.Green?)Visit(node.StartQuoteToken));
             if (node.StartQuoteToken != newStartQuoteToken)
             {
                 anyChanges = true;
@@ -443,7 +446,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
                 anyChanges = true;
             }
 
-            var newEndQuoteToken = ((PunctuationSyntax.Green)Visit(node.EndQuoteToken));
+            var newEndQuoteToken = ((PunctuationSyntax.Green?)Visit(node.EndQuoteToken));
             if (node.EndQuoteToken != newEndQuoteToken)
             {
                 anyChanges = true;
@@ -462,13 +465,13 @@ namespace Microsoft.Language.Xml.InternalSyntax
         public override GreenNode VisitXmlName(XmlNameSyntax.Green node)
         {
             bool anyChanges = false;
-            var newPrefix = ((XmlPrefixSyntax.Green)Visit(node.Prefix));
+            var newPrefix = ((XmlPrefixSyntax.Green?)Visit(node.Prefix));
             if (node.Prefix != newPrefix)
             {
                 anyChanges = true;
             }
 
-            var newLocalName = ((XmlNameTokenSyntax.Green)Visit(node.LocalName));
+            var newLocalName = ((XmlNameTokenSyntax.Green?)Visit(node.LocalName));
             if (node.LocalName != newLocalName)
             {
                 anyChanges = true;
@@ -512,7 +515,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
         public override GreenNode VisitXmlComment(XmlCommentSyntax.Green node)
         {
             bool anyChanges = false;
-            var newLessThanExclamationMinusMinusToken = ((PunctuationSyntax.Green)Visit(node.BeginComment));
+            var newLessThanExclamationMinusMinusToken = ((PunctuationSyntax.Green?)Visit(node.BeginComment));
             if (node.BeginComment != newLessThanExclamationMinusMinusToken)
             {
                 anyChanges = true;
@@ -524,7 +527,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
                 anyChanges = true;
             }
 
-            var newMinusMinusGreaterThanToken = ((PunctuationSyntax.Green)Visit(node.EndComment));
+            var newMinusMinusGreaterThanToken = ((PunctuationSyntax.Green?)Visit(node.EndComment));
             if (node.EndComment != newMinusMinusGreaterThanToken)
             {
                 anyChanges = true;
@@ -543,13 +546,13 @@ namespace Microsoft.Language.Xml.InternalSyntax
         public override GreenNode VisitXmlProcessingInstruction(XmlProcessingInstructionSyntax.Green node)
         {
             bool anyChanges = false;
-            var newLessThanQuestionToken = ((PunctuationSyntax.Green)Visit(node.LessThanQuestionToken));
+            var newLessThanQuestionToken = ((PunctuationSyntax.Green?)Visit(node.LessThanQuestionToken));
             if (node.LessThanQuestionToken != newLessThanQuestionToken)
             {
                 anyChanges = true;
             }
 
-            var newName = ((XmlNameTokenSyntax.Green)Visit(node.Name));
+            var newName = ((XmlNameTokenSyntax.Green?)Visit(node.Name));
             if (node.Name != newName)
             {
                 anyChanges = true;
@@ -561,7 +564,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
                 anyChanges = true;
             }
 
-            var newQuestionGreaterThanToken = ((PunctuationSyntax.Green)Visit(node.QuestionGreaterThanToken));
+            var newQuestionGreaterThanToken = ((PunctuationSyntax.Green?)Visit(node.QuestionGreaterThanToken));
             if (node.QuestionGreaterThanToken != newQuestionGreaterThanToken)
             {
                 anyChanges = true;
@@ -580,7 +583,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
         public override GreenNode VisitXmlCDataSection(XmlCDataSectionSyntax.Green node)
         {
             bool anyChanges = false;
-            var newBeginCDataToken = ((PunctuationSyntax.Green)Visit(node.BeginCData));
+            var newBeginCDataToken = ((PunctuationSyntax.Green?)Visit(node.BeginCData));
             if (node.BeginCData != newBeginCDataToken)
             {
                 anyChanges = true;
@@ -592,7 +595,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
                 anyChanges = true;
             }
 
-            var newEndCDataToken = ((PunctuationSyntax.Green)Visit(node.EndCData));
+            var newEndCDataToken = ((PunctuationSyntax.Green?)Visit(node.EndCData));
             if (node.EndCData != newEndCDataToken)
             {
                 anyChanges = true;

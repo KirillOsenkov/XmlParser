@@ -4,6 +4,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
+#pragma warning disable CS8602
+#pragma warning disable CS8604
+
 namespace Microsoft.Language.Xml
 {
     internal class SyntaxDiffer
@@ -461,10 +464,10 @@ namespace Microsoft.Language.Xml
         private readonly struct ChangeRecord
         {
             public readonly TextChangeRange Range;
-            public readonly Queue<SyntaxNode> OldNodes;
-            public readonly Queue<SyntaxNode> NewNodes;
+            public readonly Queue<SyntaxNode>? OldNodes;
+            public readonly Queue<SyntaxNode>? NewNodes;
 
-            internal ChangeRecord(TextChangeRange range, Queue<SyntaxNode> oldNodes, Queue<SyntaxNode> newNodes)
+            internal ChangeRecord(TextChangeRange range, Queue<SyntaxNode>? oldNodes, Queue<SyntaxNode>? newNodes)
             {
                 this.Range = range;
                 this.OldNodes = oldNodes;
@@ -616,7 +619,7 @@ namespace Microsoft.Language.Xml
             return TextSpan.FromBounds(start, end);
         }
 
-        private static Queue<SyntaxNode> Combine(Queue<SyntaxNode> first, Queue<SyntaxNode> next)
+        private static Queue<SyntaxNode>? Combine(Queue<SyntaxNode>? first, Queue<SyntaxNode>? next)
         {
             if (first == null || first.Count == 0)
             {
@@ -636,7 +639,7 @@ namespace Microsoft.Language.Xml
             return first;
         }
 
-        private static Queue<SyntaxNode> CopyFirst(Stack<SyntaxNode> stack, int n)
+        private static Queue<SyntaxNode>? CopyFirst(Stack<SyntaxNode> stack, int n)
         {
             if (n == 0)
             {
@@ -688,9 +691,9 @@ namespace Microsoft.Language.Xml
         private readonly struct ChangeRangeWithText
         {
             public readonly TextChangeRange Range;
-            public readonly string NewText;
+            public readonly string? NewText;
 
-            public ChangeRangeWithText(TextChangeRange range, string newText)
+            public ChangeRangeWithText(TextChangeRange range, string? newText)
             {
                 this.Range = range;
                 this.NewText = newText;
@@ -793,7 +796,7 @@ namespace Microsoft.Language.Xml
             return builder.ToString();
         }
 
-        private static void CopyText(Queue<SyntaxNode> queue, StringBuilder builder)
+        private static void CopyText(Queue<SyntaxNode>? queue, StringBuilder builder)
         {
             builder.Length = 0;
 

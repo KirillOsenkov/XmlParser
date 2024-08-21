@@ -8,13 +8,13 @@ namespace Microsoft.Language.Xml
     {
         internal new class Green : XmlNodeSyntax.Green
         {
-            readonly XmlPrefixSyntax.Green xmlPrefix;
-            readonly XmlNameTokenSyntax.Green localName;
+            readonly XmlPrefixSyntax.Green? xmlPrefix;
+            readonly XmlNameTokenSyntax.Green? localName;
 
-            internal XmlPrefixSyntax.Green Prefix => xmlPrefix;
-            internal XmlNameTokenSyntax.Green LocalName => localName;
+            internal XmlPrefixSyntax.Green? Prefix => xmlPrefix;
+            internal XmlNameTokenSyntax.Green? LocalName => localName;
 
-            internal Green(XmlPrefixSyntax.Green xmlPrefix, XmlNameTokenSyntax.Green localName)
+            internal Green(XmlPrefixSyntax.Green? xmlPrefix, XmlNameTokenSyntax.Green? localName)
                 : base(SyntaxKind.XmlName)
             {
                 this.SlotCount = 2;
@@ -24,7 +24,7 @@ namespace Microsoft.Language.Xml
                 AdjustWidth(localName);
             }
 
-            internal Green(XmlPrefixSyntax.Green xmlPrefix, XmlNameTokenSyntax.Green localName, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
+            internal Green(XmlPrefixSyntax.Green? xmlPrefix, XmlNameTokenSyntax.Green? localName, DiagnosticInfo[]? diagnostics, SyntaxAnnotation[] annotations)
                 : base(SyntaxKind.XmlName, diagnostics, annotations)
             {
                 this.SlotCount = 2;
@@ -34,9 +34,9 @@ namespace Microsoft.Language.Xml
                 AdjustWidth(localName);
             }
 
-            internal override SyntaxNode CreateRed(SyntaxNode parent, int position) => new XmlNameSyntax(this, parent, position);
+            internal override SyntaxNode CreateRed(SyntaxNode? parent, int position) => new XmlNameSyntax(this, parent, position);
 
-            internal override GreenNode GetSlot(int index)
+            internal override GreenNode? GetSlot(int index)
             {
                 switch (index)
                 {
@@ -52,7 +52,7 @@ namespace Microsoft.Language.Xml
                 return visitor.VisitXmlName(this);
             }
 
-            internal override GreenNode SetDiagnostics(DiagnosticInfo[] diagnostics)
+            internal override GreenNode SetDiagnostics(DiagnosticInfo[]? diagnostics)
             {
                 return new Green(xmlPrefix, localName, diagnostics, GetAnnotations());
             }
@@ -65,13 +65,13 @@ namespace Microsoft.Language.Xml
 
         internal new Green GreenNode => (Green)base.GreenNode;
 
-        XmlPrefixSyntax prefix;
-        XmlNameTokenSyntax localName;
+        XmlPrefixSyntax? prefix;
+        XmlNameTokenSyntax? localName;
 
-        public XmlPrefixSyntax PrefixNode => GetRed(ref prefix, 0);
-        public XmlNameTokenSyntax LocalNameNode => GetRed(ref localName, 1);
+        public XmlPrefixSyntax? PrefixNode => GetRed(ref prefix, 0);
+        public XmlNameTokenSyntax? LocalNameNode => GetRed(ref localName, 1);
 
-        internal XmlNameSyntax(Green green, SyntaxNode parent, int position)
+        internal XmlNameSyntax(Green green, SyntaxNode? parent, int position)
             : base(green, parent, position)
         {
 
@@ -82,8 +82,8 @@ namespace Microsoft.Language.Xml
             return visitor.VisitXmlName(this);
         }
 
-        public string LocalName => LocalNameNode?.Text;
-        public string Prefix => PrefixNode?.Name?.Text;
+        public string? LocalName => LocalNameNode?.Text;
+        public string? Prefix => PrefixNode?.Name?.Text;
 
         public string FullName => (PrefixNode != null ? (PrefixNode.Name?.Text ?? string.Empty) + ":" : string.Empty) + (LocalNameNode?.Text ?? string.Empty);
 
@@ -92,7 +92,7 @@ namespace Microsoft.Language.Xml
             return $"XmlNameSyntax {FullName}";
         }
 
-        internal override SyntaxNode GetCachedSlot(int index)
+        internal override SyntaxNode? GetCachedSlot(int index)
         {
             switch (index)
             {
@@ -102,7 +102,7 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        internal override SyntaxNode GetNodeSlot(int slot)
+        internal override SyntaxNode? GetNodeSlot(int slot)
         {
             switch (slot)
             {
@@ -112,7 +112,7 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        public XmlNameSyntax Update(XmlPrefixSyntax prefix, XmlNameTokenSyntax localName)
+        public XmlNameSyntax Update(XmlPrefixSyntax? prefix, XmlNameTokenSyntax? localName)
         {
             if (prefix != this.PrefixNode || localName != this.LocalNameNode)
             {

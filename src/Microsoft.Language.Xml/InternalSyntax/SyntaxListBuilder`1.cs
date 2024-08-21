@@ -86,7 +86,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
             return _builder.ToList<TNode>();
         }
 
-        public GreenNode ToListNode()
+        public GreenNode? ToListNode()
         {
             return _builder.ToListNode();
         }

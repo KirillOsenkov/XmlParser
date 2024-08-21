@@ -24,7 +24,7 @@ namespace Microsoft.Language.Xml
         public static SyntaxNode FindNode(
             this SyntaxNode node,
             int position,
-            Func<SyntaxNode, bool> descendIntoChildren = null,
+            Func<SyntaxNode, bool>? descendIntoChildren = null,
             bool includeTrivia = true,
             bool excludeTerminal = false)
         {
@@ -93,7 +93,7 @@ namespace Microsoft.Language.Xml
             public int i;
         }
 
-        public static IEnumerable<SyntaxNode> Tokens(this SyntaxNode root, TextSpan span, Func<SyntaxNode, bool> descendIntoChildren = null)
+        public static IEnumerable<SyntaxNode> Tokens(this SyntaxNode root, TextSpan span, Func<SyntaxNode, bool>? descendIntoChildren = null)
         {
             VisitState currentState = new VisitState() { node = root };
             Stack<VisitState> stateStack = new Stack<VisitState>();

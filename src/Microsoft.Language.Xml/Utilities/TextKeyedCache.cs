@@ -3,6 +3,8 @@
 using System;
 using System.Threading;
 
+#pragma warning disable CS8602
+
 namespace Microsoft.Language.Xml
 {
     internal class TextKeyedCache<T> where T : class
@@ -59,7 +61,7 @@ namespace Microsoft.Language.Xml
 
         // random - used for selecting a victim in the shared cache.
         // TODO: consider whether a counter is random enough
-        private Random _random;
+        private Random? _random;
 
         internal TextKeyedCache() :
             this(null)
@@ -69,18 +71,18 @@ namespace Microsoft.Language.Xml
         // implement Poolable object pattern
         #region "Poolable"
 
-        private TextKeyedCache(ObjectPool<TextKeyedCache<T>> pool)
+        private TextKeyedCache(ObjectPool<TextKeyedCache<T>>? pool)
         {
             _pool = pool;
             _strings = new StringTable();
         }
 
-        private readonly ObjectPool<TextKeyedCache<T>> _pool;
+        private readonly ObjectPool<TextKeyedCache<T>>? _pool;
         private static readonly ObjectPool<TextKeyedCache<T>> s_staticPool = CreatePool();
 
         private static ObjectPool<TextKeyedCache<T>> CreatePool()
         {
-            ObjectPool<TextKeyedCache<T>> pool = null;
+            ObjectPool<TextKeyedCache<T>>? pool = null;
             pool = new ObjectPool<TextKeyedCache<T>>(() => new TextKeyedCache<T>(pool), Environment.ProcessorCount * 4);
             return pool;
         }
@@ -101,7 +103,7 @@ namespace Microsoft.Language.Xml
 
         #endregion // Poolable
 
-        internal T FindItem(string chars, int start, int len, int hashCode)
+        internal T? FindItem(string chars, int start, int len, int hashCode)
         {
             // get direct element reference to avoid extra range checks
             ref var localSlot = ref _localTable[LocalIdxFromHash (hashCode)];
@@ -116,7 +118,7 @@ namespace Microsoft.Language.Xml
                 }
             }
 
-            SharedEntryValue e = FindSharedEntry(chars, start, len, hashCode);
+            SharedEntryValue? e = FindSharedEntry(chars, start, len, hashCode);
             if (e != null)
             {
                 // PERF: the following code does element-wise assignment of a struct
@@ -134,12 +136,12 @@ namespace Microsoft.Language.Xml
             return null;
         }
 
-        private SharedEntryValue FindSharedEntry(string chars, int start, int len, int hashCode)
+        private SharedEntryValue? FindSharedEntry(string chars, int start, int len, int hashCode)
         {
             var arr = _sharedTableInst;
             int idx = SharedIdxFromHash(hashCode);
 
-            SharedEntryValue e = null;
+            SharedEntryValue? e = null;
             int hash;
 
             // we use quadratic probing here

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+#pragma warning disable CS8602
+
 namespace Microsoft.Language.Xml.Comments
 {
     public static class CommentUtilities

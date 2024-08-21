@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
+#pragma warning disable CS8602
+#pragma warning disable CS8604
+
 namespace Microsoft.Language.Xml
 {
     using InternalSyntax;
@@ -9,9 +12,9 @@ namespace Microsoft.Language.Xml
     internal sealed class Blender : Scanner
     {
         private readonly Stack<GreenNode> _nodeStack = new Stack<GreenNode>();
-        private readonly TextChangeRange[] _changes;
-        private readonly TextSpan[] _affectedRanges;
-        private GreenNode _currentNode;
+        private readonly TextChangeRange[]? _changes;
+        private readonly TextSpan[]? _affectedRanges;
+        private GreenNode? _currentNode;
         private int _curNodeStart;
         private int _curNodeLength;
         private readonly SyntaxNode _baseTreeRoot;
@@ -98,7 +101,7 @@ namespace Microsoft.Language.Xml
             return TextSpan.FromBounds(start, end);
         }
 
-        internal override GreenNode GetCurrentSyntaxNode()
+        internal override GreenNode? GetCurrentSyntaxNode()
         {
             if (_currentNode == null)
                 return null;
@@ -191,7 +194,7 @@ namespace Microsoft.Language.Xml
 
         private static bool ShouldCrumble(GreenNode node) => true;
 
-        private GreenNode GetCurrentNode(int position)
+        private GreenNode? GetCurrentNode(int position)
         {
             Debug.Assert(_currentNode != null);
             var mappedPosition = MapNewPositionToOldTree(position);
@@ -218,7 +221,7 @@ namespace Microsoft.Language.Xml
             return _currentNode;
         }
 
-        private bool CanReuseNode(GreenNode node)
+        private bool CanReuseNode(GreenNode? node)
         {
             if (node == null)
                 return false;

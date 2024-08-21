@@ -8,9 +8,9 @@ namespace Microsoft.Language.Xml
     {
         internal class Green : GreenNode
         {
-            readonly GreenNode tokens;
+            readonly GreenNode? tokens;
 
-            internal Green(GreenNode tokens)
+            internal Green(GreenNode? tokens)
                 : base(SyntaxKind.SkippedTokensTrivia)
             {
                 this.SlotCount = 1;
@@ -18,7 +18,7 @@ namespace Microsoft.Language.Xml
                 AdjustWidth(tokens);
             }
 
-            internal Green(GreenNode tokens, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
+            internal Green(GreenNode? tokens, DiagnosticInfo[]? diagnostics, SyntaxAnnotation[] annotations)
                 : base(SyntaxKind.SkippedTokensTrivia, diagnostics, annotations)
             {
                 this.SlotCount = 1;
@@ -26,9 +26,9 @@ namespace Microsoft.Language.Xml
                 AdjustWidth(tokens);
             }
 
-            internal override SyntaxNode CreateRed(SyntaxNode parent, int position) => new SkippedTokensTriviaSyntax(this, parent, position);
+            internal override SyntaxNode CreateRed(SyntaxNode? parent, int position) => new SkippedTokensTriviaSyntax(this, parent, position);
 
-            internal override GreenNode GetSlot(int index)
+            internal override GreenNode? GetSlot(int index)
             {
                 switch (index)
                 {
@@ -42,7 +42,7 @@ namespace Microsoft.Language.Xml
                 return visitor.VisitSkippedTokensTrivia(this);
             }
 
-            internal override GreenNode SetDiagnostics(DiagnosticInfo[] diagnostics)
+            internal override GreenNode SetDiagnostics(DiagnosticInfo[]? diagnostics)
             {
                 return new Green(tokens, diagnostics, GetAnnotations());
             }
@@ -55,11 +55,11 @@ namespace Microsoft.Language.Xml
 
         internal new Green GreenNode => (Green)base.GreenNode;
 
-        SyntaxNode textTokens;
+        SyntaxNode? textTokens;
 
         public SyntaxList<SyntaxToken> Tokens => new SyntaxList<SyntaxToken>(GetRed(ref textTokens, 0));
 
-        internal SkippedTokensTriviaSyntax(Green green, SyntaxNode parent, int position)
+        internal SkippedTokensTriviaSyntax(Green green, SyntaxNode? parent, int position)
             : base(green, parent, position)
         {
 
@@ -72,7 +72,7 @@ namespace Microsoft.Language.Xml
             return visitor.VisitSkippedTokensTrivia(this);
         }
 
-        internal override SyntaxNode GetCachedSlot(int index)
+        internal override SyntaxNode? GetCachedSlot(int index)
         {
             switch (index)
             {
@@ -81,7 +81,7 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        internal override SyntaxNode GetNodeSlot(int slot)
+        internal override SyntaxNode? GetNodeSlot(int slot)
         {
             switch (slot)
             {

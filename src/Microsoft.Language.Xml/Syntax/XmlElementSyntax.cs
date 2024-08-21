@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+#pragma warning disable CS8602
+#pragma warning disable CS8604
+
 namespace Microsoft.Language.Xml
 {
     using InternalSyntax;
@@ -10,15 +13,15 @@ namespace Microsoft.Language.Xml
     {
         internal new class Green : XmlNodeSyntax.Green
         {
-            readonly XmlElementStartTagSyntax.Green startTag;
-            readonly GreenNode content;
-            readonly XmlElementEndTagSyntax.Green endTag;
+            readonly XmlElementStartTagSyntax.Green? startTag;
+            readonly GreenNode? content;
+            readonly XmlElementEndTagSyntax.Green? endTag;
 
-            internal XmlElementStartTagSyntax.Green StartTag => startTag;
-            internal GreenNode Content => content;
-            internal XmlElementEndTagSyntax.Green EndTag => endTag;
+            internal XmlElementStartTagSyntax.Green? StartTag => startTag;
+            internal GreenNode? Content => content;
+            internal XmlElementEndTagSyntax.Green? EndTag => endTag;
 
-            internal Green(XmlElementStartTagSyntax.Green startTag, GreenNode content, XmlElementEndTagSyntax.Green endTag)
+            internal Green(XmlElementStartTagSyntax.Green? startTag, GreenNode? content, XmlElementEndTagSyntax.Green? endTag)
                 : base(SyntaxKind.XmlElement)
             {
                 this.SlotCount = 3;
@@ -30,7 +33,7 @@ namespace Microsoft.Language.Xml
                 AdjustWidth(endTag);
             }
 
-            internal Green(XmlElementStartTagSyntax.Green startTag, GreenNode content, XmlElementEndTagSyntax.Green endTag, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
+            internal Green(XmlElementStartTagSyntax.Green? startTag, GreenNode? content, XmlElementEndTagSyntax.Green? endTag, DiagnosticInfo[]? diagnostics, SyntaxAnnotation[] annotations)
                 : base(SyntaxKind.XmlElement, diagnostics, annotations)
             {
                 this.SlotCount = 3;
@@ -42,9 +45,9 @@ namespace Microsoft.Language.Xml
                 AdjustWidth(endTag);
             }
 
-            internal override SyntaxNode CreateRed(SyntaxNode parent, int position) => new XmlElementSyntax(this, parent, position);
+            internal override SyntaxNode CreateRed(SyntaxNode? parent, int position) => new XmlElementSyntax(this, parent, position);
 
-            internal override GreenNode GetSlot(int index)
+            internal override GreenNode? GetSlot(int index)
             {
                 switch (index)
                 {
@@ -60,7 +63,7 @@ namespace Microsoft.Language.Xml
                 return visitor.VisitXmlElement(this);
             }
 
-            internal override GreenNode SetDiagnostics(DiagnosticInfo[] diagnostics)
+            internal override GreenNode SetDiagnostics(DiagnosticInfo[]? diagnostics)
             {
                 return new Green(startTag, content, endTag, diagnostics, GetAnnotations());
             }
@@ -73,15 +76,15 @@ namespace Microsoft.Language.Xml
 
         internal new Green GreenNode => (Green)base.GreenNode;
 
-        XmlElementStartTagSyntax startTag;
-        SyntaxNode content;
-        XmlElementEndTagSyntax endTag;
+        XmlElementStartTagSyntax? startTag;
+        SyntaxNode? content;
+        XmlElementEndTagSyntax? endTag;
 
-        public XmlElementStartTagSyntax StartTag => GetRed(ref startTag, 0);
+        public XmlElementStartTagSyntax? StartTag => GetRed(ref startTag, 0);
         public SyntaxList<SyntaxNode> Content => new SyntaxList<SyntaxNode>(GetRed(ref content, 1));
-        public XmlElementEndTagSyntax EndTag => GetRed(ref endTag, 2);
+        public XmlElementEndTagSyntax? EndTag => GetRed(ref endTag, 2);
 
-        internal XmlElementSyntax(Green green, SyntaxNode parent, int position)
+        internal XmlElementSyntax(Green green, SyntaxNode? parent, int position)
             : base(green, parent, position)
         {
 
@@ -92,7 +95,7 @@ namespace Microsoft.Language.Xml
             return visitor.VisitXmlElement(this);
         }
 
-        internal override SyntaxNode GetCachedSlot(int index)
+        internal override SyntaxNode? GetCachedSlot(int index)
         {
             switch (index)
             {
@@ -103,7 +106,7 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        internal override SyntaxNode GetNodeSlot(int slot)
+        internal override SyntaxNode? GetNodeSlot(int slot)
         {
             switch (slot)
             {
@@ -114,8 +117,8 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        public XmlNameSyntax NameNode => StartTag?.NameNode;
-        public string Name => StartTag?.Name;
+        public XmlNameSyntax? NameNode => StartTag?.NameNode;
+        public string? Name => StartTag?.Name;
 
         public IEnumerable<IXmlElementSyntax> Elements
         {
@@ -134,11 +137,11 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        public XmlAttributeSyntax GetAttribute(string localName, string prefix = null) => StartTag.AttributesNode.FirstOrDefault(
+        public XmlAttributeSyntax? GetAttribute(string localName, string? prefix = null) => StartTag.AttributesNode.FirstOrDefault(
             attr => string.Equals(attr.NameNode.LocalName, localName, StringComparison.Ordinal) && string.Equals(attr.NameNode.Prefix, prefix, StringComparison.Ordinal)
         );
 
-        public string GetAttributeValue(string localName, string prefix = null) => GetAttribute(localName, prefix)?.Value;
+        public string? GetAttributeValue(string localName, string? prefix = null) => GetAttribute(localName, prefix)?.Value;
 
         public IXmlElement AsElement => this;
         public IXmlElementSyntax AsSyntaxElement => this;
@@ -148,11 +151,11 @@ namespace Microsoft.Language.Xml
 
         int IXmlElement.FullWidth => FullWidth;
 
-        string IXmlElement.Name => Name;
+        string? IXmlElement.Name => Name;
 
         string IXmlElement.Value => Content.ToFullString();
 
-        IXmlElement IXmlElement.Parent => Parent as IXmlElement;
+        IXmlElement? IXmlElement.Parent => Parent as IXmlElement;
 
         IEnumerable<IXmlElement> IXmlElement.Elements => Elements.Select(el => el.AsElement);
 
@@ -181,13 +184,13 @@ namespace Microsoft.Language.Xml
 
         IXmlElementSyntax IXmlElement.AsSyntaxElement => this;
 
-        string IXmlElement.this[string attributeName] => GetAttributeValue(attributeName);
+        string? IXmlElement.this[string attributeName] => GetAttributeValue(attributeName);
         #endregion
 
         #region IXmlElementSyntax
 
-        IEnumerable<XmlAttributeSyntax> IXmlElementSyntax.Attributes => (IEnumerable<XmlAttributeSyntax>)StartTag?.AttributesNode;
-        IXmlElementSyntax IXmlElementSyntax.Parent => ParentElement;
+        IEnumerable<XmlAttributeSyntax>? IXmlElementSyntax.Attributes => (IEnumerable<XmlAttributeSyntax>?)StartTag?.AttributesNode;
+        IXmlElementSyntax? IXmlElementSyntax.Parent => ParentElement;
         XmlNodeSyntax IXmlElementSyntax.AsNode => this;
         SyntaxList<XmlAttributeSyntax> IXmlElementSyntax.AttributesNode => StartTag.AttributesNode;
 

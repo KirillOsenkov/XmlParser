@@ -5,6 +5,9 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Resources;
 
+#pragma warning disable CS8603
+#pragma warning disable CS8604
+
 namespace Microsoft.Language.Xml
 {
     /// <summary>
@@ -37,7 +40,7 @@ namespace Microsoft.Language.Xml
 
     public class DiagnosticInfo
     {
-        object[] parameters;
+        object[]? parameters;
 
         public ERRID ErrorID { get; }
         public DiagnosticSeverity Severity => DiagnosticSeverity.Error;

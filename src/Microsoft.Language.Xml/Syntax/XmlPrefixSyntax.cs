@@ -8,12 +8,12 @@ namespace Microsoft.Language.Xml
     {
         internal class Green : GreenNode
         {
-            readonly XmlNameTokenSyntax.Green name;
-            readonly PunctuationSyntax.Green colonToken;
+            readonly XmlNameTokenSyntax.Green? name;
+            readonly PunctuationSyntax.Green? colonToken;
 
-            internal XmlNameTokenSyntax.Green Name => name;
+            internal XmlNameTokenSyntax.Green? Name => name;
 
-            internal Green(XmlNameTokenSyntax.Green name, PunctuationSyntax.Green colonToken)
+            internal Green(XmlNameTokenSyntax.Green? name, PunctuationSyntax.Green? colonToken)
                 : base(SyntaxKind.XmlPrefix)
             {
                 this.SlotCount = 2;
@@ -23,7 +23,7 @@ namespace Microsoft.Language.Xml
                 AdjustWidth(colonToken);
             }
 
-            internal Green(XmlNameTokenSyntax.Green name, PunctuationSyntax.Green colonToken, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
+            internal Green(XmlNameTokenSyntax.Green? name, PunctuationSyntax.Green? colonToken, DiagnosticInfo[]? diagnostics, SyntaxAnnotation[] annotations)
                 : base(SyntaxKind.XmlPrefix, diagnostics, annotations)
             {
                 this.SlotCount = 2;
@@ -33,9 +33,9 @@ namespace Microsoft.Language.Xml
                 AdjustWidth(colonToken);
             }
 
-            internal override SyntaxNode CreateRed(SyntaxNode parent, int position) => new XmlPrefixSyntax(this, parent, position);
+            internal override SyntaxNode CreateRed(SyntaxNode? parent, int position) => new XmlPrefixSyntax(this, parent, position);
 
-            internal override GreenNode GetSlot(int index)
+            internal override GreenNode? GetSlot(int index)
             {
                 switch (index)
                 {
@@ -51,7 +51,7 @@ namespace Microsoft.Language.Xml
                 return visitor.VisitXmlPrefix(this);
             }
 
-            internal override GreenNode SetDiagnostics(DiagnosticInfo[] diagnostics)
+            internal override GreenNode SetDiagnostics(DiagnosticInfo[]? diagnostics)
             {
                 return new Green(name, colonToken, diagnostics, GetAnnotations());
             }
@@ -64,13 +64,13 @@ namespace Microsoft.Language.Xml
 
         internal new Green GreenNode => (Green)base.GreenNode;
 
-        XmlNameTokenSyntax name;
-        PunctuationSyntax colonToken;
+        XmlNameTokenSyntax? name;
+        PunctuationSyntax? colonToken;
 
-        public XmlNameTokenSyntax Name => GetRed(ref name, 0);
-        public PunctuationSyntax ColonToken => GetRed(ref colonToken, 1);
+        public XmlNameTokenSyntax? Name => GetRed(ref name, 0);
+        public PunctuationSyntax? ColonToken => GetRed(ref colonToken, 1);
 
-        internal XmlPrefixSyntax(Green green, SyntaxNode parent, int position)
+        internal XmlPrefixSyntax(Green green, SyntaxNode? parent, int position)
             : base(green, parent, position)
         {
         }
@@ -80,7 +80,7 @@ namespace Microsoft.Language.Xml
             return visitor.VisitXmlPrefix(this);
         }
 
-        internal override SyntaxNode GetCachedSlot(int index)
+        internal override SyntaxNode? GetCachedSlot(int index)
         {
             switch (index)
             {
@@ -90,7 +90,7 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        internal override SyntaxNode GetNodeSlot(int slot)
+        internal override SyntaxNode? GetNodeSlot(int slot)
         {
             switch (slot)
             {
@@ -100,7 +100,7 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        public XmlPrefixSyntax Update(XmlNameTokenSyntax name, PunctuationSyntax colonToken)
+        public XmlPrefixSyntax Update(XmlNameTokenSyntax? name, PunctuationSyntax? colonToken)
         {
             if (name != this.Name || colonToken != this.ColonToken)
             {
