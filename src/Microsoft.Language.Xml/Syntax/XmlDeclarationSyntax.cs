@@ -11,25 +11,25 @@ namespace Microsoft.Language.Xml
     {
         internal new class Green : XmlNodeSyntax.Green
         {
-            readonly PunctuationSyntax.Green lessThanQuestionToken;
-            readonly GreenNode xmlKeyword;
-            readonly XmlDeclarationOptionSyntax.Green version;
-            readonly XmlDeclarationOptionSyntax.Green encoding;
-            readonly XmlDeclarationOptionSyntax.Green standalone;
-            readonly PunctuationSyntax.Green questionGreaterThanToken;
+            readonly PunctuationSyntax.Green? lessThanQuestionToken;
+            readonly GreenNode? xmlKeyword;
+            readonly XmlDeclarationOptionSyntax.Green? version;
+            readonly XmlDeclarationOptionSyntax.Green? encoding;
+            readonly XmlDeclarationOptionSyntax.Green? standalone;
+            readonly PunctuationSyntax.Green? questionGreaterThanToken;
 
-            internal PunctuationSyntax.Green LessThanQuestionToken => lessThanQuestionToken;
-            internal GreenNode XmlKeyword => xmlKeyword;
-            internal XmlDeclarationOptionSyntax.Green Version => version;
-            internal XmlDeclarationOptionSyntax.Green Encoding => encoding;
-            internal XmlDeclarationOptionSyntax.Green Standalone => standalone;
-            internal PunctuationSyntax.Green QuestionGreaterThanToken => questionGreaterThanToken;
+            internal PunctuationSyntax.Green? LessThanQuestionToken => lessThanQuestionToken;
+            internal GreenNode? XmlKeyword => xmlKeyword;
+            internal XmlDeclarationOptionSyntax.Green? Version => version;
+            internal XmlDeclarationOptionSyntax.Green? Encoding => encoding;
+            internal XmlDeclarationOptionSyntax.Green? Standalone => standalone;
+            internal PunctuationSyntax.Green? QuestionGreaterThanToken => questionGreaterThanToken;
 
-            internal Green(PunctuationSyntax.Green lessThanQuestionToken,
-                           GreenNode xmlKeyword, XmlDeclarationOptionSyntax.Green version,
-                           XmlDeclarationOptionSyntax.Green encoding,
-                           XmlDeclarationOptionSyntax.Green standalone,
-                           PunctuationSyntax.Green questionGreaterThanToken)
+            internal Green(PunctuationSyntax.Green? lessThanQuestionToken,
+                           GreenNode? xmlKeyword, XmlDeclarationOptionSyntax.Green? version,
+                           XmlDeclarationOptionSyntax.Green? encoding,
+                           XmlDeclarationOptionSyntax.Green? standalone,
+                           PunctuationSyntax.Green? questionGreaterThanToken)
                 : base(SyntaxKind.XmlDeclaration)
             {
                 this.SlotCount = 6;
@@ -47,12 +47,12 @@ namespace Microsoft.Language.Xml
                 AdjustWidth(questionGreaterThanToken);
             }
 
-            internal Green(PunctuationSyntax.Green lessThanQuestionToken,
-                           GreenNode xmlKeyword, XmlDeclarationOptionSyntax.Green version,
-                           XmlDeclarationOptionSyntax.Green encoding,
-                           XmlDeclarationOptionSyntax.Green standalone,
-                           PunctuationSyntax.Green questionGreaterThanToken,
-                           DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
+            internal Green(PunctuationSyntax.Green? lessThanQuestionToken,
+                           GreenNode? xmlKeyword, XmlDeclarationOptionSyntax.Green? version,
+                           XmlDeclarationOptionSyntax.Green? encoding,
+                           XmlDeclarationOptionSyntax.Green? standalone,
+                           PunctuationSyntax.Green? questionGreaterThanToken,
+                           DiagnosticInfo[]? diagnostics, SyntaxAnnotation[] annotations)
                 : base(SyntaxKind.XmlDeclaration, diagnostics, annotations)
             {
                 this.SlotCount = 6;
@@ -70,9 +70,9 @@ namespace Microsoft.Language.Xml
                 AdjustWidth(questionGreaterThanToken);
             }
 
-            internal override SyntaxNode CreateRed(SyntaxNode parent, int position) => new XmlDeclarationSyntax(this, parent, position);
+            internal override SyntaxNode CreateRed(SyntaxNode? parent, int position) => new XmlDeclarationSyntax(this, parent, position);
 
-            internal override GreenNode GetSlot(int index)
+            internal override GreenNode? GetSlot(int index)
             {
                 switch (index)
                 {
@@ -91,7 +91,7 @@ namespace Microsoft.Language.Xml
                 return visitor.VisitXmlDeclaration(this);
             }
 
-            internal override GreenNode SetDiagnostics(DiagnosticInfo[] diagnostics)
+            internal override GreenNode SetDiagnostics(DiagnosticInfo[]? diagnostics)
             {
                 return new Green(lessThanQuestionToken, xmlKeyword, version, encoding, standalone, questionGreaterThanToken, diagnostics, GetAnnotations());
             }
@@ -104,21 +104,21 @@ namespace Microsoft.Language.Xml
 
         internal new Green GreenNode => (Green)base.GreenNode;
 
-        PunctuationSyntax lessThanQuestionToken;
-        SyntaxToken xmlKeyword;
-        XmlDeclarationOptionSyntax version;
-        XmlDeclarationOptionSyntax encoding;
-        XmlDeclarationOptionSyntax standalone;
-        PunctuationSyntax questionGreaterThanToken;
+        PunctuationSyntax? lessThanQuestionToken;
+        SyntaxToken? xmlKeyword;
+        XmlDeclarationOptionSyntax? version;
+        XmlDeclarationOptionSyntax? encoding;
+        XmlDeclarationOptionSyntax? standalone;
+        PunctuationSyntax? questionGreaterThanToken;
 
-        public PunctuationSyntax LessThanQuestionToken => GetRed(ref lessThanQuestionToken, 0);
-        public SyntaxToken XmlKeyword => GetRed(ref xmlKeyword, 1);
-        public XmlDeclarationOptionSyntax Version => GetRed(ref version, 2);
-        public XmlDeclarationOptionSyntax Encoding => GetRed(ref encoding, 3);
-        public XmlDeclarationOptionSyntax Standalone => GetRed(ref standalone, 4);
-        public PunctuationSyntax QuestionGreaterThanToken => GetRed(ref questionGreaterThanToken, 5);
+        public PunctuationSyntax? LessThanQuestionToken => GetRed(ref lessThanQuestionToken, 0);
+        public SyntaxToken? XmlKeyword => GetRed(ref xmlKeyword, 1);
+        public XmlDeclarationOptionSyntax? Version => GetRed(ref version, 2);
+        public XmlDeclarationOptionSyntax? Encoding => GetRed(ref encoding, 3);
+        public XmlDeclarationOptionSyntax? Standalone => GetRed(ref standalone, 4);
+        public PunctuationSyntax? QuestionGreaterThanToken => GetRed(ref questionGreaterThanToken, 5);
 
-        internal XmlDeclarationSyntax(Green green, SyntaxNode parent, int position)
+        internal XmlDeclarationSyntax(Green green, SyntaxNode? parent, int position)
             : base(green, parent, position)
         {
 
@@ -129,7 +129,7 @@ namespace Microsoft.Language.Xml
             return visitor.VisitXmlDeclaration(this);
         }
 
-        internal override SyntaxNode GetCachedSlot(int index)
+        internal override SyntaxNode? GetCachedSlot(int index)
         {
             switch (index)
             {
@@ -143,7 +143,7 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        internal override SyntaxNode GetNodeSlot(int slot)
+        internal override SyntaxNode? GetNodeSlot(int slot)
         {
             switch (slot)
             {

@@ -6,6 +6,7 @@ using System.Linq;
 
 namespace Microsoft.Language.Xml
 {
+    using System.Diagnostics.CodeAnalysis;
     using InternalSyntax;
 
     public readonly struct ChildSyntaxList : IEquatable<ChildSyntaxList>, IReadOnlyList<SyntaxNode>
@@ -86,7 +87,7 @@ namespace Microsoft.Language.Xml
         /// </summary>
         internal static SyntaxNode ItemInternal(SyntaxNode node, int index)
         {
-            GreenNode greenChild;
+            GreenNode? greenChild;
             var green = node.GreenNode;
             var idx = index;
             var slotIndex = 0;
@@ -184,7 +185,7 @@ namespace Microsoft.Language.Xml
             int slot;
             for (slot = 0; ; slot++)
             {
-                GreenNode greenChild = green.GetSlot(slot);
+                GreenNode? greenChild = green.GetSlot(slot);
                 if (greenChild != null)
                 {
                     var endPosition = position + greenChild.FullWidth;
@@ -247,9 +248,9 @@ namespace Microsoft.Language.Xml
         /// internal indexer that does not verify index.
         /// Used when caller has already ensured that index is within bounds.
         /// </summary>
-        internal static SyntaxNode ItemInternalAsNode(SyntaxNode node, int index)
+        internal static SyntaxNode? ItemInternalAsNode(SyntaxNode node, int index)
         {
-            GreenNode greenChild;
+            GreenNode? greenChild;
             var green = node.GreenNode;
             var idx = index;
             var slotIndex = 0;
@@ -379,7 +380,7 @@ namespace Microsoft.Language.Xml
         /// <summary>Determines whether the specified object is equal to the current instance.</summary>
         /// <returns>true if the specified object is a <see cref="ChildSyntaxList" /> structure and is equal to the current instance; otherwise, false.</returns>
         /// <param name="obj">The object to be compared with the current instance.</param>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return obj is ChildSyntaxList && Equals((ChildSyntaxList)obj);
         }
@@ -470,7 +471,7 @@ namespace Microsoft.Language.Xml
                 _childIndex = -1;
             }
 
-            internal bool TryMoveNextAndGetCurrent(out SyntaxNode current)
+            internal bool TryMoveNextAndGetCurrent([NotNullWhen(true)] out SyntaxNode? current)
             {
                 if (!MoveNext())
                 {
@@ -482,7 +483,7 @@ namespace Microsoft.Language.Xml
                 return true;
             }
 
-            internal SyntaxNode TryMoveNextAndGetCurrentAsNode()
+            internal SyntaxNode? TryMoveNextAndGetCurrentAsNode()
             {
                 while (MoveNext())
                 {
@@ -595,7 +596,7 @@ namespace Microsoft.Language.Xml
                 return _node != null ? Hash.Combine(_node.GetHashCode(), _count) : 0;
             }
 
-            public override bool Equals(object obj)
+            public override bool Equals(object? obj)
             {
                 return (obj is Reversed) && Equals((Reversed)obj);
             }

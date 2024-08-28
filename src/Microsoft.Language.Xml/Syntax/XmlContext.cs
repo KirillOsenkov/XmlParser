@@ -11,11 +11,11 @@ namespace Microsoft.Language.Xml
 
     internal readonly struct XmlContext
     {
-        private readonly XmlElementStartTagSyntax.Green _start;
+        private readonly XmlElementStartTagSyntax.Green? _start;
         private readonly InternalSyntax.SyntaxListBuilder<XmlNodeSyntax.Green> _content;
         private readonly SyntaxListPool _pool;
 
-        public XmlContext(SyntaxListPool pool, XmlElementStartTagSyntax.Green start)
+        public XmlContext(SyntaxListPool pool, XmlElementStartTagSyntax.Green? start)
         {
             _pool = pool;
             _start = start;
@@ -27,7 +27,7 @@ namespace Microsoft.Language.Xml
             _content.Add(xml);
         }
 
-        public XmlElementStartTagSyntax.Green StartElement
+        public XmlElementStartTagSyntax.Green? StartElement
         {
             get
             {

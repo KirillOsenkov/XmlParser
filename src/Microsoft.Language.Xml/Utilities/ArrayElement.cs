@@ -26,7 +26,7 @@ namespace Microsoft.Language.Xml
         // as JIT does not know if the write goes to a stack or a heap location.
         // Assigning to Value directly easily avoids all this redundancy.
 
-        public static ArrayElement<T>[] MakeElementArray(T[] items)
+        public static ArrayElement<T>[]? MakeElementArray(T[] items)
         {
             if (items == null)
             {
@@ -42,14 +42,14 @@ namespace Microsoft.Language.Xml
             return array;
         }
 
-        public static T[] MakeArray(ArrayElement<T>[] items)
+        public static T?[]? MakeArray(ArrayElement<T>[] items)
         {
             if (items == null)
             {
                 return null;
             }
 
-            var array = new T[items.Length];
+            var array = new T?[items.Length];
             for (int i = 0; i < items.Length; i++)
             {
                 array[i] = items[i].Value;

@@ -6,29 +6,29 @@ namespace Microsoft.Language.Xml
     {
         internal new class Green : SyntaxToken.Green
         {
-            internal Green(SyntaxKind kind, string name, GreenNode leadingTrivia, GreenNode trailingTrivia)
+            internal Green(SyntaxKind kind, string name, GreenNode? leadingTrivia, GreenNode? trailingTrivia)
                 : base(kind, name, leadingTrivia, trailingTrivia)
             {
             }
 
-            internal Green(SyntaxKind kind, string name, GreenNode leadingTrivia, GreenNode trailingTrivia, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
+            internal Green(SyntaxKind kind, string name, GreenNode? leadingTrivia, GreenNode? trailingTrivia, DiagnosticInfo[]? diagnostics, SyntaxAnnotation[] annotations)
                 : base(kind, name, leadingTrivia, trailingTrivia, diagnostics, annotations)
             {
             }
 
-            internal override SyntaxNode CreateRed(SyntaxNode parent, int position) => new PunctuationSyntax(this, parent, position);
+            internal override SyntaxNode CreateRed(SyntaxNode? parent, int position) => new PunctuationSyntax(this, parent, position);
 
-            public override SyntaxToken.Green WithLeadingTrivia(GreenNode trivia)
+            public override SyntaxToken.Green WithLeadingTrivia(GreenNode? trivia)
             {
                 return new Green(Kind, Text, trivia, TrailingTrivia);
             }
 
-            public override SyntaxToken.Green WithTrailingTrivia(GreenNode trivia)
+            public override SyntaxToken.Green WithTrailingTrivia(GreenNode? trivia)
             {
                 return new Green(Kind, Text, LeadingTrivia, trivia);
             }
 
-            internal override GreenNode SetDiagnostics(DiagnosticInfo[] diagnostics)
+            internal override GreenNode SetDiagnostics(DiagnosticInfo[]? diagnostics)
             {
                 return new Green(Kind, Text, LeadingTrivia, TrailingTrivia, diagnostics, GetAnnotations());
             }
@@ -43,18 +43,18 @@ namespace Microsoft.Language.Xml
 
         public string Punctuation => Text;
 
-        internal PunctuationSyntax(Green green, SyntaxNode parent, int position)
+        internal PunctuationSyntax(Green green, SyntaxNode? parent, int position)
             : base(green, parent, position)
         {
 
         }
 
-        internal override SyntaxToken WithLeadingTriviaCore(SyntaxNode trivia)
+        internal override SyntaxToken WithLeadingTriviaCore(SyntaxNode? trivia)
         {
             return (PunctuationSyntax)new Green(Kind, Text, trivia?.GreenNode, GetTrailingTrivia().Node?.GreenNode).CreateRed(Parent, Start);
         }
 
-        internal override SyntaxToken WithTrailingTriviaCore(SyntaxNode trivia)
+        internal override SyntaxToken WithTrailingTriviaCore(SyntaxNode? trivia)
         {
             return (PunctuationSyntax)new Green(Kind, Text, GetLeadingTrivia().Node?.GreenNode, trivia?.GreenNode).CreateRed(Parent, Start);
         }

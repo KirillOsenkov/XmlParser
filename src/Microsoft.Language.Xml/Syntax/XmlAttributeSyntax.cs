@@ -8,15 +8,15 @@ namespace Microsoft.Language.Xml
     {
         internal new class Green : XmlNodeSyntax.Green
         {
-            readonly XmlNameSyntax.Green nameNode;
-            readonly SyntaxToken.Green equalsSyntax;
-            readonly XmlNodeSyntax.Green valueNode;
+            readonly XmlNameSyntax.Green? nameNode;
+            readonly SyntaxToken.Green? equalsSyntax;
+            readonly XmlNodeSyntax.Green? valueNode;
 
-            internal XmlNameSyntax.Green NameNode => nameNode;
-            internal new SyntaxToken.Green Equals => equalsSyntax;
-            internal XmlNodeSyntax.Green ValueNode => valueNode;
+            internal XmlNameSyntax.Green? NameNode => nameNode;
+            internal new SyntaxToken.Green? Equals => equalsSyntax;
+            internal XmlNodeSyntax.Green? ValueNode => valueNode;
 
-            internal Green(XmlNameSyntax.Green nameNode, SyntaxToken.Green equalsSyntax, XmlNodeSyntax.Green valueNode)
+            internal Green(XmlNameSyntax.Green? nameNode, SyntaxToken.Green? equalsSyntax, XmlNodeSyntax.Green? valueNode)
                 : base(SyntaxKind.XmlAttribute)
             {
                 this.SlotCount = 3;
@@ -28,7 +28,7 @@ namespace Microsoft.Language.Xml
                 AdjustWidth(valueNode);
             }
 
-            internal Green(XmlNameSyntax.Green nameNode, SyntaxToken.Green equalsSyntax, XmlNodeSyntax.Green valueNode, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
+            internal Green(XmlNameSyntax.Green? nameNode, SyntaxToken.Green? equalsSyntax, XmlNodeSyntax.Green? valueNode, DiagnosticInfo[]? diagnostics, SyntaxAnnotation[] annotations)
                 : base(SyntaxKind.XmlAttribute, diagnostics, annotations)
             {
                 this.SlotCount = 3;
@@ -40,9 +40,9 @@ namespace Microsoft.Language.Xml
                 AdjustWidth(valueNode);
             }
 
-            internal override SyntaxNode CreateRed(SyntaxNode parent, int position) => new XmlAttributeSyntax(this, parent, position);
+            internal override SyntaxNode CreateRed(SyntaxNode? parent, int position) => new XmlAttributeSyntax(this, parent, position);
 
-            internal override GreenNode GetSlot(int index)
+            internal override GreenNode? GetSlot(int index)
             {
                 switch (index)
                 {
@@ -58,7 +58,7 @@ namespace Microsoft.Language.Xml
                 return visitor.VisitXmlAttribute(this);
             }
 
-            internal override GreenNode SetDiagnostics(DiagnosticInfo[] diagnostics)
+            internal override GreenNode SetDiagnostics(DiagnosticInfo[]? diagnostics)
             {
                 return new Green(nameNode, equalsSyntax, valueNode, diagnostics, GetAnnotations());
             }
@@ -69,21 +69,21 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        XmlNameSyntax nameNode;
-        PunctuationSyntax equalsSyntax;
-        XmlStringSyntax valueNode;
+        XmlNameSyntax? nameNode;
+        PunctuationSyntax? equalsSyntax;
+        XmlStringSyntax? valueNode;
 
-        public XmlNameSyntax NameNode => GetRed(ref nameNode, 0);
-        public new PunctuationSyntax Equals => GetRed(ref equalsSyntax, 1);
-        public XmlStringSyntax ValueNode => GetRed(ref valueNode, 2);
+        public XmlNameSyntax? NameNode => GetRed(ref nameNode, 0);
+        public new PunctuationSyntax? Equals => GetRed(ref equalsSyntax, 1);
+        public XmlStringSyntax? ValueNode => GetRed(ref valueNode, 2);
 
-        internal XmlAttributeSyntax(Green green, SyntaxNode parent, int position)
+        internal XmlAttributeSyntax(Green green, SyntaxNode? parent, int position)
             : base(green, parent, position)
         {
 
         }
 
-        public string Name => NameNode?.FullName;
+        public string? Name => NameNode?.FullName;
 
         public bool IsNamespaceDeclaration => string.Equals(NameNode?.Prefix, "xmlns", StringComparison.Ordinal);
 
@@ -95,7 +95,7 @@ namespace Microsoft.Language.Xml
         /// <seealso href="https://www.w3.org/TR/2006/REC-xml11-20060816/#sec-line-ends">2.2.12 [XML] Section 3.3.3</seealso/>
         /// <seealso href="https://learn.microsoft.com/en-us/openspecs/ie_standards/ms-xml/389b8ef1-e19e-40ac-80de-eec2cd0c58ae">2.11 [XML} End-of-Line Handling</seealso/>
         /// </remarks>
-        public string Value
+        public string? Value
         {
             get
             {
@@ -116,7 +116,7 @@ namespace Microsoft.Language.Xml
             return visitor.VisitXmlAttribute(this);
         }
 
-        internal override SyntaxNode GetCachedSlot(int index)
+        internal override SyntaxNode? GetCachedSlot(int index)
         {
             switch (index)
             {
@@ -127,7 +127,7 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        internal override SyntaxNode GetNodeSlot(int slot)
+        internal override SyntaxNode? GetNodeSlot(int slot)
         {
             switch (slot)
             {
@@ -138,7 +138,7 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        public XmlAttributeSyntax Update(XmlNameSyntax name, PunctuationSyntax equalsToken, XmlStringSyntax value)
+        public XmlAttributeSyntax Update(XmlNameSyntax? name, PunctuationSyntax? equalsToken, XmlStringSyntax? value)
         {
             if (name != this.NameNode || equalsToken != this.Equals || value != this.ValueNode)
             {

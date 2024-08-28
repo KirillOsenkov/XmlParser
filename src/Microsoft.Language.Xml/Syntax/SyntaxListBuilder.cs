@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
+#pragma warning disable CS8602
+
 namespace Microsoft.Language.Xml
 {
     using InternalSyntax;
@@ -131,7 +133,7 @@ namespace Microsoft.Language.Xml
             return false;
         }
 
-        internal GreenNode ToListNode()
+        internal GreenNode? ToListNode()
         {
             switch (this.Count)
             {

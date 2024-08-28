@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 namespace Microsoft.Language.Xml
 {
     using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
     using InternalSyntax;
 
     /// <summary>
@@ -456,7 +457,7 @@ namespace Microsoft.Language.Xml
             return !left.Equals(right);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return (obj is SyntaxTriviaList) && Equals((SyntaxTriviaList)obj);
         }
@@ -556,7 +557,7 @@ namespace Microsoft.Language.Xml
                 return _list.GetHashCode();
             }
 
-            public override bool Equals(object obj)
+            public override bool Equals(object? obj)
             {
                 return obj is Reversed && Equals((Reversed)obj);
             }
@@ -662,7 +663,7 @@ namespace Microsoft.Language.Xml
             private int _count;
 
             private int _index;
-            private SyntaxNode _current;
+            private SyntaxNode? _current;
             private int _position;
 
             internal Enumerator(in SyntaxTriviaList list)
@@ -717,6 +718,7 @@ namespace Microsoft.Language.Xml
                 InitializeFrom(trailing, index, trailingPosition);
             }
 
+            [MemberNotNullWhen(true, nameof(_current))]
             public bool MoveNext()
             {
                 int newIndex = _index + 1;
@@ -751,7 +753,7 @@ namespace Microsoft.Language.Xml
                 }
             }
 
-            internal bool TryMoveNextAndGetCurrent(out SyntaxTrivia current)
+            internal bool TryMoveNextAndGetCurrent([NotNullWhen(true)] out SyntaxTrivia? current)
             {
                 if (!MoveNext())
                 {

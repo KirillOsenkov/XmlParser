@@ -1,5 +1,7 @@
 using System;
 
+#pragma warning disable CS8602
+
 namespace Microsoft.Language.Xml
 {
     internal static class SyntaxListBuilderExtensions

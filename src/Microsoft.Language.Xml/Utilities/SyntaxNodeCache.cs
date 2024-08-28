@@ -138,12 +138,12 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        private static bool CanBeCached(GreenNode child1)
+        private static bool CanBeCached(GreenNode? child1)
         {
             return child1 == null || child1.IsCacheable;
         }
 
-        private static bool CanBeCached(GreenNode child1, GreenNode child2)
+        private static bool CanBeCached(GreenNode? child1, GreenNode child2)
         {
             return CanBeCached(child1) && CanBeCached(child2);
         }
@@ -153,7 +153,7 @@ namespace Microsoft.Language.Xml
             return CanBeCached(child1) && CanBeCached(child2) && CanBeCached(child3);
         }
 
-        private static bool ChildInCache(GreenNode child)
+        private static bool ChildInCache(GreenNode? child)
         {
             // for the purpose of this function consider that
             // null nodes, tokens and trivias are cached somewhere else.
@@ -171,7 +171,7 @@ namespace Microsoft.Language.Xml
             var cnt = node.SlotCount;
             for (int i = 0; i < cnt; i++)
             {
-                if (!ChildInCache((GreenNode)node.GetSlot(i)))
+                if (!ChildInCache((GreenNode?)node.GetSlot(i)))
                 {
                     return false;
                 }
@@ -180,12 +180,12 @@ namespace Microsoft.Language.Xml
             return true;
         }
 
-        internal static GreenNode TryGetNode(SyntaxKind kind, GreenNode child1, out int hash)
+        internal static GreenNode? TryGetNode(SyntaxKind kind, GreenNode child1, out int hash)
         {
             return TryGetNode(kind, child1, GetDefaultNodeFlags(), out hash);
         }
 
-        internal static GreenNode TryGetNode(SyntaxKind kind, GreenNode child1, NodeFlags flags, out int hash)
+        internal static GreenNode? TryGetNode(SyntaxKind kind, GreenNode child1, NodeFlags flags, out int hash)
         {
             if (CanBeCached(child1))
             {
@@ -208,12 +208,12 @@ namespace Microsoft.Language.Xml
             return null;
         }
 
-        internal static GreenNode TryGetNode(SyntaxKind kind, GreenNode child1, GreenNode child2, out int hash)
+        internal static GreenNode? TryGetNode(SyntaxKind kind, GreenNode? child1, GreenNode child2, out int hash)
         {
             return TryGetNode(kind, child1, child2, GetDefaultNodeFlags(), out hash);
         }
 
-        internal static GreenNode TryGetNode(SyntaxKind kind, GreenNode child1, GreenNode child2, NodeFlags flags, out int hash)
+        internal static GreenNode? TryGetNode(SyntaxKind kind, GreenNode? child1, GreenNode child2, NodeFlags flags, out int hash)
         {
             if (CanBeCached(child1, child2))
             {
@@ -236,12 +236,12 @@ namespace Microsoft.Language.Xml
             return null;
         }
 
-        internal static GreenNode TryGetNode(SyntaxKind kind, GreenNode child1, GreenNode child2, GreenNode child3, out int hash)
+        internal static GreenNode? TryGetNode(SyntaxKind kind, GreenNode child1, GreenNode child2, GreenNode child3, out int hash)
         {
             return TryGetNode(kind, child1, child2, child3, GetDefaultNodeFlags(), out hash);
         }
 
-        internal static GreenNode TryGetNode(SyntaxKind kind, GreenNode child1, GreenNode child2, GreenNode child3, NodeFlags flags, out int hash)
+        internal static GreenNode? TryGetNode(SyntaxKind kind, GreenNode child1, GreenNode child2, GreenNode child3, NodeFlags flags, out int hash)
         {
             if (CanBeCached(child1, child2, child3))
             {
@@ -279,7 +279,7 @@ namespace Microsoft.Language.Xml
             return code & Int32.MaxValue;
         }
 
-        private static int GetCacheHash(SyntaxKind kind, NodeFlags flags, GreenNode child1, GreenNode child2)
+        private static int GetCacheHash(SyntaxKind kind, NodeFlags flags, GreenNode? child1, GreenNode? child2)
         {
             int code = (int)(flags) ^ (int)kind;
 

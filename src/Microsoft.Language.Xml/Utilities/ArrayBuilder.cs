@@ -39,7 +39,7 @@ namespace Microsoft.Language.Xml
 
         private readonly ImmutableArray<T>.Builder _builder;
 
-        private readonly ObjectPool<ArrayBuilder<T>> _pool;
+        private readonly ObjectPool<ArrayBuilder<T>>? _pool;
 
         public ArrayBuilder (int size)
         {
@@ -90,7 +90,7 @@ namespace Microsoft.Language.Xml
         public void SetItem (int index, T value)
         {
             while (index > _builder.Count) {
-                _builder.Add (default);
+                _builder.Add (default!);
             }
 
             if (index == _builder.Count) {
@@ -242,7 +242,7 @@ namespace Microsoft.Language.Xml
 
             var tmp = ArrayBuilder<U>.GetInstance (Count);
             foreach (var i in this) {
-                tmp.Add ((U)i);
+                tmp.Add ((U)i!);
             }
 
             return tmp.ToImmutableAndFree ();
@@ -337,8 +337,8 @@ namespace Microsoft.Language.Xml
 
         public static ObjectPool<ArrayBuilder<T>> CreatePool (int size)
         {
-            ObjectPool<ArrayBuilder<T>> pool = null;
-            pool = new ObjectPool<ArrayBuilder<T>> (() => new ArrayBuilder<T> (pool), size);
+            ObjectPool<ArrayBuilder<T>>? pool = null;
+            pool = new ObjectPool<ArrayBuilder<T>> (() => new ArrayBuilder<T> (pool!), size);
             return pool;
         }
 
@@ -359,7 +359,8 @@ namespace Microsoft.Language.Xml
             return GetEnumerator ();
         }
 
-        internal Dictionary<K, ImmutableArray<T>> ToDictionary<K> (Func<T, K> keySelector, IEqualityComparer<K> comparer = null)
+        internal Dictionary<K, ImmutableArray<T>> ToDictionary<K> (Func<T, K> keySelector, IEqualityComparer<K>? comparer = null)
+            where K : notnull
         {
             if (this.Count == 1) {
                 var dictionary1 = new Dictionary<K, ImmutableArray<T>> (1, comparer);
@@ -524,7 +525,7 @@ namespace Microsoft.Language.Xml
             {
             }
 
-            object System.Collections.IEnumerator.Current {
+            object? System.Collections.IEnumerator.Current {
                 get {
                     return this.Current;
                 }

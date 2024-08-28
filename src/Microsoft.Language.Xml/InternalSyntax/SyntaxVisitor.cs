@@ -1,10 +1,12 @@
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.Language.Xml.InternalSyntax
 {
     internal abstract partial class SyntaxVisitor
     {
-        public virtual GreenNode Visit(GreenNode node)
+        [return: NotNullIfNotNull(nameof(node))]
+        public virtual GreenNode? Visit(GreenNode? node)
         {
             if (node != null)
             {
@@ -109,7 +111,8 @@ namespace Microsoft.Language.Xml.InternalSyntax
             return list;
         }
 
-        public virtual SyntaxToken.Green VisitSyntaxToken(SyntaxToken.Green token)
+        [return: NotNullIfNotNull(nameof(token))]
+        public virtual SyntaxToken.Green? VisitSyntaxToken(SyntaxToken.Green? token)
         {
             return token;
         }

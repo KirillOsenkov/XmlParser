@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
+#pragma warning disable CS8602
+
 namespace Microsoft.Language.Xml
 {
     using InternalSyntax;

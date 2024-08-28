@@ -5,6 +5,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
+#pragma warning disable CS8600
+#pragma warning disable CS8602
+#pragma warning disable CS8603
+
 namespace Microsoft.Language.Xml
 {
     using InternalSyntax;
@@ -12,9 +16,9 @@ namespace Microsoft.Language.Xml
     public readonly struct SyntaxList<TNode> : IReadOnlyList<TNode>, IEquatable<SyntaxList<TNode>>
         where TNode : SyntaxNode
     {
-        private readonly SyntaxNode _node;
+        private readonly SyntaxNode? _node;
 
-        internal SyntaxList(SyntaxNode node)
+        internal SyntaxList(SyntaxNode? node)
         {
             _node = node;
         }
@@ -37,7 +41,7 @@ namespace Microsoft.Language.Xml
         {
         }
 
-        private static SyntaxNode CreateNode(IEnumerable<TNode> nodes)
+        private static SyntaxNode? CreateNode(IEnumerable<TNode> nodes)
         {
             if (nodes == null)
             {
@@ -55,7 +59,7 @@ namespace Microsoft.Language.Xml
             return builder.ToList().Node;
         }
 
-        internal SyntaxNode Node
+        internal SyntaxNode? Node
         {
             get
             {
@@ -428,7 +432,7 @@ namespace Microsoft.Language.Xml
             return _node == other._node;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return obj is SyntaxList<TNode> && Equals((SyntaxList<TNode>)obj);
         }
@@ -561,7 +565,7 @@ namespace Microsoft.Language.Xml
                 _index = -1;
             }
 
-            public override bool Equals(object obj)
+            public override bool Equals(object? obj)
             {
                 throw new NotSupportedException();
             }

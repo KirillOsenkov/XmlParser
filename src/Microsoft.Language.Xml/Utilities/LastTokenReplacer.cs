@@ -18,7 +18,7 @@ namespace Microsoft.Language.Xml
             return (TTree)new LastTokenReplacer(newItem).Visit(root);
         }
 
-        public override GreenNode Visit(GreenNode node)
+        public override GreenNode? Visit(GreenNode? node)
         {
             if (node == null)
             {
@@ -61,7 +61,7 @@ namespace Microsoft.Language.Xml
 
                 var prevIdx = _skipCnt;
                 _skipCnt = allChildrenCnt - 1;
-                GreenNode result;
+                GreenNode? result;
                 if (node.IsList)
                 {
                     result = VisitList<GreenNode>(new InternalSyntax.SyntaxList<GreenNode>(node)).Node;
@@ -80,7 +80,7 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        public override SyntaxToken.Green VisitSyntaxToken(SyntaxToken.Green token)
+        public override SyntaxToken.Green VisitSyntaxToken(SyntaxToken.Green? token)
         {
             return _newItem(token);
         }

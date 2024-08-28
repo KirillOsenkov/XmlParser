@@ -4,15 +4,15 @@ namespace Microsoft.Language.Xml
 {
     public interface IXmlElementSyntax
     {
-        string Name { get; }
-        XmlNameSyntax NameNode { get; }
+        string? Name { get; }
+        XmlNameSyntax? NameNode { get; }
         SyntaxList<SyntaxNode> Content { get; }
-        IXmlElementSyntax Parent { get; }
+        IXmlElementSyntax? Parent { get; }
         IEnumerable<IXmlElementSyntax> Elements { get; }
-        IEnumerable<XmlAttributeSyntax> Attributes { get; }
+        IEnumerable<XmlAttributeSyntax>? Attributes { get; }
         SyntaxList<XmlAttributeSyntax> AttributesNode { get; }
-        XmlAttributeSyntax GetAttribute(string localName, string prefix = null);
-        string GetAttributeValue(string localName, string prefix = null);
+        XmlAttributeSyntax? GetAttribute(string localName, string? prefix = null);
+        string? GetAttributeValue(string localName, string? prefix = null);
         IXmlElement AsElement { get; }
         XmlNodeSyntax AsNode { get; }
         string ToFullString();

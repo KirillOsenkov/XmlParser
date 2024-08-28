@@ -8,17 +8,17 @@ namespace Microsoft.Language.Xml
     {
         internal new class Green : XmlNodeSyntax.Green
         {
-            readonly SyntaxToken.Green lessThanToken;
-            readonly XmlNameSyntax.Green name;
-            readonly GreenNode attributes;
-            readonly SyntaxToken.Green slashGreaterThanToken;
+            readonly SyntaxToken.Green? lessThanToken;
+            readonly XmlNameSyntax.Green? name;
+            readonly GreenNode? attributes;
+            readonly SyntaxToken.Green? slashGreaterThanToken;
 
-            internal XmlNameSyntax.Green NameNode => name;
-            internal SyntaxToken.Green LessThanToken => lessThanToken;
-            internal GreenNode Attributes => attributes;
-            internal SyntaxToken.Green GreaterThanToken => slashGreaterThanToken;
+            internal XmlNameSyntax.Green? NameNode => name;
+            internal SyntaxToken.Green? LessThanToken => lessThanToken;
+            internal GreenNode? Attributes => attributes;
+            internal SyntaxToken.Green? GreaterThanToken => slashGreaterThanToken;
 
-            internal Green(SyntaxToken.Green lessThanToken, XmlNameSyntax.Green name, GreenNode attributes, SyntaxToken.Green slashGreaterThanToken)
+            internal Green(SyntaxToken.Green? lessThanToken, XmlNameSyntax.Green? name, GreenNode? attributes, SyntaxToken.Green? slashGreaterThanToken)
                 : base(SyntaxKind.XmlElementStartTag)
             {
                 this.SlotCount = 4;
@@ -32,7 +32,7 @@ namespace Microsoft.Language.Xml
                 AdjustWidth(slashGreaterThanToken);
             }
 
-            internal Green(SyntaxToken.Green lessThanToken, XmlNameSyntax.Green name, GreenNode attributes, SyntaxToken.Green slashGreaterThanToken, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
+            internal Green(SyntaxToken.Green? lessThanToken, XmlNameSyntax.Green? name, GreenNode? attributes, SyntaxToken.Green? slashGreaterThanToken, DiagnosticInfo[]? diagnostics, SyntaxAnnotation[] annotations)
                 : base(SyntaxKind.XmlElementStartTag, diagnostics, annotations)
             {
                 this.SlotCount = 4;
@@ -46,9 +46,9 @@ namespace Microsoft.Language.Xml
                 AdjustWidth(slashGreaterThanToken);
             }
 
-            internal override SyntaxNode CreateRed(SyntaxNode parent, int position) => new XmlElementStartTagSyntax(this, parent, position);
+            internal override SyntaxNode CreateRed(SyntaxNode? parent, int position) => new XmlElementStartTagSyntax(this, parent, position);
 
-            internal override GreenNode GetSlot(int index)
+            internal override GreenNode? GetSlot(int index)
             {
                 switch (index)
                 {
@@ -65,7 +65,7 @@ namespace Microsoft.Language.Xml
                 return visitor.VisitXmlElementStartTag(this);
             }
 
-            internal override GreenNode SetDiagnostics(DiagnosticInfo[] diagnostics)
+            internal override GreenNode SetDiagnostics(DiagnosticInfo[]? diagnostics)
             {
                 return new Green(lessThanToken, name, attributes, slashGreaterThanToken, diagnostics, GetAnnotations());
             }
@@ -78,19 +78,19 @@ namespace Microsoft.Language.Xml
 
         internal new Green GreenNode => (Green)base.GreenNode;
 
-        PunctuationSyntax lessThanToken;
-        XmlNameSyntax nameNode;
-        SyntaxNode attributesNode;
-        PunctuationSyntax greaterThanToken;
+        PunctuationSyntax? lessThanToken;
+        XmlNameSyntax? nameNode;
+        SyntaxNode? attributesNode;
+        PunctuationSyntax? greaterThanToken;
 
-        public PunctuationSyntax LessThanToken => GetRed(ref lessThanToken, 0);
-        public XmlNameSyntax NameNode => GetRed(ref nameNode, 1);
+        public PunctuationSyntax? LessThanToken => GetRed(ref lessThanToken, 0);
+        public XmlNameSyntax? NameNode => GetRed(ref nameNode, 1);
         public SyntaxList<XmlAttributeSyntax> AttributesNode => new SyntaxList<XmlAttributeSyntax>(GetRed(ref attributesNode, 2));
-        public PunctuationSyntax GreaterThanToken => GetRed(ref greaterThanToken, 3);
+        public PunctuationSyntax? GreaterThanToken => GetRed(ref greaterThanToken, 3);
 
-        public string Name => NameNode?.FullName;
+        public string? Name => NameNode?.FullName;
 
-        internal XmlElementStartTagSyntax(Green green, SyntaxNode parent, int position)
+        internal XmlElementStartTagSyntax(Green green, SyntaxNode? parent, int position)
             : base(green, parent, position)
         {
 
@@ -101,7 +101,7 @@ namespace Microsoft.Language.Xml
             return visitor.VisitXmlElementStartTag(this);
         }
 
-        internal override SyntaxNode GetCachedSlot(int index)
+        internal override SyntaxNode? GetCachedSlot(int index)
         {
             switch (index)
             {
@@ -113,7 +113,7 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        internal override SyntaxNode GetNodeSlot(int slot)
+        internal override SyntaxNode? GetNodeSlot(int slot)
         {
             switch (slot)
             {

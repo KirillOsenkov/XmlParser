@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+#pragma warning disable CS8602
+
 namespace Microsoft.Language.Xml
 {
     public static class XmlContextExtensions
@@ -28,7 +30,7 @@ namespace Microsoft.Language.Xml
             return @this[last - i];
         }
 
-        internal static int MatchEndElement(this List<XmlContext> @this, XmlNameSyntax.Green name)
+        internal static int MatchEndElement(this List<XmlContext> @this, XmlNameSyntax.Green? name)
         {
             Debug.Assert(name == null || name.Kind == SyntaxKind.XmlName);
             var last = @this.Count - 1;

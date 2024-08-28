@@ -2,6 +2,7 @@ using System;
 
 namespace Microsoft.Language.Xml
 {
+    using System.Diagnostics.CodeAnalysis;
     using InternalSyntax;
 
     internal class FirstTokenReplacer : InternalSyntax.SyntaxRewriter
@@ -19,7 +20,8 @@ namespace Microsoft.Language.Xml
             return ((TTree)new FirstTokenReplacer(newItem).Visit(root));
         }
 
-        public override SyntaxToken.Green VisitSyntaxToken(SyntaxToken.Green token)
+        [return: NotNullIfNotNull(nameof(token))]
+        public override SyntaxToken.Green? VisitSyntaxToken(SyntaxToken.Green? token)
         {
             if (token == null)
             {

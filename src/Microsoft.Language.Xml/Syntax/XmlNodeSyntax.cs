@@ -17,7 +17,7 @@ namespace Microsoft.Language.Xml
             {
             }
 
-            protected Green(SyntaxKind kind, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
+            protected Green(SyntaxKind kind, DiagnosticInfo[]? diagnostics, SyntaxAnnotation[] annotations)
                 : base(kind, diagnostics, annotations)
             {
             }
@@ -30,7 +30,7 @@ namespace Microsoft.Language.Xml
 
         internal new Green GreenNode => (Green)base.GreenNode;
 
-        internal XmlNodeSyntax(Green green, SyntaxNode parent, int position) : base(green, parent, position)
+        internal XmlNodeSyntax(Green green, SyntaxNode? parent, int position) : base(green, parent, position)
         {
         }
 
