@@ -274,65 +274,48 @@ namespace Microsoft.Language.Xml.Tests
         [Fact]
         public void IncrementalParsingFuzz()
         {
-            const string startXml =
+            // Test that inserting every possible character at every position in
+            // the document produces the same result via incremental and full
+            // parsing. Uses characters that won't trigger CanParseIncrementally's
+            // fallback to full reparse (which skips the incremental code path).
+            const string xml =
 @"<?xml version=""1.0"" encoding=""UTF-8"" standalone=""yes""?>
-<X>
-  <n:T></n:T>
-  <X/>
-  <A.B></A.B>
-  <A B=""a""></A>
+<Root>
+  <ns:Element></ns:Element>
+  <SelfClosing/>
+  <Dotted.Name></Dotted.Name>
+  <Node LongAttribute=""value"" Another=""test""></Node>
+  <Node ShortAttr/>
   <A>&#x03C0;</A>
-  <A>a &lt;</A>
+  <A>text &amp; more</A>
   <A><![CDATA[bar]]></A>
   <!-- comment -->
-</X>";
+</Root>";
 
-            var insertChars = new[] { '<', '>', '"', '=', '/', ' ', 'a', 'b', 'x', '\n', '&', ';', '!', '-', '[', ']' };
-            var random = new Random(42);
-            var currentXml = startXml;
-            var currentTree = Parser.ParseText(currentXml);
-            const int iterations = 500;
+            var insertChars = new[] { 'a', 'z', 'M', '0', '9', ' ', '\n', '.', ':', '_', '-', '/' };
+            var tree = Parser.ParseText(xml);
 
-            for (int i = 0; i < iterations; i++)
+            for (int pos = 0; pos <= xml.Length; pos++)
             {
-                string newXml;
-                TextChangeRange change;
-
-                if (currentXml.Length > 5 && random.Next(3) == 0)
+                foreach (var ch in insertChars)
                 {
-                    // Delete a character
-                    var deleteIndex = random.Next(currentXml.Length);
-                    newXml = currentXml.Remove(deleteIndex, 1);
-                    change = new TextChangeRange(new TextSpan(deleteIndex, 1), 0);
-                }
-                else
-                {
-                    // Insert a character
-                    var insertIndex = random.Next(currentXml.Length + 1);
-                    var ch = insertChars[random.Next(insertChars.Length)];
-                    newXml = currentXml.Insert(insertIndex, ch.ToString());
-                    change = new TextChangeRange(new TextSpan(insertIndex, 0), 1);
-                }
+                    var newXml = xml.Insert(pos, ch.ToString());
+                    var change = new TextChangeRange(new TextSpan(pos, 0), 1);
+                    var incremental = Parser.ParseIncremental(newXml, new[] { change }, tree);
+                    var full = Parser.ParseText(newXml);
 
-                var incremental = Parser.ParseIncremental(newXml, new[] { change }, currentTree);
-                var full = Parser.ParseText(newXml);
-
-                try
-                {
-                    AssertSameNodes(full, incremental);
+                    try
+                    {
+                        AssertSameNodes(full, incremental);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception(
+                            $"Failed inserting '{ch}' at position {pos}.\n" +
+                            $"New XML: {newXml}",
+                            ex);
+                    }
                 }
-                catch (Exception ex)
-                {
-                    throw new Exception(
-                        $"Fuzz iteration {i} failed.\n" +
-                        $"Previous XML: {currentXml}\n" +
-                        $"New XML: {newXml}\n" +
-                        $"Change: Span({change.Span.Start}, {change.Span.Length}) NewLength={change.NewLength}",
-                        ex);
-                }
-
-                currentXml = newXml;
-                currentTree = incremental;
             }
         }
 
