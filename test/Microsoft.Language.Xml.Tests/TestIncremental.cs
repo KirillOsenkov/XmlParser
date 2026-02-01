@@ -254,6 +254,102 @@ namespace Microsoft.Language.Xml.Tests
             AssertSameNodes(full, incremental);
         }
 
+        [Fact]
+        public void IncrementalIndentAwareness_InsertSameNameChild()
+        {
+            // Simulate inserting a new <Item> inside an existing <Item> element.
+            var before = string.Join(Environment.NewLine, new[] {
+                "<Root>",
+                "  <Item>",
+                "    <Foo />",
+                "  </Item>",
+                "</Root>"
+            });
+            var after = string.Join(Environment.NewLine, new[] {
+                "<Root>",
+                "  <Item>",
+                "    <Item>",
+                "    <Foo />",
+                "  </Item>",
+                "</Root>"
+            });
+
+            var insertedText = "    <Item>" + Environment.NewLine;
+            var insertionPoint = before.IndexOf("    <Foo");
+
+            var beforeTree = Parser.ParseText(before);
+            var afterTreeFull = Parser.ParseText(after);
+            var afterTreeIncremental = Parser.ParseIncremental(
+                after,
+                new[] { new TextChangeRange(new TextSpan(insertionPoint, 0), insertedText.Length) },
+                beforeTree);
+
+            Assert.Equal(after, afterTreeIncremental.ToFullString());
+            AssertSameNodes(afterTreeFull, afterTreeIncremental);
+        }
+
+        [Fact]
+        public void IncrementalIndentAwareness_TypeEndTagCharByChar()
+        {
+            // Simulate typing "</Item>" character by character inside a same-name parent.
+            var baseText = string.Join(Environment.NewLine, new[] {
+                "<Root>",
+                "  <Item>",
+                "    <Item>",
+                "  ",
+                "</Root>"
+            });
+
+            // The line "  " is where we'll type "</Item>" one char at a time.
+            var insertionPoint = baseText.IndexOf("  " + Environment.NewLine + "</Root>") + 2;
+            var textToType = "</Item>";
+            var previousDocument = Parser.ParseText(baseText);
+
+            for (int i = 1; i <= textToType.Length; i++)
+            {
+                var currentText = baseText.Insert(insertionPoint, textToType.Substring(0, i));
+                var change = new TextChangeRange(new TextSpan(insertionPoint + i - 1, 0), 1);
+                var full = Parser.ParseText(currentText);
+                var incremental = Parser.ParseIncremental(currentText, new[] { change }, previousDocument);
+
+                Assert.Equal(currentText, incremental.ToFullString());
+                AssertSameNodes(full, incremental);
+                previousDocument = incremental;
+            }
+        }
+
+        [Fact]
+        public void IncrementalIndentAwareness_ChangeIndentation()
+        {
+            // Change the indentation of an end tag so it matches a different start tag.
+            var before = string.Join(Environment.NewLine, new[] {
+                "<Root>",
+                "  <A>",
+                "    <A>",
+                "    </A>",
+                "</Root>"
+            });
+            var after = string.Join(Environment.NewLine, new[] {
+                "<Root>",
+                "  <A>",
+                "    <A>",
+                "  </A>",
+                "</Root>"
+            });
+
+            // We're removing 2 spaces from "    </A>" to make it "  </A>"
+            var changeStart = before.IndexOf("    </A>");
+            var beforeTree = Parser.ParseText(before);
+            var afterTreeFull = Parser.ParseText(after);
+            var afterTreeIncremental = Parser.ParseIncremental(
+                after,
+                new[] { new TextChangeRange(new TextSpan(changeStart, 2), 0) },
+                beforeTree);
+
+            Assert.Equal(after, afterTreeIncremental.ToFullString());
+            AssertSameNodes(afterTreeFull, afterTreeIncremental);
+        }
+
         void AssertSameNodes (SyntaxNode root1, SyntaxNode root2)
         {
             var allNodes1 = root1.DescendantNodesAndSelf().GetEnumerator ();
