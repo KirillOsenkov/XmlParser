@@ -1,7 +1,6 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 
-#pragma warning disable CS8625
 
 namespace Microsoft.Language.Xml.InternalSyntax
 {
@@ -124,7 +123,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
         public void RemoveLast()
         {
             Count--;
-            _nodes[Count].Value = null;
+            _nodes[Count].Value = null!;
         }
 
         private void EnsureAdditionalCapacity(int additionalCount)

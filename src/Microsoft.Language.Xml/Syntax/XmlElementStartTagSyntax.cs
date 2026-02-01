@@ -125,11 +125,11 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        public XmlElementStartTagSyntax Update(PunctuationSyntax lessThanToken, XmlNameSyntax name, SyntaxList<XmlAttributeSyntax> attributes, PunctuationSyntax greaterThanToken)
+        public XmlElementStartTagSyntax Update(PunctuationSyntax? lessThanToken, XmlNameSyntax? name, SyntaxList<XmlAttributeSyntax> attributes, PunctuationSyntax? greaterThanToken)
         {
             if (lessThanToken != this.LessThanToken || name != this.NameNode || attributes != this.AttributesNode || greaterThanToken != this.GreaterThanToken)
             {
-                var newNode = SyntaxFactory.XmlElementStartTag(lessThanToken, name, attributes, greaterThanToken);
+                var newNode = SyntaxFactory.XmlElementStartTag(lessThanToken!, name!, attributes, greaterThanToken!);
                 var annotations = this.GetAnnotations();
                 if (annotations != null && annotations.Length > 0)
                     return newNode.WithAnnotations(annotations);

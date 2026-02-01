@@ -1,11 +1,10 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-#pragma warning disable CS8602
 
 namespace Microsoft.Language.Xml
 {
@@ -43,11 +42,11 @@ namespace Microsoft.Language.Xml
             while (i >= 0)
             {
                 var context = @this[i];
-                var nameExpr = context.StartElement.NameNode;
-                if (nameExpr.Kind == SyntaxKind.XmlName)
+                var nameExpr = context.StartElement?.NameNode;
+                if (nameExpr != null && nameExpr.Kind == SyntaxKind.XmlName)
                 {
                     var startName = ((XmlNameSyntax.Green)nameExpr);
-                    if (startName.LocalName.Text == name.LocalName.Text)
+                    if (startName.LocalName?.Text == name.LocalName?.Text)
                     {
                         var startPrefix = startName.Prefix;
                         var endPrefix = name.Prefix;
@@ -58,7 +57,7 @@ namespace Microsoft.Language.Xml
 
                         if (startPrefix != null && endPrefix != null)
                         {
-                            if (startPrefix.Name.Text == endPrefix.Name.Text)
+                            if (startPrefix.Name?.Text == endPrefix.Name?.Text)
                             {
                                 break;
                             }

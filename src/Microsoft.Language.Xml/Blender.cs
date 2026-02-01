@@ -1,9 +1,7 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-#pragma warning disable CS8602
-#pragma warning disable CS8604
 
 namespace Microsoft.Language.Xml
 {
@@ -107,7 +105,7 @@ namespace Microsoft.Language.Xml
                 return null;
             var start = _currentToken.Position;
 
-            if (_affectedRanges.AnyContainsPosition(start))
+            if (_affectedRanges != null && _affectedRanges.AnyContainsPosition(start))
                 return null;
             var nonterminal = GetCurrentNode(start);
             return nonterminal;
@@ -137,7 +135,8 @@ namespace Microsoft.Language.Xml
             for (int i = 1; i <= cnt; i++)
             {
                 var child = nonterminal.GetSlot(cnt - i);
-                PushChildReverse(stack, child);
+                if (child != null)
+                    PushChildReverse(stack, child);
             }
         }
 
@@ -154,17 +153,15 @@ namespace Microsoft.Language.Xml
 
         private static void PushChildReverse(Stack<GreenNode> stack, GreenNode child)
         {
-            if (child != null)
-            {
-                if (child.IsList)
-                    PushReverseNonterminal(stack, child);
-                else
-                    stack.Push(child);
-            }
+            if (child.IsList)
+                PushReverseNonterminal(stack, child);
+            else
+                stack.Push(child);
         }
 
         private int MapNewPositionToOldTree(int position)
         {
+            Debug.Assert(_changes != null);
             foreach (var change in _changes)
             {
                 if (position < change.Span.Start)
@@ -235,6 +232,7 @@ namespace Microsoft.Language.Xml
             Debug.Assert(_curNodeSpan.Length > 0);
             if (_curNodeSpan.OverlapsWithAny(_affectedRanges))
                 return false;*/
+            Debug.Assert(_currentNode != null);
             if (_currentNode.IsMissing)
                 return false;
             return true;

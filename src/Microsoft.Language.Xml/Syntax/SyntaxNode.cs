@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -6,7 +6,6 @@ using System.Globalization;
 using System.IO;
 using System.Threading;
 
-#pragma warning disable CS8602
 
 namespace Microsoft.Language.Xml
 {
@@ -119,6 +118,7 @@ namespace Microsoft.Language.Xml
             if (result == null)
             {
                 var green = this.GreenNode.GetSlot(slot);
+                Debug.Assert(green != null);
                 // passing list's parent
                 Interlocked.CompareExchange(ref element, green.CreateRed(this.Parent, this.GetChildPosition(slot)), null);
                 result = element;
@@ -463,9 +463,9 @@ namespace Microsoft.Language.Xml
             return ((SyntaxToken?)this.GetFirstTerminal());
         }
 
-        internal SyntaxToken GetLastToken()
+        internal SyntaxToken? GetLastToken()
         {
-            return ((SyntaxToken)this.GetLastTerminal());
+            return ((SyntaxToken?)this.GetLastTerminal());
         }
 
         public SyntaxNode? GetFirstTerminal()

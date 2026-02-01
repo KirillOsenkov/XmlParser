@@ -82,12 +82,12 @@ namespace Microsoft.Language.Xml
 
             internal override GreenNode SetDiagnostics(DiagnosticInfo[]? diagnostics)
             {
-                return new Green(prologue, precedingMisc, body, followingMisc, skippedTokens, eof, diagnostics, GetAnnotations());
+                return new Green(prologue, precedingMisc, body, followingMisc, skippedTokens, eof!, diagnostics, GetAnnotations());
             }
 
             internal override GreenNode SetAnnotations(SyntaxAnnotation[] annotations)
             {
-                return new Green(prologue, precedingMisc, body, followingMisc, skippedTokens, eof, GetDiagnostics(), annotations);
+                return new Green(prologue, precedingMisc, body, followingMisc, skippedTokens, eof!, GetDiagnostics(), annotations);
             }
         }
 

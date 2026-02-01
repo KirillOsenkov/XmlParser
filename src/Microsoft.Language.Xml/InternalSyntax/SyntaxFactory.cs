@@ -47,7 +47,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
         }
 
         internal static XmlElementEndTagSyntax.Green XmlElementEndTag(PunctuationSyntax.Green lessThanSlashToken,
-                                                                       XmlNameSyntax.Green name,
+                                                                       XmlNameSyntax.Green? name,
                                                                        PunctuationSyntax.Green greaterThanToken)
         {
             return new XmlElementEndTagSyntax.Green(lessThanSlashToken, name, greaterThanToken);
@@ -102,19 +102,19 @@ namespace Microsoft.Language.Xml.InternalSyntax
             return new XmlStringSyntax.Green(startQuoteToken, textTokens, endQuoteToken);
         }
 
-        internal static XmlNodeSyntax.Green XmlComment(PunctuationSyntax.Green beginComment, GreenNode comment, PunctuationSyntax.Green endComment)
+        internal static XmlNodeSyntax.Green XmlComment(PunctuationSyntax.Green beginComment, GreenNode? comment, PunctuationSyntax.Green endComment)
         {
             return new XmlCommentSyntax.Green(beginComment, comment, endComment);
         }
 
-        internal static XmlCDataSectionSyntax.Green XmlCDataSection(PunctuationSyntax.Green beginCData, GreenNode result, PunctuationSyntax.Green endCData)
+        internal static XmlCDataSectionSyntax.Green XmlCDataSection(PunctuationSyntax.Green beginCData, GreenNode? result, PunctuationSyntax.Green endCData)
         {
             return new XmlCDataSectionSyntax.Green(beginCData, result, endCData);
         }
 
         internal static XmlProcessingInstructionSyntax.Green XmlProcessingInstruction(PunctuationSyntax.Green beginProcessingInstruction,
                                                                                        XmlNameTokenSyntax.Green name,
-                                                                                       GreenNode toList,
+                                                                                       GreenNode? toList,
                                                                                        PunctuationSyntax.Green endProcessingInstruction)
         {
             return new XmlProcessingInstructionSyntax.Green(beginProcessingInstruction, name, toList, endProcessingInstruction);
@@ -217,7 +217,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
             return new PunctuationSyntax.Green(kind, string.Empty, null, null);
         }
 
-        internal static KeywordSyntax.Green Keyword(string name, GreenNode leadingTrivia, GreenNode trailingTrivia)
+        internal static KeywordSyntax.Green Keyword(string name, GreenNode? leadingTrivia, GreenNode? trailingTrivia)
         {
             return new KeywordSyntax.Green(name, leadingTrivia, trailingTrivia);
         }

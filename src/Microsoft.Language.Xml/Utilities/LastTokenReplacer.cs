@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 
 namespace Microsoft.Language.Xml
 {
@@ -15,7 +16,9 @@ namespace Microsoft.Language.Xml
 
         internal static TTree Replace<TTree>(TTree root, Func<SyntaxToken.Green, SyntaxToken.Green> newItem) where TTree : GreenNode
         {
-            return (TTree)new LastTokenReplacer(newItem).Visit(root);
+            var result = new LastTokenReplacer(newItem).Visit(root);
+            Debug.Assert(result != null);
+            return (TTree)result;
         }
 
         public override GreenNode? Visit(GreenNode? node)
@@ -82,6 +85,7 @@ namespace Microsoft.Language.Xml
 
         public override SyntaxToken.Green VisitSyntaxToken(SyntaxToken.Green? token)
         {
+            Debug.Assert(token != null);
             return _newItem(token);
         }
     }

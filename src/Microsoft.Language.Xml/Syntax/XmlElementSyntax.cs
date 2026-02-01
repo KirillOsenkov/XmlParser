@@ -1,9 +1,8 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
-#pragma warning disable CS8602
-#pragma warning disable CS8604
 
 namespace Microsoft.Language.Xml
 {
@@ -137,8 +136,8 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        public XmlAttributeSyntax? GetAttribute(string localName, string? prefix = null) => StartTag.AttributesNode.FirstOrDefault(
-            attr => string.Equals(attr.NameNode.LocalName, localName, StringComparison.Ordinal) && string.Equals(attr.NameNode.Prefix, prefix, StringComparison.Ordinal)
+        public XmlAttributeSyntax? GetAttribute(string localName, string? prefix = null) => StartTag?.AttributesNode.FirstOrDefault(
+            attr => string.Equals(attr.NameNode?.LocalName, localName, StringComparison.Ordinal) && string.Equals(attr.NameNode?.Prefix, prefix, StringComparison.Ordinal)
         );
 
         public string? GetAttributeValue(string localName, string? prefix = null) => GetAttribute(localName, prefix)?.Value;
@@ -171,13 +170,13 @@ namespace Microsoft.Language.Xml
                 var singleAttribute = StartTag?.AttributesNode.Node as XmlAttributeSyntax;
                 if (singleAttribute != null)
                 {
-                    yield return new KeyValuePair<string, string>(singleAttribute.Name, singleAttribute.Value);
+                    yield return new KeyValuePair<string, string>(singleAttribute.Name ?? string.Empty, singleAttribute.Value ?? string.Empty);
                     yield break;
                 }
 
-                foreach (var attribute in StartTag?.AttributesNode.OfType<XmlAttributeSyntax>())
+                foreach (var attribute in StartTag!.AttributesNode.OfType<XmlAttributeSyntax>())
                 {
-                    yield return new KeyValuePair<string, string>(attribute.Name, attribute.Value);
+                    yield return new KeyValuePair<string, string>(attribute.Name ?? string.Empty, attribute.Value ?? string.Empty);
                 }
             }
         }
@@ -192,18 +191,18 @@ namespace Microsoft.Language.Xml
         IEnumerable<XmlAttributeSyntax>? IXmlElementSyntax.Attributes => (IEnumerable<XmlAttributeSyntax>?)StartTag?.AttributesNode;
         IXmlElementSyntax? IXmlElementSyntax.Parent => ParentElement;
         XmlNodeSyntax IXmlElementSyntax.AsNode => this;
-        SyntaxList<XmlAttributeSyntax> IXmlElementSyntax.AttributesNode => StartTag.AttributesNode;
+        SyntaxList<XmlAttributeSyntax> IXmlElementSyntax.AttributesNode { get { Debug.Assert(StartTag != null); return StartTag.AttributesNode; } }
 
-        IXmlElementSyntax IXmlElementSyntax.WithName(XmlNameSyntax newName) => WithStartTag(StartTag.WithName(newName));
+        IXmlElementSyntax IXmlElementSyntax.WithName(XmlNameSyntax newName) { Debug.Assert(StartTag != null); return WithStartTag(StartTag.WithName(newName)); }
 
         IXmlElementSyntax IXmlElementSyntax.WithContent(SyntaxList<SyntaxNode> newContent) => Update(StartTag, newContent, EndTag);
 
-        IXmlElementSyntax IXmlElementSyntax.WithAttributes(IEnumerable<XmlAttributeSyntax> newAttributes) => WithStartTag(StartTag.WithAttributes(new SyntaxList<XmlAttributeSyntax>(newAttributes)));
-        IXmlElementSyntax IXmlElementSyntax.WithAttributes(SyntaxList<XmlAttributeSyntax> newAttributes) => WithStartTag(StartTag.WithAttributes(newAttributes));
+        IXmlElementSyntax IXmlElementSyntax.WithAttributes(IEnumerable<XmlAttributeSyntax> newAttributes) { Debug.Assert(StartTag != null); return WithStartTag(StartTag.WithAttributes(new SyntaxList<XmlAttributeSyntax>(newAttributes))); }
+        IXmlElementSyntax IXmlElementSyntax.WithAttributes(SyntaxList<XmlAttributeSyntax> newAttributes) { Debug.Assert(StartTag != null); return WithStartTag(StartTag.WithAttributes(newAttributes)); }
 
         #endregion
 
-        public XmlElementSyntax Update(XmlElementStartTagSyntax startTag, SyntaxList<SyntaxNode> content, XmlElementEndTagSyntax endTag)
+        public XmlElementSyntax Update(XmlElementStartTagSyntax? startTag, SyntaxList<SyntaxNode> content, XmlElementEndTagSyntax? endTag)
         {
             if (startTag != this.StartTag || content != this.Content || endTag != this.EndTag)
             {
@@ -234,6 +233,7 @@ namespace Microsoft.Language.Xml
 
         public XmlElementSyntax AddStartTagAttributes(params XmlAttributeSyntax[] items)
         {
+            Debug.Assert(StartTag != null);
             return this.WithStartTag(this.StartTag.WithAttributes(this.StartTag.AttributesNode.AddRange(items)));
         }
 

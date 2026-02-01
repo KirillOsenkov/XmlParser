@@ -1,8 +1,7 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-#pragma warning disable CS8601
 
 namespace Microsoft.Language.Xml
 {
@@ -104,15 +103,15 @@ namespace Microsoft.Language.Xml
 
         internal class WithManyChildren : SyntaxList
         {
-            private readonly ArrayElement<SyntaxNode>[] _children;
+            private readonly ArrayElement<SyntaxNode?>[] _children;
 
             internal WithManyChildren(InternalSyntax.SyntaxList green, SyntaxNode? parent, int position)
                 : base(green, parent, position)
             {
-                _children = new ArrayElement<SyntaxNode>[green.SlotCount];
+                _children = new ArrayElement<SyntaxNode?>[green.SlotCount];
             }
 
-            internal override SyntaxNode GetNodeSlot(int index)
+            internal override SyntaxNode? GetNodeSlot(int index)
             {
                 return this.GetRedElement(ref _children[index].Value, index);
             }

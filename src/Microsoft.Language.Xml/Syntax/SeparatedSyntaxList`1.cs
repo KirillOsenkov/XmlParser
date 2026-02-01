@@ -16,7 +16,7 @@ namespace Microsoft.Language.Xml
             this._list = list;
         }
 
-        public SyntaxNode Node
+        public SyntaxNode? Node
         {
             get
             {

@@ -1,13 +1,10 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
-#pragma warning disable CS8600
-#pragma warning disable CS8602
-#pragma warning disable CS8603
 
 namespace Microsoft.Language.Xml
 {
@@ -93,7 +90,7 @@ namespace Microsoft.Language.Xml
                     {
                         if (unchecked((uint)index < (uint)_node.SlotCount))
                         {
-                            return (TNode)_node.GetNodeSlot(index);
+                            return (TNode)_node.GetNodeSlot(index)!;
                         }
                     }
                     else if (index == 0)
@@ -107,9 +104,10 @@ namespace Microsoft.Language.Xml
 
         internal SyntaxNode ItemInternal(int index)
         {
+            Debug.Assert(_node != null);
             if (_node.IsList)
             {
-                return _node.GetNodeSlot(index);
+                return _node.GetNodeSlot(index)!;
             }
 
             Debug.Assert(index == 0);
@@ -162,7 +160,7 @@ namespace Microsoft.Language.Xml
         /// </returns>
         public override string ToString()
         {
-            return _node != null ? _node.ToString() : string.Empty;
+            return _node?.ToString() ?? string.Empty;
         }
 
         /// <summary>
@@ -325,6 +323,7 @@ namespace Microsoft.Language.Xml
             }
 
             var newGreen = creator.CreateList(items.Select(n => n.GreenNode));
+            Debug.Assert(newGreen != null);
             return new SyntaxList<TNode>(newGreen.CreateRed());
         }
 
@@ -339,7 +338,7 @@ namespace Microsoft.Language.Xml
         /// <summary>
         /// The first node in the list or default if the list is empty.
         /// </summary>
-        public TNode FirstOrDefault()
+        public TNode? FirstOrDefault()
         {
             if (this.Any())
             {
@@ -362,7 +361,7 @@ namespace Microsoft.Language.Xml
         /// <summary>
         /// The last node in the list or default if the list is empty.
         /// </summary>
-        public TNode LastOrDefault()
+        public TNode? LastOrDefault()
         {
             if (this.Any())
             {

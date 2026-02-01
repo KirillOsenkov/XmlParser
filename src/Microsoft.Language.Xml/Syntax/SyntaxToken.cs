@@ -227,7 +227,7 @@ namespace Microsoft.Language.Xml
             return triviaSlots;
         }
 
-        public override SyntaxNode GetSlotIncludingTrivia(int index)
+        public override SyntaxNode? GetSlotIncludingTrivia(int index)
         {
             if (index == 0)
             {

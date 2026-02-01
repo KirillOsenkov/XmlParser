@@ -944,7 +944,7 @@ namespace Microsoft.Language.Xml
                 if (err != ERRID.ERR_None)
                 {
                     name = name.WithDiagnostics(ErrorFactory.ErrorInfo(
-                        err, errChar, string.Format("&H{0:X}", errUnicode)));
+                        err, errChar ?? string.Empty, string.Format("&H{0:X}", errUnicode)));
                 }
 
                 return name;
@@ -1580,11 +1580,11 @@ namespace Microsoft.Language.Xml
 
                             if (CanGetCharAtOffset(Here) && PeekAheadChar(Here) == ';')
                             {
-                                return XmlMakeEntityLiteralToken(precedingTrivia, Here + 1, value);
+                                return XmlMakeEntityLiteralToken(precedingTrivia, Here + 1, value ?? "");
                             }
                             else
                             {
-                                var noSemicolon = XmlMakeEntityLiteralToken(precedingTrivia, Here, value);
+                                var noSemicolon = XmlMakeEntityLiteralToken(precedingTrivia, Here, value ?? "");
                                 var noSemicolonError = ErrorFactory.ErrorInfo(ERRID.ERR_ExpectedSColon);
                                 return ((XmlTextTokenSyntax.Green)noSemicolon.SetDiagnostics(new[]
                                 {
@@ -2016,7 +2016,7 @@ namespace Microsoft.Language.Xml
             return Punctuation(SyntaxKind.LessThanToken, "<", precedingTrivia, followingTrivia);
         }
 
-        private GreenNode ScanXmlWhitespace()
+        private GreenNode? ScanXmlWhitespace()
         {
             int length = GetXmlWhitespaceLength();
             if (length > 0)

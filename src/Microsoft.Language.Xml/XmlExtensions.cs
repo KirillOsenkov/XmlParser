@@ -1,7 +1,7 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
-#pragma warning disable CS8602
 
 namespace Microsoft.Language.Xml
 {
@@ -29,7 +29,9 @@ namespace Microsoft.Language.Xml
         public static IXmlElementSyntax WithPrefixName(this IXmlElementSyntax element, string prefixName)
         {
             var existingName = element.NameNode;
+            Debug.Assert(existingName != null);
             var existingPrefix = existingName.PrefixNode;
+            Debug.Assert(existingPrefix != null);
             var newName = SyntaxFactory.XmlNameToken(prefixName, null, null);
 
             return element.WithName(existingName.WithPrefix(existingPrefix.WithName(newName)));
@@ -42,13 +44,16 @@ namespace Microsoft.Language.Xml
         public static XmlAttributeSyntax WithValue(this XmlAttributeSyntax attribute, string attributeValue)
         {
             var textTokens = SyntaxFactory.SingletonList(SyntaxFactory.XmlTextLiteralToken(attributeValue, null, null));
+            Debug.Assert(attribute.ValueNode != null);
             return attribute.WithValue(attribute.ValueNode.WithTextTokens(textTokens));
         }
 
         public static XmlAttributeSyntax WithPrefixName(this XmlAttributeSyntax attribute, string prefixName)
         {
             var existingName = attribute.NameNode;
+            Debug.Assert(existingName != null);
             var existingPrefix = existingName.PrefixNode;
+            Debug.Assert(existingPrefix != null);
             var newName = SyntaxFactory.XmlNameToken(prefixName, null, null);
 
             return attribute.WithName(existingName.WithPrefix(existingPrefix.WithName(newName)));
@@ -57,6 +62,7 @@ namespace Microsoft.Language.Xml
         public static XmlAttributeSyntax WithLocalName(this XmlAttributeSyntax attribute, string localName)
         {
             var existingName = attribute.NameNode;
+            Debug.Assert(existingName != null);
             var existingLocalName = existingName.LocalNameNode;
             var newName = SyntaxFactory.XmlNameToken(localName, null, null);
 
@@ -83,6 +89,7 @@ namespace Microsoft.Language.Xml
         internal static bool IsXmlNodeName(this XmlNameSyntax name)
         {
             var p = name.Parent;
+            if (p == null) return false;
             switch (p.Kind)
             {
                 case SyntaxKind.XmlElement:

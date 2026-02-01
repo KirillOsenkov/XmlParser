@@ -1,11 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
-#pragma warning disable CS8602
-#pragma warning disable CS8604
 
 namespace Microsoft.Language.Xml
 {
@@ -41,7 +39,7 @@ namespace Microsoft.Language.Xml
             this.ComputeChangeRecords();
             var reducedChanges = this.ReduceChanges(_changes);
 
-            return reducedChanges.Select(c => new TextChange(c.Range.Span, c.NewText)).ToList();
+            return reducedChanges.Select(c => new TextChange(c.Range.Span, c.NewText ?? string.Empty)).ToList();
         }
 
         // return which spans of text in the new document are possibly different than text in the old document
@@ -384,8 +382,8 @@ namespace Microsoft.Language.Xml
 
             if (node1.IsToken && node2.IsToken)
             {
-                var text1 = node1.ToString();
-                var text2 = node2.ToString();
+                var text1 = node1.ToString() ?? string.Empty;
+                var text2 = node2.ToString() ?? string.Empty;
 
                 if (text1 == text2)
                 {
@@ -427,7 +425,7 @@ namespace Microsoft.Language.Xml
 
                     if (n1.IsToken)
                     {
-                        _tokenTextSimilaritySet.Add(n1.ToString());
+                        _tokenTextSimilaritySet.Add(n1.ToString() ?? string.Empty);
                     }
                 }
 
@@ -439,7 +437,7 @@ namespace Microsoft.Language.Xml
                     }
                     else if (n2.IsToken)
                     {
-                        var tokenText = n2.ToString();
+                        var tokenText = n2.ToString() ?? string.Empty;
                         if (_tokenTextSimilaritySet.Contains(tokenText))
                         {
                             w += tokenText.Length;
@@ -781,7 +779,7 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        private static string GetText(Queue<SyntaxNode> queue)
+        private static string GetText(Queue<SyntaxNode>? queue)
         {
             if (queue == null || queue.Count == 0)
             {

@@ -1,12 +1,11 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
-#pragma warning disable CS8601
-#pragma warning disable CS8602
 
 namespace Microsoft.Language.Xml
 {
@@ -66,6 +65,7 @@ namespace Microsoft.Language.Xml
 
             public bool TryGetNextInSpan(in TextSpan span, [NotNullWhen(true)] out SyntaxNode? value)
             {
+                Debug.Assert(_stack != null);
                 while (_stack[_stackPtr].TryMoveNextAndGetCurrent(out value))
                 {
                     if (IsInSpan(in span, value.FullSpan))
@@ -80,6 +80,7 @@ namespace Microsoft.Language.Xml
 
             public SyntaxNode? TryGetNextAsNodeInSpan(in TextSpan span)
             {
+                Debug.Assert(_stack != null);
                 SyntaxNode? nodeValue;
                 while ((nodeValue = _stack[_stackPtr].TryMoveNextAndGetCurrentAsNode()) != null)
                 {
@@ -95,6 +96,7 @@ namespace Microsoft.Language.Xml
 
             public void PushChildren(SyntaxNode node)
             {
+                Debug.Assert(_stack != null);
                 if (++_stackPtr >= _stack.Length)
                 {
                     // Geometric growth
@@ -127,11 +129,12 @@ namespace Microsoft.Language.Xml
         {
             private static readonly ObjectPool<SyntaxTriviaList.Enumerator[]> s_stackPool = new ObjectPool<SyntaxTriviaList.Enumerator[]>(() => new SyntaxTriviaList.Enumerator[16]);
 
-            private SyntaxTriviaList.Enumerator[] _stack;
+            private SyntaxTriviaList.Enumerator[]? _stack;
             private int _stackPtr;
 
-            public bool TryGetNext(out SyntaxTrivia value)
+            public bool TryGetNext([NotNullWhen(true)] out SyntaxTrivia? value)
             {
+                Debug.Assert(_stack != null);
                 if (_stack[_stackPtr].TryMoveNextAndGetCurrent(out value))
                 {
                     return true;
@@ -144,12 +147,14 @@ namespace Microsoft.Language.Xml
             public void PushLeadingTrivia(in SyntaxToken token)
             {
                 Grow();
+                Debug.Assert(_stack != null);
                 _stack[_stackPtr].InitializeFromLeadingTrivia(in token);
             }
 
             public void PushTrailingTrivia(in SyntaxToken token)
             {
                 Grow();
+                Debug.Assert(_stack != null);
                 _stack[_stackPtr].InitializeFromTrailingTrivia(in token);
             }
 
@@ -210,6 +215,7 @@ namespace Microsoft.Language.Xml
 
             public Which PeekNext()
             {
+                Debug.Assert(_discriminatorStack != null);
                 return _discriminatorStack[_discriminatorStack.Count - 1];
             }
 
@@ -220,17 +226,19 @@ namespace Microsoft.Language.Xml
                     return true;
                 }
 
+                Debug.Assert(_discriminatorStack != null);
                 _discriminatorStack.RemoveAt(_discriminatorStack.Count - 1);
                 return false;
             }
 
-            public bool TryGetNext(out SyntaxTrivia value)
+            public bool TryGetNext([NotNullWhen(true)] out SyntaxTrivia? value)
             {
                 if (_triviaStack.TryGetNext(out value))
                 {
                     return true;
                 }
 
+                Debug.Assert(_discriminatorStack != null);
                 _discriminatorStack.RemoveAt(_discriminatorStack.Count - 1);
                 return false;
             }
@@ -239,6 +247,7 @@ namespace Microsoft.Language.Xml
             {
                 if (descendIntoChildren == null || descendIntoChildren(node))
                 {
+                    Debug.Assert(_discriminatorStack != null);
                     _nodeStack.PushChildren(node);
                     _discriminatorStack.Add(Which.Node);
                 }
@@ -246,12 +255,14 @@ namespace Microsoft.Language.Xml
 
             public void PushLeadingTrivia(in SyntaxToken token)
             {
+                Debug.Assert(_discriminatorStack != null);
                 _triviaStack.PushLeadingTrivia(in token);
                 _discriminatorStack.Add(Which.Trivia);
             }
 
             public void PushTrailingTrivia(in SyntaxToken token)
             {
+                Debug.Assert(_discriminatorStack != null);
                 _triviaStack.PushTrailingTrivia(in token);
                 _discriminatorStack.Add(Which.Trivia);
             }
@@ -300,6 +311,7 @@ namespace Microsoft.Language.Xml
 
             public Which PeekNext()
             {
+                Debug.Assert(_discriminatorStack != null);
                 return _discriminatorStack[_discriminatorStack.Count - 1];
             }
 
@@ -310,23 +322,27 @@ namespace Microsoft.Language.Xml
                     return true;
                 }
 
+                Debug.Assert(_discriminatorStack != null);
                 _discriminatorStack.RemoveAt(_discriminatorStack.Count - 1);
                 return false;
             }
 
-            public bool TryGetNext(out SyntaxTrivia value)
+            public bool TryGetNext([NotNullWhen(true)] out SyntaxTrivia? value)
             {
                 if (_triviaStack.TryGetNext(out value))
                 {
                     return true;
                 }
 
+                Debug.Assert(_discriminatorStack != null);
                 _discriminatorStack.RemoveAt(_discriminatorStack.Count - 1);
                 return false;
             }
 
             public SyntaxNode PopToken()
             {
+                Debug.Assert(_discriminatorStack != null);
+                Debug.Assert(_tokenStack != null);
                 _discriminatorStack.RemoveAt(_discriminatorStack.Count - 1);
                 var result = _tokenStack[_tokenStack.Count - 1];
                 _tokenStack.RemoveAt(_tokenStack.Count - 1);
@@ -337,6 +353,7 @@ namespace Microsoft.Language.Xml
             {
                 if (descendIntoChildren == null || descendIntoChildren(node))
                 {
+                    Debug.Assert(_discriminatorStack != null);
                     _nodeStack.PushChildren(node);
                     _discriminatorStack.Add(Which.Node);
                 }
@@ -344,18 +361,22 @@ namespace Microsoft.Language.Xml
 
             public void PushLeadingTrivia(in SyntaxToken token)
             {
+                Debug.Assert(_discriminatorStack != null);
                 _triviaStack.PushLeadingTrivia(in token);
                 _discriminatorStack.Add(Which.Trivia);
             }
 
             public void PushTrailingTrivia(in SyntaxToken token)
             {
+                Debug.Assert(_discriminatorStack != null);
                 _triviaStack.PushTrailingTrivia(in token);
                 _discriminatorStack.Add(Which.Trivia);
             }
 
             public void PushToken(in SyntaxNode value)
             {
+                Debug.Assert(_tokenStack != null);
+                Debug.Assert(_discriminatorStack != null);
                 _tokenStack.Add(value);
                 _discriminatorStack.Add(Which.Token);
             }
@@ -563,7 +584,7 @@ namespace Microsoft.Language.Xml
 
                         case TwoEnumeratorListStack.Which.Trivia:
                             // yield structure nodes and enumerate their children
-                            SyntaxTrivia trivia;
+                            SyntaxTrivia? trivia;
                             if (stack.TryGetNext(out trivia))
                             {
                                 // PERF: Push before yield return so that "trivia" is 'dead' after the yield

@@ -1,4 +1,4 @@
-// define TRACE_LEAKS to get additional diagnostics that can lead to the leak sources. note: it will
+﻿// define TRACE_LEAKS to get additional diagnostics that can lead to the leak sources. note: it will
 // make everything about 2-3x slower
 //
 // #define TRACE_LEAKS
@@ -17,7 +17,6 @@ using System.Runtime.CompilerServices;
 
 #endif
 
-#pragma warning disable CS8601
 
 namespace Microsoft.Language.Xml
 {
@@ -42,7 +41,7 @@ namespace Microsoft.Language.Xml
     {
         private struct Element
         {
-            internal T Value;
+            internal T? Value;
         }
 
         /// <remarks>
@@ -131,7 +130,7 @@ namespace Microsoft.Language.Xml
         internal T Allocate()
         {
             var items = this.items;
-            T inst;
+            T? inst;
 
             for (int i = 0; i < items.Length; i++)
             {

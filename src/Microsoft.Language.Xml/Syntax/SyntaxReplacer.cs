@@ -1,11 +1,9 @@
-using System;
+﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-#pragma warning disable CS8600
-#pragma warning disable CS8603
-#pragma warning disable CS8604
 
 
 namespace Microsoft.Language.Xml
@@ -29,7 +27,7 @@ namespace Microsoft.Language.Xml
 
             if (replacer.HasWork)
             {
-                return replacer.Visit(root);
+                return replacer.Visit(root)!;
             }
             else
             {
@@ -173,6 +171,7 @@ namespace Microsoft.Language.Xml
 
                     if (_nodeSet.Contains(node) && _computeReplacementNode != null)
                     {
+                        Debug.Assert(rewritten != null);
                         rewritten = _computeReplacementNode((TNode)node, (TNode)rewritten);
                     }
                 }
@@ -200,22 +199,22 @@ namespace Microsoft.Language.Xml
 
         internal static SyntaxNode ReplaceNodeInList(SyntaxNode root, SyntaxNode originalNode, IEnumerable<SyntaxNode> newNodes)
         {
-            return new NodeListEditor(originalNode, newNodes, ListEditKind.Replace).Visit(root);
+            return new NodeListEditor(originalNode, newNodes, ListEditKind.Replace).Visit(root)!;
         }
 
         internal static SyntaxNode InsertNodeInList(SyntaxNode root, SyntaxNode nodeInList, IEnumerable<SyntaxNode> nodesToInsert, bool insertBefore)
         {
-            return new NodeListEditor(nodeInList, nodesToInsert, insertBefore ? ListEditKind.InsertBefore : ListEditKind.InsertAfter).Visit(root);
+            return new NodeListEditor(nodeInList, nodesToInsert, insertBefore ? ListEditKind.InsertBefore : ListEditKind.InsertAfter).Visit(root)!;
         }
 
         public static SyntaxNode ReplaceTokenInList(SyntaxNode root, SyntaxToken tokenInList, IEnumerable<SyntaxToken> newTokens)
         {
-            return new TokenListEditor(tokenInList, newTokens, ListEditKind.Replace).Visit(root);
+            return new TokenListEditor(tokenInList, newTokens, ListEditKind.Replace).Visit(root)!;
         }
 
         public static SyntaxNode InsertTokenInList(SyntaxNode root, SyntaxToken tokenInList, IEnumerable<SyntaxToken> newTokens, bool insertBefore)
         {
-            return new TokenListEditor(tokenInList, newTokens, insertBefore ? ListEditKind.InsertBefore : ListEditKind.InsertAfter).Visit(root);
+            return new TokenListEditor(tokenInList, newTokens, insertBefore ? ListEditKind.InsertBefore : ListEditKind.InsertAfter).Visit(root)!;
         }
 
         private enum ListEditKind

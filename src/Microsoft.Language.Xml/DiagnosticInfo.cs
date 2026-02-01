@@ -1,12 +1,10 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Globalization;
 using System.Resources;
 
-#pragma warning disable CS8603
-#pragma warning disable CS8604
 
 namespace Microsoft.Language.Xml
 {
@@ -61,7 +59,7 @@ namespace Microsoft.Language.Xml
         public string GetDescription(ResourceManager resourceManager)
         {
             var name = ErrorID.ToString();
-            var description = resourceManager.GetString(name);
+            var description = resourceManager.GetString(name) ?? name;
             if (parameters != null)
                 description = string.Format(description, parameters);
             return description;

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -6,8 +6,6 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Diagnostics.CodeAnalysis;
 
-#pragma warning disable CS8602
-#pragma warning disable CS8604
 
 namespace Microsoft.Language.Xml.InternalSyntax
 {
@@ -154,9 +152,14 @@ namespace Microsoft.Language.Xml.InternalSyntax
 
         public virtual int GetLeadingTriviaWidth()
         {
-            return this.FullWidth != 0 ?
-                this.GetFirstTerminal().GetLeadingTriviaWidth() :
-                0;
+            if (this.FullWidth != 0)
+            {
+                var terminal = this.GetFirstTerminal();
+                Debug.Assert(terminal != null);
+                return terminal.GetLeadingTriviaWidth();
+            }
+
+            return 0;
         }
 
         internal virtual GreenNode? GetTrailingTrivia()
@@ -166,9 +169,14 @@ namespace Microsoft.Language.Xml.InternalSyntax
 
         public virtual int GetTrailingTriviaWidth()
         {
-            return this.FullWidth != 0 ?
-                this.GetLastTerminal().GetTrailingTriviaWidth() :
-                0;
+            if (this.FullWidth != 0)
+            {
+                var terminal = this.GetLastTerminal();
+                Debug.Assert(terminal != null);
+                return terminal.GetTrailingTriviaWidth();
+            }
+
+            return 0;
         }
 
         public bool HasLeadingTrivia
@@ -325,7 +333,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
                 var node = GetSlot(i);
                 if (node != null)
                 {
-                    stack.Push(GetSlot(i));
+                    stack.Push(node);
                 }
             }
         }

@@ -1,10 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
-#pragma warning disable CS8602
 
 namespace Microsoft.Language.Xml
 {
@@ -39,9 +38,10 @@ namespace Microsoft.Language.Xml
 
             if (_nodes == null || Count >= _nodes.Length)
             {
-                this.Grow(Count == 0 ? 8 : _nodes.Length * 2);
+                this.Grow(Count == 0 ? 8 : _nodes!.Length * 2);
             }
 
+            Debug.Assert(_nodes != null);
             _nodes[Count++].Value = item;
         }
 
@@ -57,6 +57,7 @@ namespace Microsoft.Language.Xml
                 this.Grow(Count + length);
             }
 
+            Debug.Assert(_nodes != null);
             for (int i = offset, j = Count; i < offset + length; ++i, ++j)
             {
                 _nodes[j].Value = items[i].GreenNode;
@@ -91,6 +92,7 @@ namespace Microsoft.Language.Xml
                 this.Grow(Count + count);
             }
 
+            Debug.Assert(_nodes != null);
             var dst = this.Count;
             for (int i = offset, limit = offset + count; i < limit; i++)
             {

@@ -1,8 +1,8 @@
-using System;
+﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Collections.Generic;
 
-#pragma warning disable CS8602
 
 namespace Microsoft.Language.Xml
 {
@@ -277,6 +277,7 @@ namespace Microsoft.Language.Xml
             SyntaxNode trivia) where TSyntax : SyntaxNode
         {
             var first = node.GetFirstToken();
+            Debug.Assert(first != null);
             var newFirst = first.WithLeadingTrivia(trivia);
             return node.ReplaceToken(first, newFirst);
         }
@@ -289,6 +290,7 @@ namespace Microsoft.Language.Xml
             IEnumerable<SyntaxTrivia>? trivia) where TSyntax : SyntaxNode
         {
             var first = node.GetFirstToken();
+            Debug.Assert(first != null);
             var newFirst = first.WithLeadingTrivia(trivia);
             return node.ReplaceToken(first, newFirst);
         }
@@ -319,6 +321,7 @@ namespace Microsoft.Language.Xml
             SyntaxNode trivia) where TSyntax : SyntaxNode
         {
             var last = node.GetLastToken();
+            Debug.Assert(last != null);
             var newLast = last.WithTrailingTrivia(trivia);
             return node.ReplaceToken(last, newLast);
         }
@@ -331,6 +334,7 @@ namespace Microsoft.Language.Xml
             IEnumerable<SyntaxTrivia>? trivia) where TSyntax : SyntaxNode
         {
             var last = node.GetLastToken();
+            Debug.Assert(last != null);
             var newLast = last.WithTrailingTrivia(trivia);
             return node.ReplaceToken(last, newLast);
         }

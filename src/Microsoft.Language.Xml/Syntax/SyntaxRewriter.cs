@@ -63,7 +63,7 @@ namespace Microsoft.Language.Xml
 
                     visitedSeparator = (SyntaxToken)visitedSeparatorNode;
 
-                    Debug.Assert((separator == null &&
+                    Debug.Assert((separator != null &&
                         separator.Kind == SyntaxKind.None) ||
                         (visitedSeparator != null &&
                         visitedSeparator.Kind != SyntaxKind.None),
@@ -130,13 +130,13 @@ namespace Microsoft.Language.Xml
                 anyChanges = true;
             }
 
-            var newEof = VisitSyntaxToken(node.Eof);
+            var newEof = node.Eof != null ? VisitSyntaxToken(node.Eof) : null;
             if (node.Eof != newEof)
             {
                 anyChanges = true;
             }
 
-            var newSkippedTokens = ((SkippedTokensTriviaSyntax)VisitSkippedTokensTrivia(node.SkippedTokens));
+            var newSkippedTokens = node.SkippedTokens != null ? ((SkippedTokensTriviaSyntax?)VisitSkippedTokensTrivia(node.SkippedTokens)) : null;
             if (node.SkippedTokens != newSkippedTokens)
             {
                 anyChanges = true;

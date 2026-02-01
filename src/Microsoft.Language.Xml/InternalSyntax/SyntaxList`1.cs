@@ -37,9 +37,10 @@ namespace Microsoft.Language.Xml.InternalSyntax
             get
             {
                 var node = this._node;
+                Debug.Assert(node != null);
                 if (node.IsList)
                 {
-                    return ((TNode)node.GetSlot(node.SlotCount - 1));
+                    return ((TNode)node.GetSlot(node.SlotCount - 1)!);
                 }
 
                 return ((TNode)node);
@@ -52,9 +53,10 @@ namespace Microsoft.Language.Xml.InternalSyntax
             get
             {
                 var node = this._node;
+                Debug.Assert(node != null);
                 if (node.IsList)
                 {
-                    return ((TNode)node.GetSlot(index));
+                    return ((TNode)node.GetSlot(index)!);
                 }
 
                 Debug.Assert(index == 0);
@@ -65,9 +67,10 @@ namespace Microsoft.Language.Xml.InternalSyntax
         public GreenNode ItemUntyped(int index)
         {
             var node = this._node;
+            Debug.Assert(node != null);
             if (node.IsList)
             {
-                return node.GetSlot(index);
+                return node.GetSlot(index)!;
             }
 
             Debug.Assert(index == 0);

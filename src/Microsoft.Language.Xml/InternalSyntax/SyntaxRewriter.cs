@@ -1,7 +1,5 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
-#pragma warning disable CS8602
-#pragma warning disable CS8604
 
 namespace Microsoft.Language.Xml.InternalSyntax
 {
@@ -64,7 +62,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
 
                     visitedSeparator = (SyntaxToken.Green)visitedSeparatorNode;
 
-                    Debug.Assert((separator == null &&
+                    Debug.Assert((separator != null &&
                         separator.Kind == SyntaxKind.None) ||
                         (visitedSeparator != null &&
                         visitedSeparator.Kind != SyntaxKind.None),
@@ -137,7 +135,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
                 anyChanges = true;
             }
 
-            var newSkippedTokens = ((SkippedTokensTriviaSyntax.Green)VisitSkippedTokensTrivia(node.SkippedTokens));
+            var newSkippedTokens = node.SkippedTokens != null ? ((SkippedTokensTriviaSyntax.Green?)VisitSkippedTokensTrivia(node.SkippedTokens)) : null;
             if (node.SkippedTokens != newSkippedTokens)
             {
                 anyChanges = true;

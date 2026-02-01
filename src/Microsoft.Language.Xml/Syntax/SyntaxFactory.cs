@@ -123,10 +123,10 @@ namespace Microsoft.Language.Xml
         }
 
         public static XmlElementStartTagSyntax XmlElementStartTag(
-            PunctuationSyntax lessThanToken,
-            XmlNameSyntax name,
-            SyntaxNode attributes,
-            PunctuationSyntax greaterThanToken)
+            PunctuationSyntax? lessThanToken,
+            XmlNameSyntax? name,
+            SyntaxNode? attributes,
+            PunctuationSyntax? greaterThanToken)
         {
             Debug.Assert(lessThanToken != null && lessThanToken.Kind == SyntaxKind.LessThanToken);
             Debug.Assert(name != null);
@@ -134,7 +134,7 @@ namespace Microsoft.Language.Xml
             return (XmlElementStartTagSyntax)new XmlElementStartTagSyntax.Green(lessThanToken?.GreenNode, name?.GreenNode, attributes?.GreenNode, greaterThanToken?.GreenNode).CreateRed();
         }
 
-        public static XmlElementEndTagSyntax XmlElementEndTag(PunctuationSyntax lessThanSlashToken, XmlNameSyntax name, PunctuationSyntax greaterThanToken)
+        public static XmlElementEndTagSyntax XmlElementEndTag(PunctuationSyntax? lessThanSlashToken, XmlNameSyntax? name, PunctuationSyntax? greaterThanToken)
         {
             Debug.Assert(lessThanSlashToken != null && lessThanSlashToken.Kind == SyntaxKind.LessThanSlashToken);
             Debug.Assert(greaterThanToken != null && greaterThanToken.Kind == SyntaxKind.GreaterThanToken);
@@ -192,10 +192,10 @@ namespace Microsoft.Language.Xml
         }
 
         public static XmlEmptyElementSyntax XmlEmptyElement(
-            PunctuationSyntax lessThanToken,
-            XmlNameSyntax name,
-            SyntaxNode attributes,
-            PunctuationSyntax slashGreaterThanToken)
+            PunctuationSyntax? lessThanToken,
+            XmlNameSyntax? name,
+            SyntaxNode? attributes,
+            PunctuationSyntax? slashGreaterThanToken)
         {
             Debug.Assert(lessThanToken != null && lessThanToken.Kind == SyntaxKind.LessThanToken);
             Debug.Assert(name != null);
@@ -227,7 +227,7 @@ namespace Microsoft.Language.Xml
         ''' whitespace in an XML literal expression.
         ''' </summary>
         */
-        public static XmlDeclarationOptionSyntax XmlDeclarationOption(XmlNameTokenSyntax name, PunctuationSyntax equals, XmlStringSyntax value)
+        public static XmlDeclarationOptionSyntax XmlDeclarationOption(XmlNameTokenSyntax? name, PunctuationSyntax? equals, XmlStringSyntax? value)
         {
             Debug.Assert(name != null && name.Kind == SyntaxKind.XmlNameToken);
             Debug.Assert(equals != null && equals.Kind == SyntaxKind.EqualsToken);
@@ -240,7 +240,7 @@ namespace Microsoft.Language.Xml
         ''' Represents the XML declaration prologue in an XML literal expression.
         ''' </summary>
         */
-        public static XmlDeclarationSyntax XmlDeclaration(PunctuationSyntax lessThanQuestionToken, SyntaxToken xmlKeyword, XmlDeclarationOptionSyntax version, XmlDeclarationOptionSyntax encoding, XmlDeclarationOptionSyntax standalone, PunctuationSyntax questionGreaterThanToken)
+        public static XmlDeclarationSyntax XmlDeclaration(PunctuationSyntax? lessThanQuestionToken, SyntaxToken? xmlKeyword, XmlDeclarationOptionSyntax? version, XmlDeclarationOptionSyntax? encoding, XmlDeclarationOptionSyntax? standalone, PunctuationSyntax? questionGreaterThanToken)
         {
             Debug.Assert(lessThanQuestionToken != null && lessThanQuestionToken.Kind == SyntaxKind.LessThanQuestionToken);
             //Debug.Assert(xmlKeyword != null && xmlKeyword.Kind == SyntaxKind.XmlKeyword);

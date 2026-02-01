@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 
-#pragma warning disable CS8602
 
 namespace Microsoft.Language.Xml
 {
@@ -103,6 +102,7 @@ namespace Microsoft.Language.Xml
             // Array.Clear(this.localTable, 0, this.localTable.Length);
             // Array.Clear(sharedTable, 0, sharedTable.Length);
 
+            Debug.Assert(pool != null);
             pool.Free(this);
         }
 

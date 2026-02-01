@@ -1,7 +1,6 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Text;
 
-#pragma warning disable CS8604
 
 namespace Microsoft.Language.Xml
 {
@@ -74,7 +73,7 @@ namespace Microsoft.Language.Xml
         public static ObjectPool<PooledStringBuilder> CreatePool()
         {
             ObjectPool<PooledStringBuilder>? pool = null;
-            pool = new ObjectPool<PooledStringBuilder>(() => new PooledStringBuilder(pool), 32);
+            pool = new ObjectPool<PooledStringBuilder>(() => new PooledStringBuilder(pool!), 32);
             return pool;
         }
 

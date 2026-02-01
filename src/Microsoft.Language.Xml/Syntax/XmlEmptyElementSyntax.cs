@@ -1,10 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
-#pragma warning disable CS8602
 
-#pragma warning disable CS8604
 
 namespace Microsoft.Language.Xml
 {
@@ -140,7 +139,7 @@ namespace Microsoft.Language.Xml
         }
 
         public XmlAttributeSyntax? GetAttribute(string localName, string? prefix = null) => AttributesNode.FirstOrDefault(
-            attr => string.Equals(attr.NameNode.LocalName, localName, StringComparison.Ordinal) && string.Equals(attr.NameNode.Prefix, prefix, StringComparison.Ordinal)
+            attr => string.Equals(attr.NameNode?.LocalName, localName, StringComparison.Ordinal) && string.Equals(attr.NameNode?.Prefix, prefix, StringComparison.Ordinal)
         );
 
         public string? GetAttributeValue(string localName, string? prefix = null) => GetAttribute(localName, prefix)?.Value;
@@ -173,13 +172,13 @@ namespace Microsoft.Language.Xml
                 var singleAttribute = AttributesNode.Node as XmlAttributeSyntax;
                 if (singleAttribute != null)
                 {
-                    yield return new KeyValuePair<string, string>(singleAttribute.Name, singleAttribute.Value);
+                    yield return new KeyValuePair<string, string>(singleAttribute.Name ?? string.Empty, singleAttribute.Value ?? string.Empty);
                     yield break;
                 }
 
                 foreach (var attribute in AttributesNode.OfType<XmlAttributeSyntax>())
                 {
-                    yield return new KeyValuePair<string, string>(attribute.Name, attribute.Value);
+                    yield return new KeyValuePair<string, string>(attribute.Name ?? string.Empty, attribute.Value ?? string.Empty);
                 }
             }
         }
@@ -204,11 +203,11 @@ namespace Microsoft.Language.Xml
 
         #endregion
 
-        public XmlEmptyElementSyntax Update(PunctuationSyntax lessThanToken, XmlNameSyntax name, SyntaxList<XmlAttributeSyntax> attributes, PunctuationSyntax slashGreaterThanToken)
+        public XmlEmptyElementSyntax Update(PunctuationSyntax? lessThanToken, XmlNameSyntax? name, SyntaxList<XmlAttributeSyntax> attributes, PunctuationSyntax? slashGreaterThanToken)
         {
             if (lessThanToken != this.LessThanToken || name != this.NameNode || attributes != this.AttributesNode || slashGreaterThanToken != this.SlashGreaterThanToken)
             {
-                var newNode = SyntaxFactory.XmlEmptyElement(lessThanToken, name, attributes, slashGreaterThanToken);
+                var newNode = SyntaxFactory.XmlEmptyElement(lessThanToken!, name!, attributes, slashGreaterThanToken!);
                 var annotations = this.GetAnnotations();
                 if (annotations != null && annotations.Length > 0)
                     return newNode.WithAnnotations(annotations);
@@ -236,6 +235,8 @@ namespace Microsoft.Language.Xml
         // This method has to convert to an XmlElementSyntax
         public XmlElementSyntax WithContent(SyntaxList<SyntaxNode> content)
         {
+            Debug.Assert(LessThanToken != null);
+            Debug.Assert(NameNode != null);
             var greaterThanToken = SyntaxFactory.Punctuation(SyntaxKind.GreaterThanToken, ">", null, null);
             var startTag = SyntaxFactory.XmlElementStartTag(this.LessThanToken, this.NameNode, this.AttributesNode, greaterThanToken);
             var lessThanSlashToken = SyntaxFactory.Punctuation(SyntaxKind.LessThanSlashToken, "</", null, null);
