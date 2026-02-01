@@ -73,6 +73,91 @@ namespace Microsoft.Language.Xml.Tests
         }
 
         [Fact]
+        public void SelectsCorrectEndTag()
+        {
+            var xml = """
+                <Root>
+                  <A>
+                    <A>
+                  </A>
+                </Root>
+                """;
+            var document = Parser.ParseText(xml);
+            var root = (XmlElementSyntax)document.RootSyntax;
+            var a1 = (XmlElementSyntax)Assert.Single(root.Content);
+            var a2 = (XmlElementSyntax)Assert.Single(a1.Content);
+
+            // a1 should have an end tag, a2 should not. The parser should use the indentation
+            // to determine which start tag the end tag belongs to.
+            Assert.True(a1.EndTag.Span.Length > 0);
+            Assert.False(a2.EndTag.Span.Length > 0);
+        }
+
+        [Fact]
+        public void SelectsCorrectEndTag_ThreeLevels()
+        {
+            var xml = """
+                <Root>
+                  <A>
+                    <A>
+                      <A>
+                    </A>
+                  </A>
+                </Root>
+                """;
+            var document = Parser.ParseText(xml);
+            var root = (XmlElementSyntax)document.RootSyntax;
+            var a1 = (XmlElementSyntax)Assert.Single(root.Content);
+            var a2 = (XmlElementSyntax)Assert.Single(a1.Content);
+            var a3 = (XmlElementSyntax)Assert.Single(a2.Content);
+
+            // a1 and a2 should have end tags matching by indent, a3 should not.
+            Assert.True(a1.EndTag.Span.Length > 0);
+            Assert.True(a2.EndTag.Span.Length > 0);
+            Assert.False(a3.EndTag.Span.Length > 0);
+        }
+
+        [Fact]
+        public void SelectsCorrectEndTag_SameIndentSiblings()
+        {
+            // When same-name elements are siblings at the same indent, normal matching applies.
+            var xml = """
+                <Root>
+                  <A>
+                  </A>
+                  <A>
+                  </A>
+                </Root>
+                """;
+            var document = Parser.ParseText(xml);
+            var root = (XmlElementSyntax)document.RootSyntax;
+            Assert.Equal(2, root.Content.Count);
+            var a1 = (XmlElementSyntax)root.Content[0];
+            var a2 = (XmlElementSyntax)root.Content[1];
+            Assert.True(a1.EndTag.Span.Length > 0);
+            Assert.True(a2.EndTag.Span.Length > 0);
+        }
+
+        [Fact]
+        public void SelectsCorrectEndTag_DifferentNames()
+        {
+            // When names differ, indent doesn't matter - the parser matches by name.
+            var xml = """
+                <Root>
+                  <A>
+                    <B>
+                  </A>
+                </Root>
+                """;
+            var document = Parser.ParseText(xml);
+            var root = (XmlElementSyntax)document.RootSyntax;
+            var a = (XmlElementSyntax)Assert.Single(root.Content);
+            var b = (XmlElementSyntax)Assert.Single(a.Content);
+            Assert.True(a.EndTag.Span.Length > 0);
+            Assert.False(b.EndTag.Span.Length > 0);
+        }
+
+        [Fact]
         public void ParserErrorTolerance()
         {
             T("");

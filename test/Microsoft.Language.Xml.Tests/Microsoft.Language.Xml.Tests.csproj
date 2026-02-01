@@ -3,6 +3,7 @@
     <AssemblyName>Microsoft.Language.Xml.Tests</AssemblyName>
     <TargetFramework>net472</TargetFramework>
     <IsWindows>$([MSBuild]::IsOSPlatform('Windows'))</IsWindows>
+    <LangVersion>11</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>True</SignAssembly>
