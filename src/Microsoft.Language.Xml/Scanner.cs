@@ -54,6 +54,8 @@ namespace Microsoft.Language.Xml
             ResetTokens(withState);
         }
 
+        internal int CurrentTokenPosition => _currentToken.Position;
+
         internal SyntaxToken.Green GetCurrentToken()
         {
             var tk = _currentToken.InnerTokenObject;

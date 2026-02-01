@@ -288,23 +288,25 @@ namespace Microsoft.Language.Xml
                             goto case SyntaxKind.LessThanSlashToken;
                         }
 
+                        var startTagIndent = GetIndentAtPosition(_scanner.CurrentTokenPosition + CurrentToken.GetLeadingTriviaWidth());
                         xml = ParseXmlElementStartTag(nextState);
 
                         if (xml.Kind == SyntaxKind.XmlElementStartTag)
                         {
                             var startElement = xml as XmlElementStartTagSyntax.Green;
-                            contexts.Add(new XmlContext(_pool, startElement));
+                            contexts.Add(new XmlContext(_pool, startElement, startTagIndent));
                             nextState = ScannerState.Content;
                             continue;
                         }
 
                         break;
                     case SyntaxKind.LessThanSlashToken:
+                        var endTagIndent = GetIndentAtPosition(_scanner.CurrentTokenPosition + CurrentToken.GetLeadingTriviaWidth());
                         endElement = ParseXmlElementEndTag(nextState);
 
                         if (contexts.Count > 0)
                         {
-                            xml = CreateXmlElement(contexts, endElement);
+                            xml = CreateXmlElement(contexts, endElement, endTagIndent);
                         }
                         else
                         {
@@ -991,9 +993,9 @@ namespace Microsoft.Language.Xml
             currentToken = null;
         }
 
-        private XmlNodeSyntax.Green CreateXmlElement(List<XmlContext> contexts, XmlElementEndTagSyntax.Green endElement)
+        private XmlNodeSyntax.Green CreateXmlElement(List<XmlContext> contexts, XmlElementEndTagSyntax.Green endElement, int endTagIndent = -1)
         {
-            var i = contexts.MatchEndElement(endElement.NameNode);
+            var i = contexts.MatchEndElement(endElement.NameNode, endTagIndent);
             XmlNodeSyntax.Green element;
             if (i >= 0)
             {
@@ -1051,6 +1053,27 @@ namespace Microsoft.Language.Xml
 
             contexts.Pop();
             return element;
+        }
+
+        /// <summary>
+        /// Computes the column (indent) of the given absolute position by scanning
+        /// backwards to the previous newline.
+        /// </summary>
+        private int GetIndentAtPosition(int position)
+        {
+            int column = 0;
+            for (int i = position - 1; i >= 0; i--)
+            {
+                char c = buffer[i];
+                if (c == '\n' || c == '\r')
+                {
+                    break;
+                }
+
+                column++;
+            }
+
+            return column;
         }
 
         private XmlElementEndTagSyntax.Green ParseXmlElementEndTag(ScannerState nextState)
