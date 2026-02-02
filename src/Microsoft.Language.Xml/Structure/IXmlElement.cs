@@ -6,7 +6,7 @@ namespace Microsoft.Language.Xml
     {
         int Start { get; }
         int FullWidth { get; }
-        string? Name { get; }
+        string Name { get; }
         string Value { get; }
         IXmlElement? Parent { get; }
         IEnumerable<IXmlElement> Elements { get; }

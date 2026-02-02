@@ -152,7 +152,7 @@ namespace Microsoft.Language.Xml
 
         int IXmlElement.FullWidth => FullWidth;
 
-        string? IXmlElement.Name => Name;
+        string IXmlElement.Name => Name;
 
         string IXmlElement.Value => Content.ToFullString();
 

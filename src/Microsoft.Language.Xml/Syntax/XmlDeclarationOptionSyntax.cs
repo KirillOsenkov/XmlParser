@@ -69,7 +69,7 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        internal new Green GreenNode => (Green)GreenNode;
+        internal new Green GreenNode => (Green)base.GreenNode;
 
         XmlNameTokenSyntax? nameNode;
         PunctuationSyntax? equals;
