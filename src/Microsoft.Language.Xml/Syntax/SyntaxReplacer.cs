@@ -1,6 +1,10 @@
-using System;
+﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+
+
 
 namespace Microsoft.Language.Xml
 {
@@ -8,12 +12,12 @@ namespace Microsoft.Language.Xml
     {
         internal static SyntaxNode Replace<TNode>(
             SyntaxNode root,
-            IEnumerable<TNode> nodes = null,
-            Func<TNode, TNode, SyntaxNode> computeReplacementNode = null,
-            IEnumerable<SyntaxToken> tokens = null,
-            Func<SyntaxToken, SyntaxToken, SyntaxToken> computeReplacementToken = null,
-            IEnumerable<SyntaxTrivia> trivia = null,
-            Func<SyntaxTrivia, SyntaxTrivia, SyntaxTrivia> computeReplacementTrivia = null)
+            IEnumerable<TNode>? nodes = null,
+            Func<TNode, TNode, SyntaxNode>? computeReplacementNode = null,
+            IEnumerable<SyntaxToken>? tokens = null,
+            Func<SyntaxToken, SyntaxToken, SyntaxToken>? computeReplacementToken = null,
+            IEnumerable<SyntaxTrivia>? trivia = null,
+            Func<SyntaxTrivia, SyntaxTrivia, SyntaxTrivia>? computeReplacementTrivia = null)
             where TNode : SyntaxNode
         {
             var replacer = new Replacer<TNode>(
@@ -23,7 +27,7 @@ namespace Microsoft.Language.Xml
 
             if (replacer.HasWork)
             {
-                return replacer.Visit(root);
+                return replacer.Visit(root)!;
             }
             else
             {
@@ -33,12 +37,12 @@ namespace Microsoft.Language.Xml
 
         internal static SyntaxToken Replace(
             SyntaxToken root,
-            IEnumerable<SyntaxNode> nodes = null,
-            Func<SyntaxNode, SyntaxNode, SyntaxNode> computeReplacementNode = null,
-            IEnumerable<SyntaxToken> tokens = null,
-            Func<SyntaxToken, SyntaxToken, SyntaxToken> computeReplacementToken = null,
-            IEnumerable<SyntaxTrivia> trivia = null,
-            Func<SyntaxTrivia, SyntaxTrivia, SyntaxTrivia> computeReplacementTrivia = null)
+            IEnumerable<SyntaxNode>? nodes = null,
+            Func<SyntaxNode, SyntaxNode, SyntaxNode>? computeReplacementNode = null,
+            IEnumerable<SyntaxToken>? tokens = null,
+            Func<SyntaxToken, SyntaxToken, SyntaxToken>? computeReplacementToken = null,
+            IEnumerable<SyntaxTrivia>? trivia = null,
+            Func<SyntaxTrivia, SyntaxTrivia, SyntaxTrivia>? computeReplacementTrivia = null)
         {
             var replacer = new Replacer<SyntaxNode>(
                 nodes, computeReplacementNode,
@@ -57,9 +61,9 @@ namespace Microsoft.Language.Xml
 
         private class Replacer<TNode> : SyntaxRewriter where TNode : SyntaxNode
         {
-            private readonly Func<TNode, TNode, SyntaxNode> _computeReplacementNode;
-            private readonly Func<SyntaxToken, SyntaxToken, SyntaxToken> _computeReplacementToken;
-            private readonly Func<SyntaxTrivia, SyntaxTrivia, SyntaxTrivia> _computeReplacementTrivia;
+            private readonly Func<TNode, TNode, SyntaxNode>? _computeReplacementNode;
+            private readonly Func<SyntaxToken, SyntaxToken, SyntaxToken>? _computeReplacementToken;
+            private readonly Func<SyntaxTrivia, SyntaxTrivia, SyntaxTrivia>? _computeReplacementTrivia;
 
             private readonly HashSet<SyntaxNode> _nodeSet;
             private readonly HashSet<SyntaxToken> _tokenSet;
@@ -70,12 +74,12 @@ namespace Microsoft.Language.Xml
             private readonly bool _shouldVisitTrivia;
 
             public Replacer(
-                IEnumerable<TNode> nodes,
-                Func<TNode, TNode, SyntaxNode> computeReplacementNode,
-                IEnumerable<SyntaxToken> tokens,
-                Func<SyntaxToken, SyntaxToken, SyntaxToken> computeReplacementToken,
-                IEnumerable<SyntaxTrivia> trivia,
-                Func<SyntaxTrivia, SyntaxTrivia, SyntaxTrivia> computeReplacementTrivia)
+                IEnumerable<TNode>? nodes,
+                Func<TNode, TNode, SyntaxNode>? computeReplacementNode,
+                IEnumerable<SyntaxToken>? tokens,
+                Func<SyntaxToken, SyntaxToken, SyntaxToken>? computeReplacementToken,
+                IEnumerable<SyntaxTrivia>? trivia,
+                Func<SyntaxTrivia, SyntaxTrivia, SyntaxTrivia>? computeReplacementTrivia)
             {
                 _computeReplacementNode = computeReplacementNode;
                 _computeReplacementToken = computeReplacementToken;
@@ -154,9 +158,9 @@ namespace Microsoft.Language.Xml
                 return false;
             }
 
-            public override SyntaxNode Visit(SyntaxNode node)
+            public override SyntaxNode? Visit(SyntaxNode? node)
             {
-                SyntaxNode rewritten = node;
+                SyntaxNode? rewritten = node;
 
                 if (node != null)
                 {
@@ -167,6 +171,7 @@ namespace Microsoft.Language.Xml
 
                     if (_nodeSet.Contains(node) && _computeReplacementNode != null)
                     {
+                        Debug.Assert(rewritten != null);
                         rewritten = _computeReplacementNode((TNode)node, (TNode)rewritten);
                     }
                 }
@@ -194,22 +199,22 @@ namespace Microsoft.Language.Xml
 
         internal static SyntaxNode ReplaceNodeInList(SyntaxNode root, SyntaxNode originalNode, IEnumerable<SyntaxNode> newNodes)
         {
-            return new NodeListEditor(originalNode, newNodes, ListEditKind.Replace).Visit(root);
+            return new NodeListEditor(originalNode, newNodes, ListEditKind.Replace).Visit(root)!;
         }
 
         internal static SyntaxNode InsertNodeInList(SyntaxNode root, SyntaxNode nodeInList, IEnumerable<SyntaxNode> nodesToInsert, bool insertBefore)
         {
-            return new NodeListEditor(nodeInList, nodesToInsert, insertBefore ? ListEditKind.InsertBefore : ListEditKind.InsertAfter).Visit(root);
+            return new NodeListEditor(nodeInList, nodesToInsert, insertBefore ? ListEditKind.InsertBefore : ListEditKind.InsertAfter).Visit(root)!;
         }
 
         public static SyntaxNode ReplaceTokenInList(SyntaxNode root, SyntaxToken tokenInList, IEnumerable<SyntaxToken> newTokens)
         {
-            return new TokenListEditor(tokenInList, newTokens, ListEditKind.Replace).Visit(root);
+            return new TokenListEditor(tokenInList, newTokens, ListEditKind.Replace).Visit(root)!;
         }
 
         public static SyntaxNode InsertTokenInList(SyntaxNode root, SyntaxToken tokenInList, IEnumerable<SyntaxToken> newTokens, bool insertBefore)
         {
-            return new TokenListEditor(tokenInList, newTokens, insertBefore ? ListEditKind.InsertBefore : ListEditKind.InsertAfter).Visit(root);
+            return new TokenListEditor(tokenInList, newTokens, insertBefore ? ListEditKind.InsertBefore : ListEditKind.InsertAfter).Visit(root)!;
         }
 
         private enum ListEditKind
@@ -256,9 +261,10 @@ namespace Microsoft.Language.Xml
                 return false;
             }
 
-            public override SyntaxNode Visit(SyntaxNode node)
+            [return: NotNullIfNotNull(nameof(node))]
+            public override SyntaxNode? Visit(SyntaxNode? node)
             {
-                SyntaxNode rewritten = node;
+                SyntaxNode? rewritten = node;
 
                 if (node != null)
                 {
@@ -299,7 +305,7 @@ namespace Microsoft.Language.Xml
                 _newNodes = replacementNodes;
             }
 
-            public override SyntaxNode Visit(SyntaxNode node)
+            public override SyntaxNode? Visit(SyntaxNode? node)
             {
                 if (node == _originalNode)
                 {

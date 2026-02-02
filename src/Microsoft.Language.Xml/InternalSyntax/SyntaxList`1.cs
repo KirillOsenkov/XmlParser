@@ -9,18 +9,18 @@ namespace Microsoft.Language.Xml.InternalSyntax
     internal readonly struct SyntaxList<TNode>
         where TNode : GreenNode
     {
-        private readonly GreenNode _node;
+        private readonly GreenNode? _node;
 
-        public SyntaxList(GreenNode node)
+        public SyntaxList(GreenNode? node)
         {
             this._node = node;
         }
 
-        public GreenNode Node
+        public GreenNode? Node
         {
             get
             {
-                return ((GreenNode)this._node);
+                return ((GreenNode?)this._node);
             }
         }
 
@@ -37,9 +37,10 @@ namespace Microsoft.Language.Xml.InternalSyntax
             get
             {
                 var node = this._node;
+                Debug.Assert(node != null);
                 if (node.IsList)
                 {
-                    return ((TNode)node.GetSlot(node.SlotCount - 1));
+                    return ((TNode)node.GetSlot(node.SlotCount - 1)!);
                 }
 
                 return ((TNode)node);
@@ -52,9 +53,10 @@ namespace Microsoft.Language.Xml.InternalSyntax
             get
             {
                 var node = this._node;
+                Debug.Assert(node != null);
                 if (node.IsList)
                 {
-                    return ((TNode)node.GetSlot(index));
+                    return ((TNode)node.GetSlot(index)!);
                 }
 
                 Debug.Assert(index == 0);
@@ -65,9 +67,10 @@ namespace Microsoft.Language.Xml.InternalSyntax
         public GreenNode ItemUntyped(int index)
         {
             var node = this._node;
+            Debug.Assert(node != null);
             if (node.IsList)
             {
-                return node.GetSlot(index);
+                return node.GetSlot(index)!;
             }
 
             Debug.Assert(index == 0);
@@ -117,7 +120,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
             return !(left._node == right._node);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return (obj is SyntaxList<TNode> && (this._node == ((SyntaxList<TNode>)obj)._node));
         }
@@ -132,7 +135,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
             return new SeparatedSyntaxList<TOther>(new SyntaxList<TOther>(this._node));
         }*/
 
-        public static implicit operator SyntaxList<TNode>(TNode node)
+        public static implicit operator SyntaxList<TNode>(TNode? node)
         {
             return new SyntaxList<TNode>(node);
         }

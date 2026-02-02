@@ -1,5 +1,7 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+
 
 namespace Microsoft.Language.Xml
 {
@@ -28,6 +30,7 @@ namespace Microsoft.Language.Xml
         {
             var existingName = element.NameNode;
             var existingPrefix = existingName.PrefixNode;
+            Debug.Assert(existingPrefix != null);
             var newName = SyntaxFactory.XmlNameToken(prefixName, null, null);
 
             return element.WithName(existingName.WithPrefix(existingPrefix.WithName(newName)));
@@ -47,6 +50,7 @@ namespace Microsoft.Language.Xml
         {
             var existingName = attribute.NameNode;
             var existingPrefix = existingName.PrefixNode;
+            Debug.Assert(existingPrefix != null);
             var newName = SyntaxFactory.XmlNameToken(prefixName, null, null);
 
             return attribute.WithName(existingName.WithPrefix(existingPrefix.WithName(newName)));
@@ -81,6 +85,7 @@ namespace Microsoft.Language.Xml
         internal static bool IsXmlNodeName(this XmlNameSyntax name)
         {
             var p = name.Parent;
+            if (p == null) return false;
             switch (p.Kind)
             {
                 case SyntaxKind.XmlElement:

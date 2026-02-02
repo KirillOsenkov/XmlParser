@@ -11,27 +11,23 @@ namespace Microsoft.Language.Xml
 
     internal readonly struct XmlContext
     {
-        private readonly XmlElementStartTagSyntax.Green _start;
+        private readonly XmlElementStartTagSyntax.Green? _start;
         private readonly InternalSyntax.SyntaxListBuilder<XmlNodeSyntax.Green> _content;
         private readonly SyntaxListPool _pool;
-        private readonly int _indent;
 
-        public XmlContext(SyntaxListPool pool, XmlElementStartTagSyntax.Green start, int indent = -1)
+        public XmlContext(SyntaxListPool pool, XmlElementStartTagSyntax.Green? start)
         {
             _pool = pool;
             _start = start;
-            _indent = indent;
             _content = _pool.Allocate<XmlNodeSyntax.Green>();
         }
-
-        public int Indent => _indent;
 
         public void Add(XmlNodeSyntax.Green xml)
         {
             _content.Add(xml);
         }
 
-        public XmlElementStartTagSyntax.Green StartElement
+        public XmlElementStartTagSyntax.Green? StartElement
         {
             get
             {
@@ -42,6 +38,7 @@ namespace Microsoft.Language.Xml
         public XmlNodeSyntax.Green CreateElement(XmlElementEndTagSyntax.Green endElement)
         {
             Debug.Assert(endElement != null);
+            Debug.Assert(_start != null);
             var contentList = _content.ToList();
             _pool.Free(_content);
             return XmlElement(_start, contentList.Node, endElement);

@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 namespace Microsoft.Language.Xml
 {
     using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
     using InternalSyntax;
 
     /// <summary>
@@ -17,17 +18,17 @@ namespace Microsoft.Language.Xml
     {
         public static SyntaxTriviaList Empty => default(SyntaxTriviaList);
 
-        internal SyntaxTriviaList(SyntaxNode node, int position, int index = 0)
+        internal SyntaxTriviaList(SyntaxNode? node, int position, int index = 0)
         {
             Node = node;
             Position = position;
             Index = index;
         }
 
-        internal SyntaxTriviaList(SyntaxNode node)
+        internal SyntaxTriviaList(SyntaxNode? node)
         {
             Node = node;
-            Position = node.Start;
+            Position = node?.Start ?? 0;
             Index = 0;
         }
 
@@ -56,7 +57,7 @@ namespace Microsoft.Language.Xml
         {
         }
 
-        private static SyntaxNode CreateNode(SyntaxTrivia[] trivias)
+        private static SyntaxNode? CreateNode(SyntaxTrivia[]? trivias)
         {
             if (trivias == null)
             {
@@ -68,7 +69,7 @@ namespace Microsoft.Language.Xml
             return builder.ToList().Node;
         }
 
-        internal SyntaxNode Node { get; }
+        internal SyntaxNode? Node { get; }
 
         internal int Position { get; }
 
@@ -101,7 +102,7 @@ namespace Microsoft.Language.Xml
                     {
                         if (unchecked((uint)index < (uint)Node.SlotCount))
                         {
-                            return GetSyntaxTrivia(Node.GetNodeSlot(index));
+                            return GetSyntaxTrivia(Node.GetNodeSlot(index)!);
                         }
                     }
                     else if (index == 0)
@@ -432,13 +433,13 @@ namespace Microsoft.Language.Xml
         /// </summary>
         private SyntaxNode GetNodeAt(int i)
         {
-            return GetNodeAt(Node, i);
+            return GetNodeAt(Node!, i);
         }
 
         private static SyntaxNode GetNodeAt(SyntaxNode node, int i)
         {
             Debug.Assert(node.IsList || (i == 0 && !node.IsList));
-            return node.IsList ? node.GetNodeSlot(i) : node;
+            return node.IsList ? node.GetNodeSlot(i)! : node;
         }
 
         public bool Equals(SyntaxTriviaList other)
@@ -456,14 +457,14 @@ namespace Microsoft.Language.Xml
             return !left.Equals(right);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return (obj is SyntaxTriviaList) && Equals((SyntaxTriviaList)obj);
         }
 
         public override int GetHashCode()
         {
-            return Hash.Combine(Node, Index);
+            return Hash.Combine(Node!, Index);
         }
 
         /// <summary>
@@ -487,20 +488,20 @@ namespace Microsoft.Language.Xml
 
             // calculate trivia position from the first ourselves from now on
             var position = first.Start;
-            var current = first;
+            SyntaxNode current = first;
 
             for (int i = 1; i < count; i++)
             {
                 position += current.FullWidth;
-                current = GetNodeAt(offset + i) as SyntaxTrivia;
+                current = GetNodeAt(offset + i);
 
-                array[arrayOffset + i] = current;
+                array[arrayOffset + i] = GetSyntaxTrivia(current);
             }
         }
 
         public override string ToString()
         {
-            return Node != null ? Node.ToString() : string.Empty;
+            return Node?.ToString() ?? string.Empty;
         }
 
         public string ToFullString()
@@ -556,7 +557,7 @@ namespace Microsoft.Language.Xml
                 return _list.GetHashCode();
             }
 
-            public override bool Equals(object obj)
+            public override bool Equals(object? obj)
             {
                 return obj is Reversed && Equals((Reversed)obj);
             }
@@ -569,12 +570,12 @@ namespace Microsoft.Language.Xml
             [StructLayout(LayoutKind.Auto)]
             public struct Enumerator
             {
-                private readonly SyntaxNode _singleNodeOrList;
+                private readonly SyntaxNode? _singleNodeOrList;
                 private readonly int _baseIndex;
                 private readonly int _count;
 
                 private int _index;
-                private SyntaxNode _current;
+                private SyntaxNode? _current;
                 private int _position;
 
                 public Enumerator(in SyntaxTriviaList list)
@@ -604,7 +605,7 @@ namespace Microsoft.Language.Xml
 
                     _index--;
 
-                    _current = GetNodeAt(_singleNodeOrList, _index);
+                    _current = GetNodeAt(_singleNodeOrList!, _index);
                     _position -= _current.FullWidth;
 
                     return true;
@@ -657,12 +658,12 @@ namespace Microsoft.Language.Xml
         [StructLayout(LayoutKind.Auto)]
         public struct Enumerator
         {
-            private SyntaxNode _singleNodeOrList;
+            private SyntaxNode? _singleNodeOrList;
             private int _baseIndex;
             private int _count;
 
             private int _index;
-            private SyntaxNode _current;
+            private SyntaxNode? _current;
             private int _position;
 
             internal Enumerator(in SyntaxTriviaList list)
@@ -676,11 +677,11 @@ namespace Microsoft.Language.Xml
                 _position = list.Position;
             }
 
-            private void InitializeFrom(SyntaxNode node, int index, int position)
+            private void InitializeFrom(SyntaxNode? node, int index, int position)
             {
                 _singleNodeOrList = node;
                 _baseIndex = index;
-                _count = node.IsList ? node.SlotCount : 1;
+                _count = node == null ? 0 : (node.IsList ? node.SlotCount : 1);
 
                 _index = -1;
                 _current = null;
@@ -717,6 +718,7 @@ namespace Microsoft.Language.Xml
                 InitializeFrom(trailing, index, trailingPosition);
             }
 
+            [MemberNotNullWhen(true, nameof(_current))]
             public bool MoveNext()
             {
                 int newIndex = _index + 1;
@@ -734,7 +736,7 @@ namespace Microsoft.Language.Xml
                     _position += _current.FullWidth;
                 }
 
-                _current = GetNodeAt(_singleNodeOrList, newIndex);
+                _current = GetNodeAt(_singleNodeOrList!, newIndex);
                 return true;
             }
 
@@ -751,7 +753,7 @@ namespace Microsoft.Language.Xml
                 }
             }
 
-            internal bool TryMoveNextAndGetCurrent(out SyntaxTrivia current)
+            internal bool TryMoveNextAndGetCurrent([NotNullWhen(true)] out SyntaxTrivia? current)
             {
                 if (!MoveNext())
                 {

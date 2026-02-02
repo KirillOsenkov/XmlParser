@@ -6,18 +6,18 @@ namespace Microsoft.Language.Xml.InternalSyntax
     {
         #region Nodes
         internal static XmlDocumentSyntax.Green XmlDocument(
-            XmlDeclarationSyntax.Green prologue,
+            XmlDeclarationSyntax.Green? prologue,
             SyntaxList<GreenNode> precedingMisc,
             XmlNodeSyntax.Green body,
             SyntaxList<GreenNode> followingMisc,
-            SkippedTokensTriviaSyntax.Green skippedTokens,
+            SkippedTokensTriviaSyntax.Green? skippedTokens,
             SyntaxToken.Green eof)
         {
             return new XmlDocumentSyntax.Green(prologue, precedingMisc.Node, body, followingMisc.Node, skippedTokens, eof);
         }
 
         internal static XmlDocumentSyntax.Green XmlDocument(
-            XmlDeclarationSyntax.Green prologue,
+            XmlDeclarationSyntax.Green? prologue,
             GreenNode precedingMisc,
             XmlNodeSyntax.Green body,
             GreenNode followingMisc,
@@ -27,12 +27,12 @@ namespace Microsoft.Language.Xml.InternalSyntax
             return new XmlDocumentSyntax.Green(prologue, precedingMisc, body, followingMisc, skippedTokens, eof);
         }
 
-        internal static XmlNodeSyntax.Green XmlElement(XmlElementStartTagSyntax.Green startElement, GreenNode content, XmlElementEndTagSyntax.Green endElement)
+        internal static XmlNodeSyntax.Green XmlElement(XmlElementStartTagSyntax.Green startElement, GreenNode? content, XmlElementEndTagSyntax.Green endElement)
         {
             return new XmlElementSyntax.Green(startElement, content, endElement);
         }
 
-        internal static XmlNodeSyntax.Green XmlEmptyElement(PunctuationSyntax.Green lessThanToken, XmlNameSyntax.Green name, GreenNode attributes, PunctuationSyntax.Green slashGreaterThanToken)
+        internal static XmlNodeSyntax.Green XmlEmptyElement(PunctuationSyntax.Green lessThanToken, XmlNameSyntax.Green name, GreenNode? attributes, PunctuationSyntax.Green slashGreaterThanToken)
         {
             return new XmlEmptyElementSyntax.Green(lessThanToken, name, attributes, slashGreaterThanToken);
         }
@@ -40,7 +40,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
         internal static XmlElementStartTagSyntax.Green XmlElementStartTag(
             PunctuationSyntax.Green lessThanToken,
             XmlNameSyntax.Green name,
-            GreenNode attributes,
+            GreenNode? attributes,
             PunctuationSyntax.Green greaterThanToken)
         {
             return new XmlElementStartTagSyntax.Green(lessThanToken, name, attributes, greaterThanToken);
@@ -70,7 +70,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
             return result;
         }
 
-        internal static XmlNameSyntax.Green XmlName(XmlPrefixSyntax.Green prefix, XmlNameTokenSyntax.Green localName)
+        internal static XmlNameSyntax.Green XmlName(XmlPrefixSyntax.Green? prefix, XmlNameTokenSyntax.Green localName)
         {
             int hash;
             var cached = SyntaxNodeCache.TryGetNode(SyntaxKind.XmlName, prefix, localName, out hash);
@@ -87,7 +87,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
             return new XmlDeclarationOptionSyntax.Green(name, equals, value);
         }
 
-        internal static XmlDeclarationSyntax.Green XmlDeclaration(PunctuationSyntax.Green lessThanQuestionToken, SyntaxToken.Green xmlKeyword, XmlDeclarationOptionSyntax.Green version, XmlDeclarationOptionSyntax.Green encoding, XmlDeclarationOptionSyntax.Green standalone, PunctuationSyntax.Green questionGreaterThanToken)
+        internal static XmlDeclarationSyntax.Green XmlDeclaration(PunctuationSyntax.Green lessThanQuestionToken, SyntaxToken.Green xmlKeyword, XmlDeclarationOptionSyntax.Green version, XmlDeclarationOptionSyntax.Green? encoding, XmlDeclarationOptionSyntax.Green? standalone, PunctuationSyntax.Green questionGreaterThanToken)
         {
             return new XmlDeclarationSyntax.Green(lessThanQuestionToken, xmlKeyword, version, encoding, standalone, questionGreaterThanToken);
         }
@@ -97,24 +97,24 @@ namespace Microsoft.Language.Xml.InternalSyntax
             return new XmlTextSyntax.Green(textTokens.Node);
         }
 
-        internal static XmlStringSyntax.Green XmlString(PunctuationSyntax.Green startQuoteToken, GreenNode textTokens, PunctuationSyntax.Green endQuoteToken)
+        internal static XmlStringSyntax.Green XmlString(PunctuationSyntax.Green startQuoteToken, GreenNode? textTokens, PunctuationSyntax.Green endQuoteToken)
         {
             return new XmlStringSyntax.Green(startQuoteToken, textTokens, endQuoteToken);
         }
 
-        internal static XmlNodeSyntax.Green XmlComment(PunctuationSyntax.Green beginComment, GreenNode comment, PunctuationSyntax.Green endComment)
+        internal static XmlNodeSyntax.Green XmlComment(PunctuationSyntax.Green beginComment, GreenNode? comment, PunctuationSyntax.Green endComment)
         {
             return new XmlCommentSyntax.Green(beginComment, comment, endComment);
         }
 
-        internal static XmlCDataSectionSyntax.Green XmlCDataSection(PunctuationSyntax.Green beginCData, GreenNode result, PunctuationSyntax.Green endCData)
+        internal static XmlCDataSectionSyntax.Green XmlCDataSection(PunctuationSyntax.Green beginCData, GreenNode? result, PunctuationSyntax.Green endCData)
         {
             return new XmlCDataSectionSyntax.Green(beginCData, result, endCData);
         }
 
         internal static XmlProcessingInstructionSyntax.Green XmlProcessingInstruction(PunctuationSyntax.Green beginProcessingInstruction,
                                                                                        XmlNameTokenSyntax.Green name,
-                                                                                       GreenNode toList,
+                                                                                       GreenNode? toList,
                                                                                        PunctuationSyntax.Green endProcessingInstruction)
         {
             return new XmlProcessingInstructionSyntax.Green(beginProcessingInstruction, name, toList, endProcessingInstruction);
@@ -143,7 +143,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
             return new SyntaxTrivia.Green(SyntaxKind.EndOfLineTrivia, text);
         }
 
-        internal static XmlNameTokenSyntax.Green XmlNameToken(string text, GreenNode precedingTrivia, GreenNode followingTrivia)
+        internal static XmlNameTokenSyntax.Green XmlNameToken(string text, GreenNode? precedingTrivia, GreenNode? followingTrivia)
         {
             return new XmlNameTokenSyntax.Green(text, precedingTrivia, followingTrivia);
         }
@@ -217,7 +217,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
             return new PunctuationSyntax.Green(kind, string.Empty, null, null);
         }
 
-        internal static KeywordSyntax.Green Keyword(string name, GreenNode leadingTrivia, GreenNode trailingTrivia)
+        internal static KeywordSyntax.Green Keyword(string name, GreenNode? leadingTrivia, GreenNode? trailingTrivia)
         {
             return new KeywordSyntax.Green(name, leadingTrivia, trailingTrivia);
         }

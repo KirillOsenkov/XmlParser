@@ -51,8 +51,8 @@ namespace Microsoft.Language.Xml
                 var item = list[i];
                 var visitedItem = this.Visit(item);
 
-                SyntaxToken separator = null;
-                SyntaxToken visitedSeparator = null;
+                SyntaxToken? separator = null;
+                SyntaxToken? visitedSeparator = null;
 
                 if (i < separatorCount)
                 {
@@ -63,7 +63,7 @@ namespace Microsoft.Language.Xml
 
                     visitedSeparator = (SyntaxToken)visitedSeparatorNode;
 
-                    Debug.Assert((separator == null &&
+                    Debug.Assert((separator != null &&
                         separator.Kind == SyntaxKind.None) ||
                         (visitedSeparator != null &&
                         visitedSeparator.Kind != SyntaxKind.None),
@@ -106,7 +106,7 @@ namespace Microsoft.Language.Xml
         public override SyntaxNode VisitXmlDocument(XmlDocumentSyntax node)
         {
             bool anyChanges = false;
-            var newDeclaration = ((XmlDeclarationSyntax)Visit(node.Prologue));
+            var newDeclaration = ((XmlDeclarationSyntax?)Visit(node.Prologue));
             if (node.Prologue != newDeclaration)
             {
                 anyChanges = true;
@@ -118,7 +118,7 @@ namespace Microsoft.Language.Xml
                 anyChanges = true;
             }
 
-            var newRoot = ((XmlNodeSyntax)Visit(node.Body));
+            var newRoot = ((XmlNodeSyntax?)Visit(node.Body));
             if (node.Body != newRoot)
             {
                 anyChanges = true;
@@ -136,7 +136,7 @@ namespace Microsoft.Language.Xml
                 anyChanges = true;
             }
 
-            var newSkippedTokens = ((SkippedTokensTriviaSyntax)VisitSkippedTokensTrivia(node.SkippedTokens));
+            var newSkippedTokens = node.SkippedTokens != null ? ((SkippedTokensTriviaSyntax?)VisitSkippedTokensTrivia(node.SkippedTokens)) : null;
             if (node.SkippedTokens != newSkippedTokens)
             {
                 anyChanges = true;
@@ -161,37 +161,37 @@ namespace Microsoft.Language.Xml
         public override SyntaxNode VisitXmlDeclaration(XmlDeclarationSyntax node)
         {
             bool anyChanges = false;
-            var newLessThanQuestionToken = ((PunctuationSyntax)Visit(node.LessThanQuestionToken));
+            var newLessThanQuestionToken = ((PunctuationSyntax?)Visit(node.LessThanQuestionToken));
             if (node.LessThanQuestionToken != newLessThanQuestionToken)
             {
                 anyChanges = true;
             }
 
-            var newXmlKeyword = ((KeywordSyntax)Visit(node.XmlKeyword));
+            var newXmlKeyword = ((KeywordSyntax?)Visit(node.XmlKeyword));
             if (node.XmlKeyword != newXmlKeyword)
             {
                 anyChanges = true;
             }
 
-            var newVersion = ((XmlDeclarationOptionSyntax)Visit(node.Version));
+            var newVersion = ((XmlDeclarationOptionSyntax?)Visit(node.Version));
             if (node.Version != newVersion)
             {
                 anyChanges = true;
             }
 
-            var newEncoding = ((XmlDeclarationOptionSyntax)Visit(node.Encoding));
+            var newEncoding = ((XmlDeclarationOptionSyntax?)Visit(node.Encoding));
             if (node.Encoding != newEncoding)
             {
                 anyChanges = true;
             }
 
-            var newStandalone = ((XmlDeclarationOptionSyntax)Visit(node.Standalone));
+            var newStandalone = ((XmlDeclarationOptionSyntax?)Visit(node.Standalone));
             if (node.Standalone != newStandalone)
             {
                 anyChanges = true;
             }
 
-            var newQuestionGreaterThanToken = ((PunctuationSyntax)Visit(node.QuestionGreaterThanToken));
+            var newQuestionGreaterThanToken = ((PunctuationSyntax?)Visit(node.QuestionGreaterThanToken));
             if (node.QuestionGreaterThanToken != newQuestionGreaterThanToken)
             {
                 anyChanges = true;
@@ -216,19 +216,19 @@ namespace Microsoft.Language.Xml
         public override SyntaxNode VisitXmlDeclarationOption(XmlDeclarationOptionSyntax node)
         {
             bool anyChanges = false;
-            var newName = ((XmlNameTokenSyntax)Visit(node.NameNode));
+            var newName = ((XmlNameTokenSyntax?)Visit(node.NameNode));
             if (node.NameNode != newName)
             {
                 anyChanges = true;
             }
 
-            var newEquals = ((PunctuationSyntax)Visit(node.Equals));
+            var newEquals = ((PunctuationSyntax?)Visit(node.Equals));
             if (node.Equals != newEquals)
             {
                 anyChanges = true;
             }
 
-            var newValue = ((XmlStringSyntax)Visit(node.Value));
+            var newValue = ((XmlStringSyntax?)Visit(node.Value));
             if (node.Value != newValue)
             {
                 anyChanges = true;
@@ -247,7 +247,7 @@ namespace Microsoft.Language.Xml
         public override SyntaxNode VisitXmlElement(XmlElementSyntax node)
         {
             bool anyChanges = false;
-            var newStartTag = ((XmlElementStartTagSyntax)Visit(node.StartTag));
+            var newStartTag = ((XmlElementStartTagSyntax?)Visit(node.StartTag));
             if (node.StartTag != newStartTag)
             {
                 anyChanges = true;
@@ -259,7 +259,7 @@ namespace Microsoft.Language.Xml
                 anyChanges = true;
             }
 
-            var newEndTag = ((XmlElementEndTagSyntax)Visit(node.EndTag));
+            var newEndTag = ((XmlElementEndTagSyntax?)Visit(node.EndTag));
             if (node.EndTag != newEndTag)
             {
                 anyChanges = true;
@@ -297,13 +297,13 @@ namespace Microsoft.Language.Xml
         public override SyntaxNode VisitXmlElementStartTag(XmlElementStartTagSyntax node)
         {
             bool anyChanges = false;
-            var newLessThanToken = ((PunctuationSyntax)Visit(node.LessThanToken));
+            var newLessThanToken = ((PunctuationSyntax?)Visit(node.LessThanToken));
             if (node.LessThanToken != newLessThanToken)
             {
                 anyChanges = true;
             }
 
-            var newName = ((XmlNameSyntax)Visit(node.NameNode));
+            var newName = ((XmlNameSyntax?)Visit(node.NameNode));
             if (node.NameNode != newName)
             {
                 anyChanges = true;
@@ -315,7 +315,7 @@ namespace Microsoft.Language.Xml
                 anyChanges = true;
             }
 
-            var newGreaterThanToken = ((PunctuationSyntax)Visit(node.GreaterThanToken));
+            var newGreaterThanToken = ((PunctuationSyntax?)Visit(node.GreaterThanToken));
             if (node.GreaterThanToken != newGreaterThanToken)
             {
                 anyChanges = true;
@@ -334,19 +334,19 @@ namespace Microsoft.Language.Xml
         public override SyntaxNode VisitXmlElementEndTag(XmlElementEndTagSyntax node)
         {
             bool anyChanges = false;
-            var newLessThanSlashToken = ((PunctuationSyntax)Visit(node.LessThanSlashToken));
+            var newLessThanSlashToken = ((PunctuationSyntax?)Visit(node.LessThanSlashToken));
             if (node.LessThanSlashToken != newLessThanSlashToken)
             {
                 anyChanges = true;
             }
 
-            var newName = ((XmlNameSyntax)Visit(node.NameNode));
+            var newName = ((XmlNameSyntax?)Visit(node.NameNode));
             if (node.NameNode != newName)
             {
                 anyChanges = true;
             }
 
-            var newGreaterThanToken = ((PunctuationSyntax)Visit(node.GreaterThanToken));
+            var newGreaterThanToken = ((PunctuationSyntax?)Visit(node.GreaterThanToken));
             if (node.GreaterThanToken != newGreaterThanToken)
             {
                 anyChanges = true;
@@ -365,13 +365,13 @@ namespace Microsoft.Language.Xml
         public override SyntaxNode VisitXmlEmptyElement(XmlEmptyElementSyntax node)
         {
             bool anyChanges = false;
-            var newLessThanToken = ((PunctuationSyntax)Visit(node.LessThanToken));
+            var newLessThanToken = ((PunctuationSyntax?)Visit(node.LessThanToken));
             if (node.LessThanToken != newLessThanToken)
             {
                 anyChanges = true;
             }
 
-            var newName = ((XmlNameSyntax)Visit(node.NameNode));
+            var newName = ((XmlNameSyntax?)Visit(node.NameNode));
             if (node.NameNode != newName)
             {
                 anyChanges = true;
@@ -383,7 +383,7 @@ namespace Microsoft.Language.Xml
                 anyChanges = true;
             }
 
-            var newSlashGreaterThanToken = ((PunctuationSyntax)Visit(node.SlashGreaterThanToken));
+            var newSlashGreaterThanToken = ((PunctuationSyntax?)Visit(node.SlashGreaterThanToken));
             if (node.SlashGreaterThanToken != newSlashGreaterThanToken)
             {
                 anyChanges = true;
@@ -402,19 +402,19 @@ namespace Microsoft.Language.Xml
         public override SyntaxNode VisitXmlAttribute(XmlAttributeSyntax node)
         {
             bool anyChanges = false;
-            var newName = ((XmlNameSyntax)Visit(node.NameNode));
+            var newName = ((XmlNameSyntax?)Visit(node.NameNode));
             if (node.NameNode != newName)
             {
                 anyChanges = true;
             }
 
-            var newEqualsToken = ((PunctuationSyntax)Visit(node.Equals));
+            var newEqualsToken = ((PunctuationSyntax?)Visit(node.Equals));
             if (node.Equals != newEqualsToken)
             {
                 anyChanges = true;
             }
 
-            var newValue = ((XmlNodeSyntax)Visit(node.ValueNode));
+            var newValue = ((XmlNodeSyntax?)Visit(node.ValueNode));
             if (node.ValueNode != newValue)
             {
                 anyChanges = true;
@@ -433,7 +433,7 @@ namespace Microsoft.Language.Xml
         public override SyntaxNode VisitXmlString(XmlStringSyntax node)
         {
             bool anyChanges = false;
-            var newStartQuoteToken = ((PunctuationSyntax)Visit(node.StartQuoteToken));
+            var newStartQuoteToken = ((PunctuationSyntax?)Visit(node.StartQuoteToken));
             if (node.StartQuoteToken != newStartQuoteToken)
             {
                 anyChanges = true;
@@ -445,7 +445,7 @@ namespace Microsoft.Language.Xml
                 anyChanges = true;
             }
 
-            var newEndQuoteToken = ((PunctuationSyntax)Visit(node.EndQuoteToken));
+            var newEndQuoteToken = ((PunctuationSyntax?)Visit(node.EndQuoteToken));
             if (node.EndQuoteToken != newEndQuoteToken)
             {
                 anyChanges = true;
@@ -464,13 +464,13 @@ namespace Microsoft.Language.Xml
         public override SyntaxNode VisitXmlName(XmlNameSyntax node)
         {
             bool anyChanges = false;
-            var newPrefix = ((XmlPrefixSyntax)Visit(node.PrefixNode));
+            var newPrefix = ((XmlPrefixSyntax?)Visit(node.PrefixNode));
             if (node.PrefixNode != newPrefix)
             {
                 anyChanges = true;
             }
 
-            var newLocalName = ((XmlNameTokenSyntax)Visit(node.LocalNameNode));
+            var newLocalName = ((XmlNameTokenSyntax?)Visit(node.LocalNameNode));
             if (node.LocalNameNode != newLocalName)
             {
                 anyChanges = true;
@@ -489,13 +489,13 @@ namespace Microsoft.Language.Xml
         public override SyntaxNode VisitXmlPrefix(XmlPrefixSyntax node)
         {
             bool anyChanges = false;
-            var newName = ((XmlNameTokenSyntax)Visit(node.Name));
+            var newName = ((XmlNameTokenSyntax?)Visit(node.Name));
             if (node.Name != newName)
             {
                 anyChanges = true;
             }
 
-            var newColonToken = ((PunctuationSyntax)Visit(node.ColonToken));
+            var newColonToken = ((PunctuationSyntax?)Visit(node.ColonToken));
             if (node.ColonToken != newColonToken)
             {
                 anyChanges = true;
@@ -514,7 +514,7 @@ namespace Microsoft.Language.Xml
         public override SyntaxNode VisitXmlComment(XmlCommentSyntax node)
         {
             bool anyChanges = false;
-            var newLessThanExclamationMinusMinusToken = ((PunctuationSyntax)Visit(node.BeginComment));
+            var newLessThanExclamationMinusMinusToken = ((PunctuationSyntax?)Visit(node.BeginComment));
             if (node.BeginComment != newLessThanExclamationMinusMinusToken)
             {
                 anyChanges = true;
@@ -526,7 +526,7 @@ namespace Microsoft.Language.Xml
                 anyChanges = true;
             }
 
-            var newMinusMinusGreaterThanToken = ((PunctuationSyntax)Visit(node.EndComment));
+            var newMinusMinusGreaterThanToken = ((PunctuationSyntax?)Visit(node.EndComment));
             if (node.EndComment != newMinusMinusGreaterThanToken)
             {
                 anyChanges = true;
@@ -545,13 +545,13 @@ namespace Microsoft.Language.Xml
         public override SyntaxNode VisitXmlProcessingInstruction(XmlProcessingInstructionSyntax node)
         {
             bool anyChanges = false;
-            var newLessThanQuestionToken = ((PunctuationSyntax)Visit(node.LessThanQuestionToken));
+            var newLessThanQuestionToken = ((PunctuationSyntax?)Visit(node.LessThanQuestionToken));
             if (node.LessThanQuestionToken != newLessThanQuestionToken)
             {
                 anyChanges = true;
             }
 
-            var newName = ((XmlNameTokenSyntax)Visit(node.Name));
+            var newName = ((XmlNameTokenSyntax?)Visit(node.Name));
             if (node.Name != newName)
             {
                 anyChanges = true;
@@ -563,7 +563,7 @@ namespace Microsoft.Language.Xml
                 anyChanges = true;
             }
 
-            var newQuestionGreaterThanToken = ((PunctuationSyntax)Visit(node.QuestionGreaterThanToken));
+            var newQuestionGreaterThanToken = ((PunctuationSyntax?)Visit(node.QuestionGreaterThanToken));
             if (node.QuestionGreaterThanToken != newQuestionGreaterThanToken)
             {
                 anyChanges = true;
@@ -582,7 +582,7 @@ namespace Microsoft.Language.Xml
         public override SyntaxNode VisitXmlCDataSection(XmlCDataSectionSyntax node)
         {
             bool anyChanges = false;
-            var newBeginCDataToken = ((PunctuationSyntax)Visit(node.BeginCData));
+            var newBeginCDataToken = ((PunctuationSyntax?)Visit(node.BeginCData));
             if (node.BeginCData != newBeginCDataToken)
             {
                 anyChanges = true;
@@ -594,7 +594,7 @@ namespace Microsoft.Language.Xml
                 anyChanges = true;
             }
 
-            var newEndCDataToken = ((PunctuationSyntax)Visit(node.EndCData));
+            var newEndCDataToken = ((PunctuationSyntax?)Visit(node.EndCData));
             if (node.EndCData != newEndCDataToken)
             {
                 anyChanges = true;

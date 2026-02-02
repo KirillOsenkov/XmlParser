@@ -1,4 +1,6 @@
-using System;
+﻿using System;
+using System.Diagnostics;
+
 
 namespace Microsoft.Language.Xml
 {
@@ -11,7 +13,9 @@ namespace Microsoft.Language.Xml
                 return default(SyntaxList<SyntaxNode>);
             }
 
-            return new SyntaxList<SyntaxNode>(builder.ToListNode().CreateRed());
+            var listNode = builder.ToListNode();
+            Debug.Assert(listNode != null);
+            return new SyntaxList<SyntaxNode>(listNode.CreateRed());
         }
 
         public static SyntaxList<TNode> ToList<TNode>(this SyntaxListBuilder builder)
@@ -22,7 +26,9 @@ namespace Microsoft.Language.Xml
                 return new SyntaxList<TNode>();
             }
 
-            return new SyntaxList<TNode>(builder.ToListNode().CreateRed());
+            var listNode = builder.ToListNode();
+            Debug.Assert(listNode != null);
+            return new SyntaxList<TNode>(listNode.CreateRed());
         }
     }
 }

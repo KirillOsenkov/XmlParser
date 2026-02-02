@@ -8,15 +8,15 @@ namespace Microsoft.Language.Xml
     {
         internal new class Green : XmlNodeSyntax.Green
         {
-            readonly PunctuationSyntax.Green beginComment;
-            readonly GreenNode content;
-            readonly PunctuationSyntax.Green endComment;
+            readonly PunctuationSyntax.Green? beginComment;
+            readonly GreenNode? content;
+            readonly PunctuationSyntax.Green? endComment;
 
-            internal PunctuationSyntax.Green BeginComment => beginComment;
-            internal GreenNode Content => content;
-            internal PunctuationSyntax.Green EndComment => endComment;
+            internal PunctuationSyntax.Green? BeginComment => beginComment;
+            internal GreenNode? Content => content;
+            internal PunctuationSyntax.Green? EndComment => endComment;
 
-            internal Green(PunctuationSyntax.Green beginComment, GreenNode content, PunctuationSyntax.Green endComment)
+            internal Green(PunctuationSyntax.Green? beginComment, GreenNode? content, PunctuationSyntax.Green? endComment)
                 : base(SyntaxKind.XmlComment)
             {
                 this.SlotCount = 3;
@@ -28,7 +28,7 @@ namespace Microsoft.Language.Xml
                 AdjustWidth(endComment);
             }
 
-            internal Green(PunctuationSyntax.Green beginComment, GreenNode content, PunctuationSyntax.Green endComment, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
+            internal Green(PunctuationSyntax.Green? beginComment, GreenNode? content, PunctuationSyntax.Green? endComment, DiagnosticInfo[]? diagnostics, SyntaxAnnotation[] annotations)
                 : base(SyntaxKind.XmlComment, diagnostics, annotations)
             {
                 this.SlotCount = 3;
@@ -40,9 +40,9 @@ namespace Microsoft.Language.Xml
                 AdjustWidth(endComment);
             }
 
-            internal override SyntaxNode CreateRed(SyntaxNode parent, int position) => new XmlCommentSyntax(this, parent, position);
+            internal override SyntaxNode CreateRed(SyntaxNode? parent, int position) => new XmlCommentSyntax(this, parent, position);
 
-            internal override GreenNode GetSlot(int index)
+            internal override GreenNode? GetSlot(int index)
             {
                 switch (index)
                 {
@@ -58,7 +58,7 @@ namespace Microsoft.Language.Xml
                 return visitor.VisitXmlNode(this);
             }
 
-            internal override GreenNode SetDiagnostics(DiagnosticInfo[] diagnostics)
+            internal override GreenNode SetDiagnostics(DiagnosticInfo[]? diagnostics)
             {
                 return new Green(beginComment, content, endComment, diagnostics, GetAnnotations());
             }
@@ -69,15 +69,15 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        PunctuationSyntax beginComment;
-        SyntaxNode content;
-        PunctuationSyntax endComment;
+        PunctuationSyntax? beginComment;
+        SyntaxNode? content;
+        PunctuationSyntax? endComment;
 
-        public PunctuationSyntax BeginComment => GetRed(ref beginComment, 0);
+        public PunctuationSyntax BeginComment => GetRed(ref beginComment, 0)!;
         public SyntaxList<SyntaxNode> Content => new SyntaxList<SyntaxNode>(GetRed(ref content, 1));
-        public PunctuationSyntax EndComment => GetRed(ref endComment, 2);
+        public PunctuationSyntax EndComment => GetRed(ref endComment, 2)!;
 
-        internal XmlCommentSyntax(Green green, SyntaxNode parent, int position)
+        internal XmlCommentSyntax(Green green, SyntaxNode? parent, int position)
             : base(green, parent, position)
         {
 
@@ -90,7 +90,7 @@ namespace Microsoft.Language.Xml
             return visitor.VisitXmlComment(this);
         }
 
-        internal override SyntaxNode GetCachedSlot(int index)
+        internal override SyntaxNode? GetCachedSlot(int index)
         {
             switch (index)
             {
@@ -101,7 +101,7 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        internal override SyntaxNode GetNodeSlot(int slot)
+        internal override SyntaxNode? GetNodeSlot(int slot)
         {
             switch (slot)
             {

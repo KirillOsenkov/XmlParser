@@ -1,10 +1,12 @@
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.Language.Xml
 {
     public abstract class SyntaxVisitor
     {
-        public virtual SyntaxNode Visit(SyntaxNode node)
+        [return: NotNullIfNotNull(nameof(node))]
+        public virtual SyntaxNode? Visit(SyntaxNode? node)
         {
             if (node != null)
             {

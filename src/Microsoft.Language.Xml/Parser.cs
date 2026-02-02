@@ -6,18 +6,19 @@ using System.Threading;
 
 namespace Microsoft.Language.Xml
 {
+    using System.Diagnostics.CodeAnalysis;
     using InternalSyntax;
     using static InternalSyntax.SyntaxFactory;
 
     public class Parser
     {
         private readonly Scanner _scanner;
-        private SyntaxToken.Green currentToken;
+        private SyntaxToken.Green? currentToken;
         private SyntaxListPool _pool = new SyntaxListPool();
         private Buffer buffer;
         private CancellationToken cancellationToken;
 
-        private Parser(Buffer buffer, Scanner scanner = null, CancellationToken cancellationToken = default(CancellationToken))
+        private Parser(Buffer buffer, Scanner? scanner = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             this.buffer = buffer;
             this._scanner = scanner ?? new Scanner(buffer);
@@ -123,7 +124,7 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        internal SyntaxToken.Green PrevToken
+        internal SyntaxToken.Green? PrevToken
         {
             get
             {
@@ -150,9 +151,9 @@ namespace Microsoft.Language.Xml
             return XmlDocument(prologue, precedingMisc, body, followingMisc, skippedTokens, CurrentToken);
         }
 
-        private SkippedTokensTriviaSyntax.Green ParseSkippedTokens ()
+        private SkippedTokensTriviaSyntax.Green? ParseSkippedTokens ()
         {
-            SkippedTokensTriviaSyntax.Green skippedTokens = null;
+            SkippedTokensTriviaSyntax.Green? skippedTokens = null;
             if (CurrentToken.Kind != SyntaxKind.EndOfFileToken) {
                 var tokens = this._pool.Allocate<SyntaxToken.Green> ();
                 while (CurrentToken.Kind != SyntaxKind.EndOfFileToken) {
@@ -170,7 +171,7 @@ namespace Microsoft.Language.Xml
             Debug.Assert(CurrentToken.Kind == SyntaxKind.LessThanQuestionToken, "ParseXmlPI called on the wrong token.");
             var beginProcessingInstruction = ((PunctuationSyntax.Green)CurrentToken);
             GetNextToken(ScannerState.Element);
-            XmlNameTokenSyntax.Green name = null;
+            XmlNameTokenSyntax.Green? name = null;
 
             //TODO - name has to allow :. Dev10 puts a fully qualified name here.
             if (!VerifyExpectedToken(SyntaxKind.XmlNameToken, ref name, ScannerState.StartProcessingInstruction))
@@ -180,12 +181,13 @@ namespace Microsoft.Language.Xml
                 ResetCurrentToken(ScannerState.StartProcessingInstruction);
             }
 
+            Debug.Assert(name != null);
             if (name.Text.Length == 3 && name.Text.Equals("xml", StringComparison.OrdinalIgnoreCase))
             {
                 name = ReportSyntaxError(name, ERRID.ERR_IllegalProcessingInstructionName, name.Text);
             }
 
-            XmlTextTokenSyntax.Green textToken = null;
+            XmlTextTokenSyntax.Green? textToken = null;
             var values = _pool.Allocate<XmlTextTokenSyntax.Green>();
             if (CurrentToken.Kind == SyntaxKind.XmlTextLiteralToken || CurrentToken.Kind == SyntaxKind.DocumentationCommentLineBreakToken)
             {
@@ -208,8 +210,9 @@ namespace Microsoft.Language.Xml
                 }
             }
 
-            PunctuationSyntax.Green endProcessingInstruction = null;
+            PunctuationSyntax.Green? endProcessingInstruction = null;
             VerifyExpectedToken(SyntaxKind.QuestionGreaterThanToken, ref endProcessingInstruction, nextState);
+            Debug.Assert(endProcessingInstruction != null);
             var result = XmlProcessingInstruction(
                 beginProcessingInstruction,
                 name,
@@ -232,7 +235,7 @@ namespace Microsoft.Language.Xml
         ''' <remarks>Since nodes are immutable, the only way to create nodes with errors attached is to create a node without an error,
         ''' then add an error with this method to create another node.</remarks>
         */
-        private bool VerifyExpectedToken<T>(SyntaxKind kind, ref T token, ScannerState state = ScannerState.Content) where T : SyntaxToken.Green
+        private bool VerifyExpectedToken<T>(SyntaxKind kind, [NotNullWhen(true)] ref T? token, ScannerState state = ScannerState.Content) where T : SyntaxToken.Green
         {
             SyntaxToken.Green current = CurrentToken;
             if (current.Kind == kind)
@@ -263,7 +266,7 @@ namespace Microsoft.Language.Xml
             //        SyntaxKind.BadToken),
             //    "ParseXmlElement call on wrong token.");
 
-            XmlNodeSyntax.Green xml = null;
+            XmlNodeSyntax.Green? xml = null;
             var contexts = new List<XmlContext>(0);
             XmlElementEndTagSyntax.Green endElement;
             var nextState = enclosingState;
@@ -282,7 +285,7 @@ namespace Microsoft.Language.Xml
                             break;
                         }
 
-                        bool nextTokenIsSlash = PeekNextToken(ScannerState.Element).Kind == SyntaxKind.SlashToken;
+                        bool nextTokenIsSlash = PeekNextToken(ScannerState.Element)?.Kind == SyntaxKind.SlashToken;
                         if (nextTokenIsSlash)
                         {
                             goto case SyntaxKind.LessThanSlashToken;
@@ -311,7 +314,7 @@ namespace Microsoft.Language.Xml
                         else
                         {
                             var missingLessThan = MissingPunctuation(SyntaxKind.LessThanToken);
-                            var missingXmlNameToken = MissingToken(SyntaxKind.XmlNameToken) as XmlNameTokenSyntax.Green;
+                            var missingXmlNameToken = (XmlNameTokenSyntax.Green)MissingToken(SyntaxKind.XmlNameToken);
                             var missingName = XmlName(null, missingXmlNameToken);
                             var missingGreaterThan = MissingPunctuation(SyntaxKind.GreaterThanToken);
                             var startElement = XmlElementStartTag(missingLessThan, missingName, null, missingGreaterThan);
@@ -339,7 +342,7 @@ namespace Microsoft.Language.Xml
                         var textTokens = _pool.Allocate<XmlTextTokenSyntax.Green>();
                         do
                         {
-                            textTokens.Add(CurrentToken as XmlTextTokenSyntax.Green);
+                            textTokens.Add((XmlTextTokenSyntax.Green)CurrentToken);
                             GetNextToken(nextState);
                             newKind = CurrentToken.Kind;
                         }
@@ -355,7 +358,7 @@ namespace Microsoft.Language.Xml
                         xml = XmlText(MissingToken(SyntaxKind.LessThanToken));
                         break;
                     case SyntaxKind.BadToken:
-                        var badToken = CurrentToken as BadTokenSyntax.Green;
+                        var badToken = (BadTokenSyntax.Green)CurrentToken;
 
                         if (badToken.SubKind == SyntaxSubKind.BeginDocTypeToken)
                         {
@@ -408,7 +411,7 @@ namespace Microsoft.Language.Xml
 
             ResetCurrentToken(enclosingState);
 
-            return xml;
+            return xml ?? XmlText(MissingToken(SyntaxKind.XmlTextLiteralToken));
         }
 
         private GreenNode ParseXmlDocType(ScannerState enclosingState)
@@ -419,17 +422,19 @@ namespace Microsoft.Language.Xml
             var beginDocType = ((BadTokenSyntax.Green)CurrentToken);
             builder.Add(beginDocType);
 
-            XmlNameTokenSyntax.Green name = null;
+            XmlNameTokenSyntax.Green? name = null;
             GetNextToken(ScannerState.DocType);
             VerifyExpectedToken(SyntaxKind.XmlNameToken, ref name, ScannerState.DocType);
+            Debug.Assert(name != null);
 
             builder.Add(name);
             ParseExternalID(builder);
             ParseInternalSubSet(builder);
-            PunctuationSyntax.Green greaterThan = null;
+            PunctuationSyntax.Green? greaterThan = null;
             VerifyExpectedToken(SyntaxKind.GreaterThanToken, ref greaterThan, enclosingState);
+            Debug.Assert(greaterThan != null);
             builder.Add(greaterThan);
-            return builder.ToList().Node;
+            return builder.ToList().Node!;
         }
 
         private void ParseExternalID(InternalSyntax.SyntaxListBuilder<GreenNode> builder)
@@ -581,8 +586,9 @@ namespace Microsoft.Language.Xml
                 GetNextToken(ScannerState.CData);
             }
 
-            PunctuationSyntax.Green endCData = null;
+            PunctuationSyntax.Green? endCData = null;
             VerifyExpectedToken(SyntaxKind.EndCDataToken, ref endCData, nextState);
+            Debug.Assert(endCData != null);
             var result = values.ToListNode();
             _pool.Free(values);
             return XmlCDataSection(beginCData, result, endCData);
@@ -606,8 +612,9 @@ namespace Microsoft.Language.Xml
                 GetNextToken(ScannerState.Comment);
             }
 
-            PunctuationSyntax.Green endComment = null;
+            PunctuationSyntax.Green? endComment = null;
             VerifyExpectedToken(SyntaxKind.MinusMinusGreaterThanToken, ref endComment, nextState);
+            Debug.Assert(endComment != null);
             var result = values.ToListNode();
             _pool.Free(values);
             return XmlComment(beginComment, result, endComment);
@@ -631,8 +638,8 @@ namespace Microsoft.Language.Xml
             var Name = ParseXmlQualifiedName(false, true, ScannerState.Element, ScannerState.Element);
             var nameIsFollowedByWhitespace = Name.HasTrailingTrivia;
             var Attributes = ParseXmlAttributes(!nameIsFollowedByWhitespace, Name);
-            PunctuationSyntax.Green greaterThan = null;
-            PunctuationSyntax.Green endEmptyElementToken = null;
+            PunctuationSyntax.Green? greaterThan = null;
+            PunctuationSyntax.Green? endEmptyElementToken = null;
             switch ((CurrentToken.Kind))
             {
                 case SyntaxKind.GreaterThanToken:
@@ -647,7 +654,7 @@ namespace Microsoft.Language.Xml
                     return XmlEmptyElement(lessThan, Name, Attributes.Node, endEmptyElementToken);
                 case SyntaxKind.SlashToken:
                     // Looks like an empty element but  / followed by '>' is an error when there is whitespace between the tokens.
-                    if (PeekNextToken(ScannerState.Element).Kind == SyntaxKind.GreaterThanToken)
+                    if (PeekNextToken(ScannerState.Element)?.Kind == SyntaxKind.GreaterThanToken)
                     {
                         SyntaxToken.Green divideToken = CurrentToken;
                         GetNextToken(ScannerState.Element);
@@ -800,7 +807,7 @@ namespace Microsoft.Language.Xml
             return result;
         }
 
-        private XmlNodeSyntax.Green ParseXmlAttribute(bool requireLeadingWhitespace, bool AllowNameAsExpression, XmlNodeSyntax.Green xmlElementName)
+        private XmlNodeSyntax.Green? ParseXmlAttribute(bool requireLeadingWhitespace, bool AllowNameAsExpression, XmlNodeSyntax.Green xmlElementName)
         {
             Debug.Assert(IsToken(
                 CurrentToken,
@@ -809,7 +816,7 @@ namespace Microsoft.Language.Xml
                 SyntaxKind.EqualsToken,
                 SyntaxKind.SingleQuoteToken,
                 SyntaxKind.DoubleQuoteToken), "ParseXmlAttribute called on wrong token.");
-            XmlNodeSyntax.Green Result = null;
+            XmlNodeSyntax.Green? Result = null;
             if (CurrentToken.Kind == SyntaxKind.XmlNameToken ||
                 (AllowNameAsExpression && CurrentToken.Kind == SyntaxKind.LessThanPercentEqualsToken) ||
                 CurrentToken.Kind == SyntaxKind.EqualsToken ||
@@ -829,7 +836,7 @@ namespace Microsoft.Language.Xml
                 {
                     var equals = ((PunctuationSyntax.Green)CurrentToken);
                     GetNextToken(ScannerState.Element);
-                    XmlStringSyntax.Green value = null;
+                    XmlStringSyntax.Green? value = null;
 
                     // Try parsing as a string (quoted or unquoted)
                     value = ParseXmlString(ScannerState.Element);
@@ -866,7 +873,7 @@ namespace Microsoft.Language.Xml
         private XmlStringSyntax.Green ParseXmlString(ScannerState nextState)
         {
             ScannerState state;
-            PunctuationSyntax.Green startQuote = null;
+            PunctuationSyntax.Green? startQuote = null;
             if (CurrentToken.Kind == SyntaxKind.SingleQuoteToken)
             {
                 state = CurrentToken.Text == "'" ? ScannerState.SingleQuotedString : ScannerState.SmartSingleQuotedString;
@@ -961,7 +968,7 @@ namespace Microsoft.Language.Xml
                 localName = ReportSyntaxError(localName, ERRID.ERR_ExpectedXmlWhiteSpace);
             }
 
-            XmlPrefixSyntax.Green prefix = null;
+            XmlPrefixSyntax.Green? prefix = null;
             if (CurrentToken.Kind == SyntaxKind.ColonToken)
             {
                 PunctuationSyntax.Green colon = ((PunctuationSyntax.Green)CurrentToken);
@@ -1034,7 +1041,10 @@ namespace Microsoft.Language.Xml
                 var prefix = "";
                 var colon = "";
                 var localName = "";
-                var nameExpr = ((XmlElementStartTagSyntax)contexts.Peek().StartElement.CreateRed()).NameNode;
+                Debug.Assert(contexts.Peek().StartElement != null);
+                var startTagRed = (XmlElementStartTagSyntax)contexts.Peek().StartElement!.CreateRed();
+                var nameExpr = startTagRed.NameNode;
+                Debug.Assert(nameExpr != null);
                 if (nameExpr.Kind == SyntaxKind.XmlName)
                 {
                     var name = ((XmlNameSyntax)nameExpr);
@@ -1078,9 +1088,9 @@ namespace Microsoft.Language.Xml
 
         private XmlElementEndTagSyntax.Green ParseXmlElementEndTag(ScannerState nextState)
         {
-            PunctuationSyntax.Green beginEndElement = null;
-            XmlNameSyntax.Green name = null;
-            PunctuationSyntax.Green greaterToken = null;
+            PunctuationSyntax.Green? beginEndElement = null;
+            XmlNameSyntax.Green? name = null;
+            PunctuationSyntax.Green? greaterToken = null;
             InternalSyntax.SyntaxList<SyntaxToken.Green> unexpected = null;
             if (CurrentToken.Kind != SyntaxKind.LessThanSlashToken)
             {
@@ -1092,12 +1102,13 @@ namespace Microsoft.Language.Xml
 
             if (!VerifyExpectedToken(SyntaxKind.LessThanSlashToken, ref beginEndElement, ScannerState.EndElement))
             {
+                Debug.Assert(beginEndElement != null);
                 // Check for '<' followed by '/'.  This is an error because whitespace is not allowed between the tokens.
                 if (CurrentToken.Kind == SyntaxKind.LessThanToken)
                 {
                     var lessThan = ((PunctuationSyntax.Green)CurrentToken);
-                    SyntaxToken.Green slashToken = PeekNextToken(ScannerState.EndElement);
-                    if (slashToken.Kind == SyntaxKind.SlashToken)
+                    var slashToken = PeekNextToken(ScannerState.EndElement);
+                    if (slashToken != null && slashToken.Kind == SyntaxKind.SlashToken)
                     {
                         if (lessThan.HasTrailingTrivia || slashToken.HasLeadingTrivia)
                         {
@@ -1120,6 +1131,7 @@ namespace Microsoft.Language.Xml
                 }
             }
 
+            Debug.Assert(beginEndElement != null);
             if (unexpected.Node != null)
             {
                 if (unexpected.Node.ContainsDiagnostics)
@@ -1137,8 +1149,13 @@ namespace Microsoft.Language.Xml
                 // /* AllowExpr */' /* IsBracketed */'
                 name = ((XmlNameSyntax.Green)ParseXmlQualifiedName(false, false, ScannerState.EndElement, ScannerState.EndElement));
             }
+            else
+            {
+                name = XmlName(null, (XmlNameTokenSyntax.Green)MissingToken(SyntaxKind.XmlNameToken));
+            }
 
             VerifyExpectedToken(SyntaxKind.GreaterThanToken, ref greaterToken, nextState);
+            Debug.Assert(greaterToken != null);
             return XmlElementEndTag(beginEndElement, name, greaterToken);
         }
 
@@ -1155,7 +1172,7 @@ namespace Microsoft.Language.Xml
             return false;
         }
 
-        private InternalSyntax.SyntaxList<XmlNodeSyntax.Green> ParseXmlMisc(out GreenNode skippedDTD)
+        private InternalSyntax.SyntaxList<XmlNodeSyntax.Green> ParseXmlMisc(out GreenNode? skippedDTD)
         {
             skippedDTD = null;
 
@@ -1163,7 +1180,7 @@ namespace Microsoft.Language.Xml
             bool exitWhile = false;
             while (!exitWhile)
             {
-                XmlNodeSyntax.Green result = null;
+                XmlNodeSyntax.Green? result = null;
                 switch (CurrentToken.Kind)
                 {
                     case SyntaxKind.BadToken:
@@ -1213,8 +1230,9 @@ namespace Microsoft.Language.Xml
             //Debug.Assert(CurrentToken.Kind == SyntaxKind.LessThanQuestionToken && PeekNextToken(ScannerState.Element).Kind == SyntaxKind.XmlNameToken && ((XmlNameTokenSyntax)PeekNextToken(ScannerState.Element)).PossibleKeywordKind == SyntaxKind.XmlKeyword, "ParseXmlDecl called on the wrong token.");
             var beginPrologue = ((PunctuationSyntax.Green)CurrentToken);
             GetNextToken(ScannerState.Element);
-            XmlNameTokenSyntax.Green nameToken = null;
+            XmlNameTokenSyntax.Green? nameToken = null;
             VerifyExpectedToken(SyntaxKind.XmlNameToken, ref nameToken, ScannerState.Element);
+            Debug.Assert(nameToken != null);
             var encodingIndex = 0;
             var standaloneIndex = 0;
             var foundVersion = false;
@@ -1251,7 +1269,7 @@ namespace Microsoft.Language.Xml
                                     nextOption = ReportSyntaxError(nextOption, ERRID.ERR_VersionMustBeFirstInXmlDecl, "", "", optionName.ToString());
                                 }
 
-                                if (nextOption.Value.TextTokens.Node == null || nextOption.Value.TextTokens.Node.ToFullString() != "1.0")
+                                if (nextOption.Value?.TextTokens.Node == null || nextOption.Value.TextTokens.Node.ToFullString() != "1.0")
                                 {
                                     nextOption = ReportSyntaxError(nextOption, ERRID.ERR_InvalidAttributeValue1, "1.0");
                                 }
@@ -1302,7 +1320,7 @@ namespace Microsoft.Language.Xml
                                     break;
                                 }
 
-                                var stringValue = nextOption.Value.TextTokens.Node != null ? nextOption.Value.TextTokens.Node.ToFullString() : "";
+                                var stringValue = nextOption.Value?.TextTokens.Node != null ? nextOption.Value.TextTokens.Node.ToFullString() : "";
                                 if (stringValue != "yes" && stringValue != "no")
                                 {
                                     nextOption = ReportSyntaxError(nextOption, ERRID.ERR_InvalidAttributeValue2, "yes", "no");
@@ -1315,7 +1333,7 @@ namespace Microsoft.Language.Xml
                                 break;
                             default:
                                 nextOption = ParseXmlDeclarationOption();
-                                nextOption = ReportSyntaxError(nextOption, ERRID.ERR_IllegalAttributeInXmlDecl, "", "", nextOption.Name.ToString());
+                                nextOption = ReportSyntaxError(nextOption, ERRID.ERR_IllegalAttributeInXmlDecl, "", "", nextOption.Name?.ToString() ?? "");
                                 nodes[i - 1] = nodes[i - 1].AddTrailingSyntax(nextOption);
                                 break;
                         }
@@ -1344,8 +1362,9 @@ namespace Microsoft.Language.Xml
                     });
             }
 
-            PunctuationSyntax.Green endPrologue = null;
+            PunctuationSyntax.Green? endPrologue = null;
             VerifyExpectedToken(SyntaxKind.QuestionGreaterThanToken, ref endPrologue, ScannerState.Content);
+            Debug.Assert(endPrologue != null);
             if (unexpected.Node != null)
             {
                 endPrologue = endPrologue.AddLeadingSyntax(unexpected, ERRID.ERR_ExpectedXmlName);
@@ -1363,8 +1382,8 @@ namespace Microsoft.Language.Xml
 
             return XmlDeclaration(
                 beginPrologue,
-                (nodes[0] as SyntaxToken.Green),
-                (nodes[1] as XmlDeclarationOptionSyntax.Green),
+                (SyntaxToken.Green)nodes[0],
+                (XmlDeclarationOptionSyntax.Green)nodes[1],
                 encodingIndex == 0 ? null : (nodes[encodingIndex] as XmlDeclarationOptionSyntax.Green),
                 standaloneIndex == 0 ? null : (nodes[standaloneIndex] as XmlDeclarationOptionSyntax.Green),
                 endPrologue);
@@ -1391,12 +1410,13 @@ namespace Microsoft.Language.Xml
                 SyntaxKind.EqualsToken,
                 SyntaxKind.SingleQuoteToken,
                 SyntaxKind.DoubleQuoteToken), "ParseXmlPrologueOption called on wrong token.");
-            XmlDeclarationOptionSyntax.Green result = null;
-            XmlNameTokenSyntax.Green name = null;
-            PunctuationSyntax.Green equals = null;
-            XmlStringSyntax.Green value = null;
-            var hasPrecedingWhitespace = PrevToken.GetTrailingTrivia().ContainsWhitespaceTrivia() || CurrentToken.GetLeadingTrivia().ContainsWhitespaceTrivia();
+            XmlDeclarationOptionSyntax.Green? result = null;
+            XmlNameTokenSyntax.Green? name = null;
+            PunctuationSyntax.Green? equals = null;
+            XmlStringSyntax.Green? value = null;
+            var hasPrecedingWhitespace = (PrevToken?.GetTrailingTrivia()?.ContainsWhitespaceTrivia() ?? false) || (CurrentToken.GetLeadingTrivia()?.ContainsWhitespaceTrivia() ?? false);
             VerifyExpectedToken(SyntaxKind.XmlNameToken, ref name, ScannerState.Element);
+            Debug.Assert(name != null);
             if (!hasPrecedingWhitespace)
             {
                 name = ReportSyntaxError(name, ERRID.ERR_ExpectedXmlWhiteSpace);
@@ -1405,6 +1425,7 @@ namespace Microsoft.Language.Xml
             InternalSyntax.SyntaxList<SyntaxToken.Green> skipped = null;
             if (!VerifyExpectedToken(SyntaxKind.EqualsToken, ref equals, ScannerState.Element))
             {
+                Debug.Assert(equals != null);
                 skipped = ResyncAt(ScannerState.Element, new[]
                 {
                     SyntaxKind.SingleQuoteToken,
@@ -1431,7 +1452,7 @@ namespace Microsoft.Language.Xml
             return result;
         }
 
-        private SyntaxToken.Green PeekNextToken(ScannerState scannerState)
+        private SyntaxToken.Green? PeekNextToken(ScannerState scannerState)
         {
             return _scanner.PeekNextToken(scannerState);
         }

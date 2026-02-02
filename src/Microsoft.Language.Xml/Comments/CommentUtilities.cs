@@ -1,8 +1,10 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 
 namespace Microsoft.Language.Xml.Comments
 {
@@ -158,6 +160,7 @@ namespace Microsoft.Language.Xml.Comments
                 //break;
                 case SyntaxKind.XmlElementStartTag:
                 case SyntaxKind.XmlElementEndTag:
+                    Debug.Assert(commentNode.Parent != null);
                     return commentNode.Parent.Span;
                 case SyntaxKind.WhitespaceTrivia:
                 // TODO: what to do about this case?

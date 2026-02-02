@@ -1,5 +1,6 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Text;
+
 
 namespace Microsoft.Language.Xml
 {
@@ -71,8 +72,8 @@ namespace Microsoft.Language.Xml
         // if someone needs to create a private pool;
         public static ObjectPool<PooledStringBuilder> CreatePool()
         {
-            ObjectPool<PooledStringBuilder> pool = null;
-            pool = new ObjectPool<PooledStringBuilder>(() => new PooledStringBuilder(pool), 32);
+            ObjectPool<PooledStringBuilder>? pool = null;
+            pool = new ObjectPool<PooledStringBuilder>(() => new PooledStringBuilder(pool!), 32);
             return pool;
         }
 

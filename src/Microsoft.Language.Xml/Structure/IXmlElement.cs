@@ -8,10 +8,10 @@ namespace Microsoft.Language.Xml
         int FullWidth { get; }
         string Name { get; }
         string Value { get; }
-        IXmlElement Parent { get; }
+        IXmlElement? Parent { get; }
         IEnumerable<IXmlElement> Elements { get; }
         IEnumerable<KeyValuePair<string, string>> Attributes { get; }
-        string this[string attributeName] { get; }
+        string? this[string attributeName] { get; }
         IXmlElementSyntax AsSyntaxElement { get; }
     }
 }
