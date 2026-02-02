@@ -4,8 +4,6 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-
-
 namespace Microsoft.Language.Xml
 {
     internal static class SyntaxReplacer
