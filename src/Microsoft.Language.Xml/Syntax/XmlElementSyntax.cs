@@ -116,8 +116,8 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        public XmlNameSyntax? NameNode => StartTag?.NameNode;
-        public string? Name => StartTag?.Name;
+        public XmlNameSyntax NameNode => StartTag.NameNode;
+        public string Name => StartTag.Name;
 
         public IEnumerable<IXmlElementSyntax> Elements
         {
