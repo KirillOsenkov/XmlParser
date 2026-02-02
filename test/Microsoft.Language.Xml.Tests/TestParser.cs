@@ -73,7 +73,7 @@ namespace Microsoft.Language.Xml.Tests
         }
 
         [Fact]
-        public void SelectsCorrectEndTag()
+        public void SelectsCorrectEndTag_ChildWithSameName()
         {
             var xml = """
                 <Root>
@@ -92,7 +92,6 @@ namespace Microsoft.Language.Xml.Tests
             Assert.True(a1.EndTag.Span.Length > 0);
             Assert.False(a2.EndTag.Span.Length > 0);
         }
-
         [Fact]
         public void SelectsCorrectEndTag_ThreeLevels()
         {
@@ -155,6 +154,28 @@ namespace Microsoft.Language.Xml.Tests
             var b = (XmlElementSyntax)Assert.Single(a.Content);
             Assert.True(a.EndTag.Span.Length > 0);
             Assert.False(b.EndTag.Span.Length > 0);
+        }
+
+        [Fact]
+        public void SelectsCorrectEndTag_DifferentNamesSibling()
+        {
+            var xml = """
+                <Root>
+                  <A>
+                    <B>
+                    <C/>
+                  </A>
+                </Root>
+                """;
+            var document = Parser.ParseText(xml);
+            var root = (XmlElementSyntax)document.RootSyntax;
+            var a = (XmlElementSyntax)Assert.Single(root.Content);
+            var b = (XmlElementSyntax)a.Content[0];
+            var c = (XmlElementSyntax)a.Content[1];
+
+            Assert.True(a.EndTag.Span.Length > 0);
+            Assert.False(b.EndTag.Span.Length > 0);
+            Assert.True(c.EndTag.Span.Length > 0);
         }
 
         [Fact]
