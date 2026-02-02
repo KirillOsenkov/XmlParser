@@ -18,7 +18,7 @@ namespace Microsoft.Language.Xml
                 Text = text;
             }
 
-            internal Green(SyntaxKind kind, string text, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
+            internal Green(SyntaxKind kind, string text, DiagnosticInfo[]? diagnostics, SyntaxAnnotation[] annotations)
                 : base(kind, text.Length, diagnostics, annotations)
             {
                 Text = text;
@@ -43,14 +43,14 @@ namespace Microsoft.Language.Xml
                 throw new InvalidOperationException();
             }
 
-            internal override SyntaxNode CreateRed(SyntaxNode parent, int position) => new SyntaxTrivia(this, parent, position);
+            internal override SyntaxNode CreateRed(SyntaxNode? parent, int position) => new SyntaxTrivia(this, parent, position);
 
             internal override GreenNode Accept(InternalSyntax.SyntaxVisitor visitor)
             {
                 return visitor.VisitSyntaxTrivia(this);
             }
 
-            internal override GreenNode SetDiagnostics(DiagnosticInfo[] diagnostics)
+            internal override GreenNode SetDiagnostics(DiagnosticInfo[]? diagnostics)
             {
                 return new Green(Kind, Text, diagnostics, GetAnnotations());
             }
@@ -65,7 +65,7 @@ namespace Microsoft.Language.Xml
 
         public string Text => GreenNode.Text;
 
-        internal SyntaxTrivia(Green green, SyntaxNode parent, int position)
+        internal SyntaxTrivia(Green green, SyntaxNode? parent, int position)
             : base(green, parent, position)
         {
         }

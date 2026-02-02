@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -275,6 +276,7 @@ namespace Microsoft.Language.Xml
             SyntaxNode trivia) where TSyntax : SyntaxNode
         {
             var first = node.GetFirstToken();
+            Debug.Assert(first != null);
             var newFirst = first.WithLeadingTrivia(trivia);
             return node.ReplaceToken(first, newFirst);
         }
@@ -284,9 +286,10 @@ namespace Microsoft.Language.Xml
         /// </summary>
         public static TSyntax WithLeadingTrivia<TSyntax>(
             this TSyntax node,
-            IEnumerable<SyntaxTrivia> trivia) where TSyntax : SyntaxNode
+            IEnumerable<SyntaxTrivia>? trivia) where TSyntax : SyntaxNode
         {
             var first = node.GetFirstToken();
+            Debug.Assert(first != null);
             var newFirst = first.WithLeadingTrivia(trivia);
             return node.ReplaceToken(first, newFirst);
         }
@@ -306,7 +309,7 @@ namespace Microsoft.Language.Xml
         /// </summary>
         public static TSyntax WithoutLeadingTrivia<TSyntax>(this TSyntax node) where TSyntax : SyntaxNode
         {
-            return node.WithLeadingTrivia((IEnumerable<SyntaxTrivia>)null);
+            return node.WithLeadingTrivia((IEnumerable<SyntaxTrivia>?)null);
         }
 
         /// <summary>
@@ -317,6 +320,7 @@ namespace Microsoft.Language.Xml
             SyntaxNode trivia) where TSyntax : SyntaxNode
         {
             var last = node.GetLastToken();
+            Debug.Assert(last != null);
             var newLast = last.WithTrailingTrivia(trivia);
             return node.ReplaceToken(last, newLast);
         }
@@ -326,9 +330,10 @@ namespace Microsoft.Language.Xml
         /// </summary>
         public static TSyntax WithTrailingTrivia<TSyntax>(
             this TSyntax node,
-            IEnumerable<SyntaxTrivia> trivia) where TSyntax : SyntaxNode
+            IEnumerable<SyntaxTrivia>? trivia) where TSyntax : SyntaxNode
         {
             var last = node.GetLastToken();
+            Debug.Assert(last != null);
             var newLast = last.WithTrailingTrivia(trivia);
             return node.ReplaceToken(last, newLast);
         }
@@ -348,7 +353,7 @@ namespace Microsoft.Language.Xml
         /// </summary>
         public static TSyntax WithoutTrailingTrivia<TSyntax>(this TSyntax node) where TSyntax : SyntaxNode
         {
-            return node.WithTrailingTrivia((IEnumerable<SyntaxTrivia>)null);
+            return node.WithTrailingTrivia((IEnumerable<SyntaxTrivia>?)null);
         }
 
         /// <summary>

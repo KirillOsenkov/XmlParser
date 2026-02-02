@@ -9,21 +9,21 @@ namespace Microsoft.Language.Xml
     {
         internal new class Green : XmlNodeSyntax.Green
         {
-            readonly XmlDeclarationSyntax.Green prologue;
-            readonly GreenNode precedingMisc;
-            readonly XmlNodeSyntax.Green body;
-            readonly GreenNode followingMisc;
-            readonly SkippedTokensTriviaSyntax.Green skippedTokens;
-            readonly SyntaxToken.Green eof;
+            readonly XmlDeclarationSyntax.Green? prologue;
+            readonly GreenNode? precedingMisc;
+            readonly XmlNodeSyntax.Green? body;
+            readonly GreenNode? followingMisc;
+            readonly SkippedTokensTriviaSyntax.Green? skippedTokens;
+            readonly SyntaxToken.Green? eof;
 
-            internal XmlDeclarationSyntax.Green Prologue => prologue;
-            internal GreenNode PrecedingMisc => precedingMisc;
-            internal XmlNodeSyntax.Green Body => body;
-            internal GreenNode FollowingMisc => followingMisc;
-            internal SkippedTokensTriviaSyntax.Green SkippedTokens => skippedTokens;
-            internal SyntaxToken.Green Eof => eof;
+            internal XmlDeclarationSyntax.Green? Prologue => prologue;
+            internal GreenNode? PrecedingMisc => precedingMisc;
+            internal XmlNodeSyntax.Green? Body => body;
+            internal GreenNode? FollowingMisc => followingMisc;
+            internal SkippedTokensTriviaSyntax.Green? SkippedTokens => skippedTokens;
+            internal SyntaxToken.Green? Eof => eof;
 
-            internal Green(XmlDeclarationSyntax.Green prologue, GreenNode precedingMisc, XmlNodeSyntax.Green body, GreenNode followingMisc, SkippedTokensTriviaSyntax.Green skippedTokens, SyntaxToken.Green eof)
+            internal Green(XmlDeclarationSyntax.Green? prologue, GreenNode? precedingMisc, XmlNodeSyntax.Green? body, GreenNode? followingMisc, SkippedTokensTriviaSyntax.Green? skippedTokens, SyntaxToken.Green? eof)
                 : base(SyntaxKind.XmlDocument)
             {
                 this.SlotCount = 6;
@@ -41,7 +41,7 @@ namespace Microsoft.Language.Xml
                 AdjustWidth(eof);
             }
 
-            internal Green(XmlDeclarationSyntax.Green prologue, GreenNode precedingMisc, XmlNodeSyntax.Green body, GreenNode followingMisc, SkippedTokensTriviaSyntax.Green skippedTokens, SyntaxToken.Green eof, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
+            internal Green(XmlDeclarationSyntax.Green? prologue, GreenNode? precedingMisc, XmlNodeSyntax.Green? body, GreenNode? followingMisc, SkippedTokensTriviaSyntax.Green? skippedTokens, SyntaxToken.Green eof, DiagnosticInfo[]? diagnostics, SyntaxAnnotation[] annotations)
                 : base(SyntaxKind.XmlDocument, diagnostics, annotations)
             {
                 this.SlotCount = 6;
@@ -59,9 +59,9 @@ namespace Microsoft.Language.Xml
                 AdjustWidth(eof);
             }
 
-            internal override SyntaxNode CreateRed(SyntaxNode parent, int position) => new XmlDocumentSyntax(this, parent, position);
+            internal override SyntaxNode CreateRed(SyntaxNode? parent, int position) => new XmlDocumentSyntax(this, parent, position);
 
-            internal override GreenNode GetSlot(int index)
+            internal override GreenNode? GetSlot(int index)
             {
                 switch (index)
                 {
@@ -80,34 +80,34 @@ namespace Microsoft.Language.Xml
                 return visitor.VisitXmlDocument(this);
             }
 
-            internal override GreenNode SetDiagnostics(DiagnosticInfo[] diagnostics)
+            internal override GreenNode SetDiagnostics(DiagnosticInfo[]? diagnostics)
             {
-                return new Green(prologue, precedingMisc, body, followingMisc, skippedTokens, eof, diagnostics, GetAnnotations());
+                return new Green(prologue, precedingMisc, body, followingMisc, skippedTokens, eof!, diagnostics, GetAnnotations());
             }
 
             internal override GreenNode SetAnnotations(SyntaxAnnotation[] annotations)
             {
-                return new Green(prologue, precedingMisc, body, followingMisc, skippedTokens, eof, GetDiagnostics(), annotations);
+                return new Green(prologue, precedingMisc, body, followingMisc, skippedTokens, eof!, GetDiagnostics(), annotations);
             }
         }
 
         internal new Green GreenNode => (Green)base.GreenNode;
 
-        XmlDeclarationSyntax prologue;
-        SyntaxNode precedingMisc;
-        XmlNodeSyntax body;
-        SyntaxNode followingMisc;
-        SkippedTokensTriviaSyntax skippedTokens;
-        SyntaxToken eof;
+        XmlDeclarationSyntax? prologue;
+        SyntaxNode? precedingMisc;
+        XmlNodeSyntax? body;
+        SyntaxNode? followingMisc;
+        SkippedTokensTriviaSyntax? skippedTokens;
+        SyntaxToken? eof;
 
-        public XmlDeclarationSyntax Prologue => GetRed(ref prologue, 0);
+        public XmlDeclarationSyntax? Prologue => GetRed(ref prologue, 0);
         public SyntaxList<SyntaxNode> PrecedingMisc => new SyntaxList<SyntaxNode>(GetRed(ref precedingMisc, 1));
-        public XmlNodeSyntax Body => GetRed(ref body, 2);
+        public XmlNodeSyntax Body => GetRed(ref body, 2)!;
         public SyntaxList<SyntaxNode> FollowingMisc => new SyntaxList<SyntaxNode>(GetRed(ref followingMisc, 3));
-        public SkippedTokensTriviaSyntax SkippedTokens => GetRed(ref skippedTokens, 4);
-        public SyntaxToken Eof => GetRed(ref eof, 5);
+        public SkippedTokensTriviaSyntax? SkippedTokens => GetRed(ref skippedTokens, 4);
+        public SyntaxToken Eof => GetRed(ref eof, 5)!;
 
-        internal XmlDocumentSyntax(Green green, SyntaxNode parent, int position)
+        internal XmlDocumentSyntax(Green green, SyntaxNode? parent, int position)
             : base(green, parent, position)
         {
 
@@ -118,7 +118,7 @@ namespace Microsoft.Language.Xml
             return visitor.VisitXmlDocument(this);
         }
 
-        internal override SyntaxNode GetCachedSlot(int index)
+        internal override SyntaxNode? GetCachedSlot(int index)
         {
             switch (index)
             {
@@ -132,7 +132,7 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        internal override SyntaxNode GetNodeSlot(int slot)
+        internal override SyntaxNode? GetNodeSlot(int slot)
         {
             switch (slot)
             {
@@ -146,7 +146,7 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        public IXmlElementSyntax RootSyntax => Body as IXmlElementSyntax;
-        public IXmlElement Root => RootSyntax?.AsElement;
+        public IXmlElementSyntax? RootSyntax => Body as IXmlElementSyntax;
+        public IXmlElement? Root => RootSyntax?.AsElement;
     }
 }

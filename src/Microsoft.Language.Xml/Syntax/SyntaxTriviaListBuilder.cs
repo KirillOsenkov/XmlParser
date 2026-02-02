@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Microsoft.Language.Xml
 {
@@ -69,7 +70,7 @@ namespace Microsoft.Language.Xml
 
         public SyntaxTriviaListBuilder Add(SyntaxTrivia item)
         {
-            if (_nodes == null || _count >= _nodes.Length)
+            if (_count >= _nodes.Length)
             {
                 this.Grow(_count == 0 ? 8 : _nodes.Length * 2);
             }
@@ -85,7 +86,7 @@ namespace Microsoft.Language.Xml
 
         public void Add(SyntaxTrivia[] items, int offset, int length)
         {
-            if (_nodes == null || _count + length > _nodes.Length)
+            if (_count + length > _nodes.Length)
             {
                 this.Grow(_count + length);
             }
@@ -101,7 +102,7 @@ namespace Microsoft.Language.Xml
 
         public void Add(in SyntaxTriviaList list, int offset, int length)
         {
-            if (_nodes == null || _count + length > _nodes.Length)
+            if (_count + length > _nodes.Length)
             {
                 this.Grow(_count + length);
             }

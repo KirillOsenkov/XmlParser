@@ -13,10 +13,10 @@ namespace Microsoft.Language.Xml
         internal abstract class Green : GreenNode
         {
             public string Text { get; }
-            public GreenNode LeadingTrivia { get; }
-            public GreenNode TrailingTrivia { get; }
+            public GreenNode? LeadingTrivia { get; }
+            public GreenNode? TrailingTrivia { get; }
 
-            internal Green(SyntaxKind tokenKind, string text, GreenNode leadingTrivia, GreenNode trailingTrivia)
+            internal Green(SyntaxKind tokenKind, string text, GreenNode? leadingTrivia, GreenNode? trailingTrivia)
                 : base(tokenKind, text.Length)
             {
                 Text = text;
@@ -26,7 +26,7 @@ namespace Microsoft.Language.Xml
                 AdjustWidth(trailingTrivia);
             }
 
-            internal Green(SyntaxKind tokenKind, string text, GreenNode leadingTrivia, GreenNode trailingTrivia, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
+            internal Green(SyntaxKind tokenKind, string text, GreenNode? leadingTrivia, GreenNode? trailingTrivia, DiagnosticInfo[]? diagnostics, SyntaxAnnotation[] annotations)
                 : base(tokenKind, text.Length, diagnostics, annotations)
             {
                 Text = text;
@@ -37,6 +37,11 @@ namespace Microsoft.Language.Xml
             }
 
             internal override bool IsToken => true;
+
+            internal override bool IsMissing =>
+                Kind != SyntaxKind.EndOfFileToken &&
+                Kind != SyntaxKind.EndOfXmlToken &&
+                string.IsNullOrEmpty(Text);
 
             public override int Width => Text.Length;
 
@@ -57,13 +62,13 @@ namespace Microsoft.Language.Xml
                 }
             }
 
-            internal override sealed GreenNode GetLeadingTrivia() => LeadingTrivia;
+            internal override sealed GreenNode? GetLeadingTrivia() => LeadingTrivia;
             public override int GetLeadingTriviaWidth() => LeadingTrivia == null ? 0 : LeadingTrivia.FullWidth;
-            internal override sealed GreenNode GetTrailingTrivia() => TrailingTrivia;
+            internal override sealed GreenNode? GetTrailingTrivia() => TrailingTrivia;
             public override int GetTrailingTriviaWidth() => TrailingTrivia == null ? 0 : TrailingTrivia.FullWidth;
 
-            public abstract SyntaxToken.Green WithLeadingTrivia(GreenNode trivia);
-            public abstract SyntaxToken.Green WithTrailingTrivia(GreenNode trivia);
+            public abstract SyntaxToken.Green WithLeadingTrivia(GreenNode? trivia);
+            public abstract SyntaxToken.Green WithTrailingTrivia(GreenNode? trivia);
 
             protected override sealed int GetSlotCount() => 0;
 
@@ -92,7 +97,7 @@ namespace Microsoft.Language.Xml
                 }
 
                 var oldTrivia = new InternalSyntax.SyntaxList<GreenNode>(token.GetLeadingTrivia());
-                GreenNode leadingTrivia;
+                GreenNode? leadingTrivia;
                 if (oldTrivia.Node == null)
                 {
                     leadingTrivia = newTrivia.Node;
@@ -121,7 +126,7 @@ namespace Microsoft.Language.Xml
                 }
 
                 var oldTrivia = new InternalSyntax.SyntaxList<GreenNode>(token.GetTrailingTrivia());
-                GreenNode trailingTrivia;
+                GreenNode? trailingTrivia;
                 if (oldTrivia.Node == null)
                 {
                     trailingTrivia = newTrivia.Node;
@@ -140,7 +145,7 @@ namespace Microsoft.Language.Xml
 
         internal new Green GreenNode => (Green)base.GreenNode;
 
-        internal SyntaxToken(Green green, SyntaxNode parent, int position)
+        internal SyntaxToken(Green green, SyntaxNode? parent, int position)
             : base(green, parent, position)
         {
         }
@@ -174,19 +179,19 @@ namespace Microsoft.Language.Xml
             return new SyntaxTriviaList(trailingGreen.CreateRed(this, trailingPosition), trailingPosition, index);
         }
 
-        internal abstract SyntaxToken WithLeadingTriviaCore(SyntaxNode trivia);
-        internal abstract SyntaxToken WithTrailingTriviaCore(SyntaxNode trivia);
+        internal abstract SyntaxToken WithLeadingTriviaCore(SyntaxNode? trivia);
+        internal abstract SyntaxToken WithTrailingTriviaCore(SyntaxNode? trivia);
 
         public SyntaxToken WithLeadingTrivia(SyntaxNode trivia) => WithLeadingTriviaCore(trivia);
         public SyntaxToken WithTrailingTrivia(SyntaxNode trivia) => WithTrailingTriviaCore(trivia);
 
-        public SyntaxToken WithLeadingTrivia(IEnumerable<SyntaxTrivia> trivia)
+        public SyntaxToken WithLeadingTrivia(IEnumerable<SyntaxTrivia>? trivia)
         {
             var greenList = trivia?.Select(t => t.GreenNode);
             return WithLeadingTriviaCore(GreenNode.CreateList(greenList)?.CreateRed());
         }
 
-        public SyntaxToken WithTrailingTrivia(IEnumerable<SyntaxTrivia> trivia)
+        public SyntaxToken WithTrailingTrivia(IEnumerable<SyntaxTrivia>? trivia)
         {
             var greenList = trivia?.Select(t => t.GreenNode);
             return WithTrailingTriviaCore(GreenNode.CreateList(greenList)?.CreateRed());
@@ -227,7 +232,7 @@ namespace Microsoft.Language.Xml
             return triviaSlots;
         }
 
-        public override SyntaxNode GetSlotIncludingTrivia(int index)
+        public override SyntaxNode? GetSlotIncludingTrivia(int index)
         {
             if (index == 0)
             {

@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
+
 
 namespace Microsoft.Language.Xml.InternalSyntax
 {
@@ -40,12 +42,12 @@ namespace Microsoft.Language.Xml.InternalSyntax
             this.fullWidth = fullWidth;
         }
 
-        protected GreenNode(SyntaxKind kind, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
+        protected GreenNode(SyntaxKind kind, DiagnosticInfo[]? diagnostics, SyntaxAnnotation[] annotations)
             : this(kind, 0, diagnostics, annotations)
         {
         }
 
-        protected GreenNode(SyntaxKind kind, int fullWidth, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
+        protected GreenNode(SyntaxKind kind, int fullWidth, DiagnosticInfo[]? diagnostics, SyntaxAnnotation[] annotations)
             : this(kind, fullWidth)
         {
             if (diagnostics?.Length > 0)
@@ -63,7 +65,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
             }
         }
 
-        protected void AdjustWidth(GreenNode node)
+        protected void AdjustWidth(GreenNode? node)
         {
             this.fullWidth += node == null ? 0 : node.fullWidth;
         }
@@ -87,7 +89,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
             }
         }
 
-        internal abstract GreenNode GetSlot(int index);
+        internal abstract GreenNode? GetSlot(int index);
 
         // for slot counts >= byte.MaxValue
         protected virtual int GetSlotCount()
@@ -141,30 +143,40 @@ namespace Microsoft.Language.Xml.InternalSyntax
 
         internal virtual bool IsList => false;
         internal virtual bool IsToken => false;
-        internal virtual bool IsMissing => (flags & NodeFlags.IsMissing) != 0;
+        internal virtual bool IsMissing => FullWidth == 0;
 
-        internal virtual GreenNode GetLeadingTrivia()
+        internal virtual GreenNode? GetLeadingTrivia()
         {
             return GetFirstTerminal()?.GetLeadingTrivia();
         }
 
         public virtual int GetLeadingTriviaWidth()
         {
-            return this.FullWidth != 0 ?
-                this.GetFirstTerminal().GetLeadingTriviaWidth() :
-                0;
+            if (this.FullWidth != 0)
+            {
+                var terminal = this.GetFirstTerminal();
+                Debug.Assert(terminal != null);
+                return terminal.GetLeadingTriviaWidth();
+            }
+
+            return 0;
         }
 
-        internal virtual GreenNode GetTrailingTrivia()
+        internal virtual GreenNode? GetTrailingTrivia()
         {
             return GetLastTerminal()?.GetTrailingTrivia();
         }
 
         public virtual int GetTrailingTriviaWidth()
         {
-            return this.FullWidth != 0 ?
-                this.GetLastTerminal().GetTrailingTriviaWidth() :
-                0;
+            if (this.FullWidth != 0)
+            {
+                var terminal = this.GetLastTerminal();
+                Debug.Assert(terminal != null);
+                return terminal.GetTrailingTriviaWidth();
+            }
+
+            return 0;
         }
 
         public bool HasLeadingTrivia
@@ -183,16 +195,16 @@ namespace Microsoft.Language.Xml.InternalSyntax
             }
         }
 
-        public virtual GreenNode GetLeadingTriviaCore() { return null; }
-        public virtual GreenNode GetTrailingTriviaCore() { return null; }
+        public virtual GreenNode? GetLeadingTriviaCore() { return null; }
+        public virtual GreenNode? GetTrailingTriviaCore() { return null; }
 
-        internal GreenNode GetFirstTerminal()
+        internal GreenNode? GetFirstTerminal()
         {
-            GreenNode node = this;
+            GreenNode? node = this;
 
             do
             {
-                GreenNode firstChild = null;
+                GreenNode? firstChild = null;
                 for (int i = 0, n = node.SlotCount; i < n; i++)
                 {
                     var child = node.GetSlot(i);
@@ -208,13 +220,13 @@ namespace Microsoft.Language.Xml.InternalSyntax
             return node;
         }
 
-        internal GreenNode GetLastTerminal()
+        internal GreenNode? GetLastTerminal()
         {
-            GreenNode node = this;
+            GreenNode? node = this;
 
             do
             {
-                GreenNode lastChild = null;
+                GreenNode? lastChild = null;
                 for (int i = node.SlotCount - 1; i >= 0; i--)
                 {
                     var child = node.GetSlot(i);
@@ -230,13 +242,13 @@ namespace Microsoft.Language.Xml.InternalSyntax
             return node;
         }
 
-        internal GreenNode GetLastNonmissingTerminal()
+        internal GreenNode? GetLastNonmissingTerminal()
         {
-            GreenNode node = this;
+            GreenNode? node = this;
 
             do
             {
-                GreenNode nonmissingChild = null;
+                GreenNode? nonmissingChild = null;
                 for (int i = node.SlotCount - 1; i >= 0; i--)
                 {
                     var child = node.GetSlot(i);
@@ -253,7 +265,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
             return node;
         }
 
-        public virtual GreenNode CreateList(IEnumerable<GreenNode> nodes, bool alwaysCreateListNode = false)
+        public virtual GreenNode? CreateList(IEnumerable<GreenNode>? nodes, bool alwaysCreateListNode = false)
         {
             if (nodes == null)
             {
@@ -289,7 +301,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
             return CreateRed(null, 0);
         }
 
-        internal abstract SyntaxNode CreateRed(SyntaxNode parent, int position);
+        internal abstract SyntaxNode CreateRed(SyntaxNode? parent, int position);
 
         public virtual string ToFullString()
         {
@@ -321,7 +333,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
                 var node = GetSlot(i);
                 if (node != null)
                 {
-                    stack.Push(GetSlot(i));
+                    stack.Push(node);
                 }
             }
         }
@@ -347,7 +359,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
         {
             if (this.ContainsDiagnostics)
             {
-                DiagnosticInfo[] diags;
+                DiagnosticInfo[]? diags;
                 if (diagnosticsTable.TryGetValue(this, out diags))
                 {
                     return diags;
@@ -384,7 +396,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
             return SetDiagnostics(errorInfos);
         }
 
-        internal abstract GreenNode SetDiagnostics(DiagnosticInfo[] diagnostics);
+        internal abstract GreenNode SetDiagnostics(DiagnosticInfo[]? diagnostics);
         #endregion
 
         #region Annotations
@@ -505,7 +517,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
         {
             if (this.ContainsAnnotations)
             {
-                SyntaxAnnotation[] annotations;
+                SyntaxAnnotation[]? annotations;
                 if (annotationsTable.TryGetValue(this, out annotations))
                 {
                     System.Diagnostics.Debug.Assert(annotations.Length != 0, "we should return nonempty annotations or NoAnnotations");
@@ -565,7 +577,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
                 this.GetSlot(0) == child1;
         }
 
-        internal bool IsCacheEquivalent(SyntaxKind kind, NodeFlags flags, GreenNode child1, GreenNode child2)
+        internal bool IsCacheEquivalent(SyntaxKind kind, NodeFlags flags, GreenNode? child1, GreenNode? child2)
         {
             Debug.Assert(this.IsCacheable);
 

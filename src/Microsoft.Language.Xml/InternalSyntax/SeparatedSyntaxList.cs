@@ -30,7 +30,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
             }
         }
 
-        internal GreenNode Node => _list.Node;
+        internal GreenNode? Node => _list.Node;
 
         public int Count
         {
@@ -86,7 +86,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
             return _list == other._list;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return (obj is SeparatedSyntaxList<TNode>) && Equals((SeparatedSyntaxList<TNode>)obj);
         }

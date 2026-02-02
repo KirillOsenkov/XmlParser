@@ -1,13 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>Microsoft.Language.Xml</AssemblyName>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>net8.0;netstandard2.0</TargetFrameworks>
     <NBGV_DoNotEmitNonVersionCustomAttributes>true</NBGV_DoNotEmitNonVersionCustomAttributes>
     <LangVersion>latest</LangVersion>
     <DebugType>embedded</DebugType>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
-  </PropertyGroup>
+    <Nullable>enable</Nullable>
+    <WarningsAsErrors Condition="'$(TargetFramework)' == 'net8.0'">$(WarningsAsErrors);nullable</WarningsAsErrors>
+    <NoWarn Condition="'$(TargetFramework)' != 'net8.0'">$(NoWarn);nullable</NoWarn>  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Nerdbank.GitVersioning" Version="2.1.84" PrivateAssets="all" />
     <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />

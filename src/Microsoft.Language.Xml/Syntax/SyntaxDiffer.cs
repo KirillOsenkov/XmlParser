@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -38,7 +38,7 @@ namespace Microsoft.Language.Xml
             this.ComputeChangeRecords();
             var reducedChanges = this.ReduceChanges(_changes);
 
-            return reducedChanges.Select(c => new TextChange(c.Range.Span, c.NewText)).ToList();
+            return reducedChanges.Select(c => new TextChange(c.Range.Span, c.NewText ?? string.Empty)).ToList();
         }
 
         // return which spans of text in the new document are possibly different than text in the old document
@@ -381,8 +381,8 @@ namespace Microsoft.Language.Xml
 
             if (node1.IsToken && node2.IsToken)
             {
-                var text1 = node1.ToString();
-                var text2 = node2.ToString();
+                var text1 = node1.ToString() ?? string.Empty;
+                var text2 = node2.ToString() ?? string.Empty;
 
                 if (text1 == text2)
                 {
@@ -424,7 +424,7 @@ namespace Microsoft.Language.Xml
 
                     if (n1.IsToken)
                     {
-                        _tokenTextSimilaritySet.Add(n1.ToString());
+                        _tokenTextSimilaritySet.Add(n1.ToString() ?? string.Empty);
                     }
                 }
 
@@ -436,7 +436,7 @@ namespace Microsoft.Language.Xml
                     }
                     else if (n2.IsToken)
                     {
-                        var tokenText = n2.ToString();
+                        var tokenText = n2.ToString() ?? string.Empty;
                         if (_tokenTextSimilaritySet.Contains(tokenText))
                         {
                             w += tokenText.Length;
@@ -461,10 +461,10 @@ namespace Microsoft.Language.Xml
         private readonly struct ChangeRecord
         {
             public readonly TextChangeRange Range;
-            public readonly Queue<SyntaxNode> OldNodes;
-            public readonly Queue<SyntaxNode> NewNodes;
+            public readonly Queue<SyntaxNode>? OldNodes;
+            public readonly Queue<SyntaxNode>? NewNodes;
 
-            internal ChangeRecord(TextChangeRange range, Queue<SyntaxNode> oldNodes, Queue<SyntaxNode> newNodes)
+            internal ChangeRecord(TextChangeRange range, Queue<SyntaxNode>? oldNodes, Queue<SyntaxNode>? newNodes)
             {
                 this.Range = range;
                 this.OldNodes = oldNodes;
@@ -616,7 +616,7 @@ namespace Microsoft.Language.Xml
             return TextSpan.FromBounds(start, end);
         }
 
-        private static Queue<SyntaxNode> Combine(Queue<SyntaxNode> first, Queue<SyntaxNode> next)
+        private static Queue<SyntaxNode>? Combine(Queue<SyntaxNode>? first, Queue<SyntaxNode>? next)
         {
             if (first == null || first.Count == 0)
             {
@@ -636,7 +636,7 @@ namespace Microsoft.Language.Xml
             return first;
         }
 
-        private static Queue<SyntaxNode> CopyFirst(Stack<SyntaxNode> stack, int n)
+        private static Queue<SyntaxNode>? CopyFirst(Stack<SyntaxNode> stack, int n)
         {
             if (n == 0)
             {
@@ -688,9 +688,9 @@ namespace Microsoft.Language.Xml
         private readonly struct ChangeRangeWithText
         {
             public readonly TextChangeRange Range;
-            public readonly string NewText;
+            public readonly string? NewText;
 
-            public ChangeRangeWithText(TextChangeRange range, string newText)
+            public ChangeRangeWithText(TextChangeRange range, string? newText)
             {
                 this.Range = range;
                 this.NewText = newText;
@@ -778,7 +778,7 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        private static string GetText(Queue<SyntaxNode> queue)
+        private static string GetText(Queue<SyntaxNode>? queue)
         {
             if (queue == null || queue.Count == 0)
             {
@@ -793,7 +793,7 @@ namespace Microsoft.Language.Xml
             return builder.ToString();
         }
 
-        private static void CopyText(Queue<SyntaxNode> queue, StringBuilder builder)
+        private static void CopyText(Queue<SyntaxNode>? queue, StringBuilder builder)
         {
             builder.Length = 0;
 

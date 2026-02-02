@@ -89,9 +89,9 @@ namespace Microsoft.Language.Xml
         private struct VisitState
         {
             public SyntaxNode node;
-            public XmlClassificationTypes[] childTypes;
+            public XmlClassificationTypes[]? childTypes;
             public int i;
-            public SyntaxNode child;
+            public SyntaxNode? child;
             public XmlClassificationTypes childType;
             public bool continueInsideForLoop;
         }
@@ -219,7 +219,7 @@ namespace Microsoft.Language.Xml
                 return 0;
             }
 
-            XmlClassificationTypes[] childTypes = null;
+            XmlClassificationTypes[]? childTypes = null;
             kindMap.TryGetValue(node.Kind, out childTypes);
 
             int visitedCount = 0;

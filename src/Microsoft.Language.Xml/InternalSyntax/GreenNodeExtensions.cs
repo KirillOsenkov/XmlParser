@@ -6,7 +6,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
 {
     internal static class GreenNodeExtensions
     {
-        internal static TSyntax AddLeadingTrivia<TSyntax>(this TSyntax node, InternalSyntax.SyntaxList<GreenNode> trivia) where TSyntax : GreenNode
+        internal static TSyntax AddLeadingTrivia<TSyntax>(this TSyntax? node, InternalSyntax.SyntaxList<GreenNode> trivia) where TSyntax : GreenNode
         {
             if (node == null)
             {
@@ -142,7 +142,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
             return string.IsNullOrEmpty(token.Text);
         }
 
-        internal static TSyntax AddLeadingSyntax<TSyntax>(this TSyntax node, GreenNode unexpected) where TSyntax : GreenNode
+        internal static TSyntax AddLeadingSyntax<TSyntax>(this TSyntax node, GreenNode? unexpected) where TSyntax : GreenNode
         {
             if (unexpected != null) {
                 var trivia = CreateSkippedTrivia(unexpected,
@@ -159,7 +159,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
             return node.AddLeadingSyntax(unexpected.Node);
         }
 
-        internal static TSyntax AddLeadingSyntax<TSyntax>(this TSyntax node, GreenNode unexpected, ERRID errorId) where TSyntax : GreenNode
+        internal static TSyntax AddLeadingSyntax<TSyntax>(this TSyntax node, GreenNode? unexpected, ERRID errorId) where TSyntax : GreenNode
         {
             var diagnostic = ErrorFactory.ErrorInfo(errorId);
             if (unexpected != null)
@@ -205,7 +205,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
             return node.AddTrailingSyntax(unexpected.Node);
         }
 
-        internal static TSyntax AddTrailingSyntax<TSyntax>(this TSyntax node, GreenNode unexpected) where TSyntax : GreenNode
+        internal static TSyntax AddTrailingSyntax<TSyntax>(this TSyntax node, GreenNode? unexpected) where TSyntax : GreenNode
         {
             if (unexpected != null)
             {
@@ -220,7 +220,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
             return node;
         }
 
-        internal static TSyntax AddTrailingTrivia<TSyntax>(this TSyntax node, InternalSyntax.SyntaxList<GreenNode> trivia) where TSyntax : GreenNode
+        internal static TSyntax AddTrailingTrivia<TSyntax>(this TSyntax? node, InternalSyntax.SyntaxList<GreenNode> trivia) where TSyntax : GreenNode
         {
             if (node == null)
             {
@@ -252,7 +252,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
         //   "addDiagnostic", if not Nothing, is added as a diagnostics
         //   "addDiagnosticsToFirstTokenOnly" means that "addDiagnostics" is attached only to the first token, otherwise
         //    it is attached to all tokens.
-        private static InternalSyntax.SyntaxList<GreenNode> CreateSkippedTrivia(GreenNode node, bool preserveDiagnostics, bool addDiagnosticToFirstTokenOnly, DiagnosticInfo addDiagnostic)
+        private static InternalSyntax.SyntaxList<GreenNode> CreateSkippedTrivia(GreenNode node, bool preserveDiagnostics, bool addDiagnosticToFirstTokenOnly, DiagnosticInfo? addDiagnostic)
         {
             if (node.Kind == SyntaxKind.SkippedTokensTrivia)
             {
@@ -291,7 +291,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
             return skippedTriviaBuilder.GetTriviaList();
         }
 
-        internal static void CollectConstituentTokensAndDiagnostics(this GreenNode node, InternalSyntax.SyntaxListBuilder<SyntaxToken.Green> tokenListBuilder, IList<DiagnosticInfo> nonTokenDiagnostics)
+        internal static void CollectConstituentTokensAndDiagnostics(this GreenNode? node, InternalSyntax.SyntaxListBuilder<SyntaxToken.Green> tokenListBuilder, IList<DiagnosticInfo> nonTokenDiagnostics)
         {
             if (node == null)
                 return;
@@ -322,7 +322,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
             }
         }
 
-        internal static bool ContainsWhitespaceTrivia(this GreenNode node)
+        internal static bool ContainsWhitespaceTrivia(this GreenNode? node)
         {
             if (node == null)
             {
@@ -344,7 +344,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
 
         // In order to handle creating SkippedTokens trivia correctly, we need to know if any structured
         // trivia is present in a trivia list (because structured trivia can't contain structured trivia).
-        internal static bool TriviaListContainsStructuredTrivia(this GreenNode triviaList)
+        internal static bool TriviaListContainsStructuredTrivia(this GreenNode? triviaList)
         {
             if (triviaList == null)
             {
@@ -378,7 +378,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
             }
         }
 
-        public static TNode WithAdditionalAnnotationsGreen<TNode>(this TNode node, IEnumerable<SyntaxAnnotation> annotations) where TNode : GreenNode
+        public static TNode WithAdditionalAnnotationsGreen<TNode>(this TNode node, IEnumerable<SyntaxAnnotation>? annotations) where TNode : GreenNode
         {
             var existingAnnotations = node.GetAnnotations();
 
@@ -408,7 +408,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
             }
         }
 
-        public static TNode WithoutAnnotationsGreen<TNode>(this TNode node, IEnumerable<SyntaxAnnotation> annotations) where TNode : GreenNode
+        public static TNode WithoutAnnotationsGreen<TNode>(this TNode node, IEnumerable<SyntaxAnnotation>? annotations) where TNode : GreenNode
         {
             var existingAnnotations = node.GetAnnotations();
 

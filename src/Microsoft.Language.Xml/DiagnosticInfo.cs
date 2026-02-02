@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
@@ -37,7 +37,7 @@ namespace Microsoft.Language.Xml
 
     public class DiagnosticInfo
     {
-        object[] parameters;
+        object[]? parameters;
 
         public ERRID ErrorID { get; }
         public DiagnosticSeverity Severity => DiagnosticSeverity.Error;
@@ -58,7 +58,7 @@ namespace Microsoft.Language.Xml
         public string GetDescription(ResourceManager resourceManager)
         {
             var name = ErrorID.ToString();
-            var description = resourceManager.GetString(name);
+            var description = resourceManager.GetString(name) ?? name;
             if (parameters != null)
                 description = string.Format(description, parameters);
             return description;

@@ -8,15 +8,15 @@ namespace Microsoft.Language.Xml
     {
         internal new class Green : XmlNodeSyntax.Green
         {
-            readonly PunctuationSyntax.Green beginCData;
-            readonly GreenNode value;
-            readonly PunctuationSyntax.Green endCData;
+            readonly PunctuationSyntax.Green? beginCData;
+            readonly GreenNode? value;
+            readonly PunctuationSyntax.Green? endCData;
 
-            internal PunctuationSyntax.Green BeginCData => beginCData;
+            internal PunctuationSyntax.Green? BeginCData => beginCData;
             internal InternalSyntax.SyntaxList<GreenNode> TextTokens => value;
-            internal PunctuationSyntax.Green EndCData => endCData;
+            internal PunctuationSyntax.Green? EndCData => endCData;
 
-            internal Green(PunctuationSyntax.Green beginCData, GreenNode value, PunctuationSyntax.Green endCData)
+            internal Green(PunctuationSyntax.Green? beginCData, GreenNode? value, PunctuationSyntax.Green? endCData)
                 : base(SyntaxKind.XmlCDataSection)
             {
                 this.SlotCount = 3;
@@ -28,7 +28,7 @@ namespace Microsoft.Language.Xml
                 AdjustWidth(endCData);
             }
 
-            internal Green(PunctuationSyntax.Green beginCData, GreenNode value, PunctuationSyntax.Green endCData, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
+            internal Green(PunctuationSyntax.Green? beginCData, GreenNode? value, PunctuationSyntax.Green? endCData, DiagnosticInfo[]? diagnostics, SyntaxAnnotation[] annotations)
                 : base(SyntaxKind.XmlCDataSection, diagnostics, annotations)
             {
                 this.SlotCount = 3;
@@ -40,9 +40,9 @@ namespace Microsoft.Language.Xml
                 AdjustWidth(endCData);
             }
 
-            internal override SyntaxNode CreateRed(SyntaxNode parent, int position) => new XmlCDataSectionSyntax(this, parent, position);
+            internal override SyntaxNode CreateRed(SyntaxNode? parent, int position) => new XmlCDataSectionSyntax(this, parent, position);
 
-            internal override GreenNode GetSlot(int index)
+            internal override GreenNode? GetSlot(int index)
             {
                 switch (index)
                 {
@@ -58,7 +58,7 @@ namespace Microsoft.Language.Xml
                 return visitor.VisitXmlCDataSection(this);
             }
 
-            internal override GreenNode SetDiagnostics(DiagnosticInfo[] diagnostics)
+            internal override GreenNode SetDiagnostics(DiagnosticInfo[]? diagnostics)
             {
                 return new Green(beginCData, value, endCData, diagnostics, GetAnnotations());
             }
@@ -69,15 +69,15 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        PunctuationSyntax beginCData;
-        SyntaxNode textTokens;
-        PunctuationSyntax endCData;
+        PunctuationSyntax? beginCData;
+        SyntaxNode? textTokens;
+        PunctuationSyntax? endCData;
 
-        public PunctuationSyntax BeginCData => GetRed(ref beginCData, 0);
+        public PunctuationSyntax BeginCData => GetRed(ref beginCData, 0)!;
         public SyntaxList<SyntaxNode> TextTokens => new SyntaxList<SyntaxNode>(GetRed(ref textTokens, 1));
-        public PunctuationSyntax EndCData => GetRed(ref endCData, 2);
+        public PunctuationSyntax EndCData => GetRed(ref endCData, 2)!;
 
-        internal XmlCDataSectionSyntax(Green green, SyntaxNode parent, int position)
+        internal XmlCDataSectionSyntax(Green green, SyntaxNode? parent, int position)
             : base(green, parent, position)
         {
 
@@ -90,7 +90,7 @@ namespace Microsoft.Language.Xml
             return visitor.VisitXmlCDataSection(this);
         }
 
-        internal override SyntaxNode GetCachedSlot(int index)
+        internal override SyntaxNode? GetCachedSlot(int index)
         {
             switch (index)
             {
@@ -101,7 +101,7 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        internal override SyntaxNode GetNodeSlot(int slot)
+        internal override SyntaxNode? GetNodeSlot(int slot)
         {
             switch (slot)
             {

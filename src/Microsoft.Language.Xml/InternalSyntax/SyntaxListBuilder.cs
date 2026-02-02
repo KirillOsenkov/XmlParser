@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 
+
 namespace Microsoft.Language.Xml.InternalSyntax
 {
     internal class SyntaxListBuilder
@@ -36,7 +37,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
             }
         }
 
-        public void Add(GreenNode item)
+        public void Add(GreenNode? item)
         {
             if (item == null) return;
 
@@ -122,7 +123,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
         public void RemoveLast()
         {
             Count--;
-            _nodes[Count].Value = null;
+            _nodes[Count].Value = null!;
         }
 
         private void EnsureAdditionalCapacity(int additionalCount)
@@ -165,7 +166,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
             return array;
         }
 
-        internal GreenNode ToListNode()
+        internal GreenNode? ToListNode()
         {
             switch (this.Count)
             {
