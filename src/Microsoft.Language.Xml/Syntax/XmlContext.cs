@@ -38,6 +38,7 @@ namespace Microsoft.Language.Xml
         public XmlNodeSyntax.Green CreateElement(XmlElementEndTagSyntax.Green endElement)
         {
             Debug.Assert(endElement != null);
+            Debug.Assert(_start != null);
             var contentList = _content.ToList();
             _pool.Free(_content);
             return XmlElement(_start, contentList.Node, endElement);

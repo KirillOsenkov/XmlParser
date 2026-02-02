@@ -79,9 +79,9 @@ namespace Microsoft.Language.Xml
         SyntaxNode? content;
         XmlElementEndTagSyntax? endTag;
 
-        public XmlElementStartTagSyntax? StartTag => GetRed(ref startTag, 0);
+        public XmlElementStartTagSyntax StartTag => GetRed(ref startTag, 0)!;
         public SyntaxList<SyntaxNode> Content => new SyntaxList<SyntaxNode>(GetRed(ref content, 1));
-        public XmlElementEndTagSyntax? EndTag => GetRed(ref endTag, 2);
+        public XmlElementEndTagSyntax EndTag => GetRed(ref endTag, 2)!;
 
         internal XmlElementSyntax(Green green, SyntaxNode? parent, int position)
             : base(green, parent, position)
@@ -202,7 +202,7 @@ namespace Microsoft.Language.Xml
 
         #endregion
 
-        public XmlElementSyntax Update(XmlElementStartTagSyntax? startTag, SyntaxList<SyntaxNode> content, XmlElementEndTagSyntax? endTag)
+        public XmlElementSyntax Update(XmlElementStartTagSyntax startTag, SyntaxList<SyntaxNode> content, XmlElementEndTagSyntax endTag)
         {
             if (startTag != this.StartTag || content != this.Content || endTag != this.EndTag)
             {

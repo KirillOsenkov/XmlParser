@@ -73,9 +73,9 @@ namespace Microsoft.Language.Xml
         PunctuationSyntax? equalsSyntax;
         XmlStringSyntax? valueNode;
 
-        public XmlNameSyntax? NameNode => GetRed(ref nameNode, 0);
-        public new PunctuationSyntax? Equals => GetRed(ref equalsSyntax, 1);
-        public XmlStringSyntax? ValueNode => GetRed(ref valueNode, 2);
+        public XmlNameSyntax NameNode => GetRed(ref nameNode, 0)!;
+        public new PunctuationSyntax Equals => GetRed(ref equalsSyntax, 1)!;
+        public XmlStringSyntax ValueNode => GetRed(ref valueNode, 2)!;
 
         internal XmlAttributeSyntax(Green green, SyntaxNode? parent, int position)
             : base(green, parent, position)
@@ -83,9 +83,9 @@ namespace Microsoft.Language.Xml
 
         }
 
-        public string? Name => NameNode?.FullName;
+        public string Name => NameNode.FullName;
 
-        public bool IsNamespaceDeclaration => string.Equals(NameNode?.Prefix, "xmlns", StringComparison.Ordinal);
+        public bool IsNamespaceDeclaration => string.Equals(NameNode.Prefix, "xmlns", StringComparison.Ordinal);
 
         /// <summary>
         /// Get attribute normalized value
@@ -138,7 +138,7 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        public XmlAttributeSyntax Update(XmlNameSyntax? name, PunctuationSyntax? equalsToken, XmlStringSyntax? value)
+        public XmlAttributeSyntax Update(XmlNameSyntax name, PunctuationSyntax equalsToken, XmlStringSyntax value)
         {
             if (name != this.NameNode || equalsToken != this.Equals || value != this.ValueNode)
             {

@@ -75,11 +75,11 @@ namespace Microsoft.Language.Xml
         PunctuationSyntax? equals;
         XmlStringSyntax? value;
 
-        public XmlNameTokenSyntax? NameNode => GetRed(ref nameNode, 0);
-        public new PunctuationSyntax? Equals => GetRed(ref equals, 1);
-        public XmlStringSyntax? Value => GetRed(ref value, 2);
+        public XmlNameTokenSyntax NameNode => GetRed(ref nameNode, 0)!;
+        public new PunctuationSyntax Equals => GetRed(ref equals, 1)!;
+        public XmlStringSyntax Value => GetRed(ref value, 2)!;
 
-        public string? Name => NameNode?.Name;
+        public string Name => NameNode.Name;
 
         internal XmlDeclarationOptionSyntax(Green green, SyntaxNode? parent, int position)
             : base(green, parent, position)

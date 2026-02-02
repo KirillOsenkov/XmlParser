@@ -75,11 +75,11 @@ namespace Microsoft.Language.Xml
         XmlNameSyntax? nameNode;
         PunctuationSyntax? slashGreaterThanToken;
 
-        public PunctuationSyntax? LessThanSlashToken => GetRed(ref lessThanToken, 0);
-        public XmlNameSyntax? NameNode => GetRed(ref nameNode, 1);
-        public PunctuationSyntax? GreaterThanToken => GetRed(ref slashGreaterThanToken, 2);
+        public PunctuationSyntax LessThanSlashToken => GetRed(ref lessThanToken, 0)!;
+        public XmlNameSyntax NameNode => GetRed(ref nameNode, 1)!;
+        public PunctuationSyntax GreaterThanToken => GetRed(ref slashGreaterThanToken, 2)!;
 
-        public string? Name => NameNode?.FullName;
+        public string Name => NameNode.FullName;
 
         internal XmlElementEndTagSyntax(Green green, SyntaxNode? parent, int position)
             : base(green, parent, position)

@@ -69,7 +69,7 @@ namespace Microsoft.Language.Xml
         XmlNameTokenSyntax? localName;
 
         public XmlPrefixSyntax? PrefixNode => GetRed(ref prefix, 0);
-        public XmlNameTokenSyntax? LocalNameNode => GetRed(ref localName, 1);
+        public XmlNameTokenSyntax LocalNameNode => GetRed(ref localName, 1)!;
 
         internal XmlNameSyntax(Green green, SyntaxNode? parent, int position)
             : base(green, parent, position)
@@ -82,10 +82,10 @@ namespace Microsoft.Language.Xml
             return visitor.VisitXmlName(this);
         }
 
-        public string? LocalName => LocalNameNode?.Text;
+        public string LocalName => LocalNameNode.Text;
         public string? Prefix => PrefixNode?.Name?.Text;
 
-        public string FullName => (PrefixNode != null ? (PrefixNode.Name?.Text ?? string.Empty) + ":" : string.Empty) + (LocalNameNode?.Text ?? string.Empty);
+        public string FullName => (PrefixNode != null ? (PrefixNode.Name?.Text ?? string.Empty) + ":" : string.Empty) + LocalNameNode.Text;
 
         public override string ToString()
         {
@@ -112,7 +112,7 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        public XmlNameSyntax Update(XmlPrefixSyntax? prefix, XmlNameTokenSyntax? localName)
+        public XmlNameSyntax Update(XmlPrefixSyntax? prefix, XmlNameTokenSyntax localName)
         {
             if (prefix != this.PrefixNode || localName != this.LocalNameNode)
             {

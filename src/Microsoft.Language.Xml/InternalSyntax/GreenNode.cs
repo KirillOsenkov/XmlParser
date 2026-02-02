@@ -143,7 +143,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
 
         internal virtual bool IsList => false;
         internal virtual bool IsToken => false;
-        internal virtual bool IsMissing => (flags & NodeFlags.IsMissing) != 0;
+        internal virtual bool IsMissing => FullWidth == 0;
 
         internal virtual GreenNode? GetLeadingTrivia()
         {

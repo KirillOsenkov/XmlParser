@@ -38,6 +38,11 @@ namespace Microsoft.Language.Xml
 
             internal override bool IsToken => true;
 
+            internal override bool IsMissing =>
+                Kind != SyntaxKind.EndOfFileToken &&
+                Kind != SyntaxKind.EndOfXmlToken &&
+                string.IsNullOrEmpty(Text);
+
             public override int Width => Text.Length;
 
             internal override void WriteToOrFlatten(TextWriter writer, Stack<GreenNode> stack)

@@ -94,10 +94,10 @@ namespace Microsoft.Language.Xml
         SyntaxNode? textTokens;
         PunctuationSyntax? questionGreaterThanToken;
 
-        public PunctuationSyntax? LessThanQuestionToken => GetRed(ref lessThanQuestionToken, 0);
-        public XmlNameTokenSyntax? Name => GetRed(ref name, 1);
+        public PunctuationSyntax LessThanQuestionToken => GetRed(ref lessThanQuestionToken, 0)!;
+        public XmlNameTokenSyntax Name => GetRed(ref name, 1)!;
         public SyntaxList<SyntaxNode> TextTokens => new SyntaxList<SyntaxNode>(GetRed(ref textTokens, 2));
-        public PunctuationSyntax? QuestionGreaterThanToken => GetRed(ref questionGreaterThanToken, 3);
+        public PunctuationSyntax QuestionGreaterThanToken => GetRed(ref questionGreaterThanToken, 3)!;
 
         internal XmlProcessingInstructionSyntax(Green green, SyntaxNode? parent, int position)
             : base(green, parent, position)

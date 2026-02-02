@@ -111,12 +111,12 @@ namespace Microsoft.Language.Xml
         XmlDeclarationOptionSyntax? standalone;
         PunctuationSyntax? questionGreaterThanToken;
 
-        public PunctuationSyntax? LessThanQuestionToken => GetRed(ref lessThanQuestionToken, 0);
-        public SyntaxToken? XmlKeyword => GetRed(ref xmlKeyword, 1);
-        public XmlDeclarationOptionSyntax? Version => GetRed(ref version, 2);
+        public PunctuationSyntax LessThanQuestionToken => GetRed(ref lessThanQuestionToken, 0)!;
+        public SyntaxToken XmlKeyword => GetRed(ref xmlKeyword, 1)!;
+        public XmlDeclarationOptionSyntax Version => GetRed(ref version, 2)!;
         public XmlDeclarationOptionSyntax? Encoding => GetRed(ref encoding, 3);
         public XmlDeclarationOptionSyntax? Standalone => GetRed(ref standalone, 4);
-        public PunctuationSyntax? QuestionGreaterThanToken => GetRed(ref questionGreaterThanToken, 5);
+        public PunctuationSyntax QuestionGreaterThanToken => GetRed(ref questionGreaterThanToken, 5)!;
 
         internal XmlDeclarationSyntax(Green green, SyntaxNode? parent, int position)
             : base(green, parent, position)

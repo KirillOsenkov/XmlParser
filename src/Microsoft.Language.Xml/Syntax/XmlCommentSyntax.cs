@@ -73,9 +73,9 @@ namespace Microsoft.Language.Xml
         SyntaxNode? content;
         PunctuationSyntax? endComment;
 
-        public PunctuationSyntax? BeginComment => GetRed(ref beginComment, 0);
+        public PunctuationSyntax BeginComment => GetRed(ref beginComment, 0)!;
         public SyntaxList<SyntaxNode> Content => new SyntaxList<SyntaxNode>(GetRed(ref content, 1));
-        public PunctuationSyntax? EndComment => GetRed(ref endComment, 2);
+        public PunctuationSyntax EndComment => GetRed(ref endComment, 2)!;
 
         internal XmlCommentSyntax(Green green, SyntaxNode? parent, int position)
             : base(green, parent, position)

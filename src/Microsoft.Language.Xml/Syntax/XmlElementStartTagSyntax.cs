@@ -83,12 +83,12 @@ namespace Microsoft.Language.Xml
         SyntaxNode? attributesNode;
         PunctuationSyntax? greaterThanToken;
 
-        public PunctuationSyntax? LessThanToken => GetRed(ref lessThanToken, 0);
-        public XmlNameSyntax? NameNode => GetRed(ref nameNode, 1);
+        public PunctuationSyntax LessThanToken => GetRed(ref lessThanToken, 0)!;
+        public XmlNameSyntax NameNode => GetRed(ref nameNode, 1)!;
         public SyntaxList<XmlAttributeSyntax> AttributesNode => new SyntaxList<XmlAttributeSyntax>(GetRed(ref attributesNode, 2));
-        public PunctuationSyntax? GreaterThanToken => GetRed(ref greaterThanToken, 3);
+        public PunctuationSyntax GreaterThanToken => GetRed(ref greaterThanToken, 3)!;
 
-        public string? Name => NameNode?.FullName;
+        public string Name => NameNode.FullName;
 
         internal XmlElementStartTagSyntax(Green green, SyntaxNode? parent, int position)
             : base(green, parent, position)
@@ -125,11 +125,11 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        public XmlElementStartTagSyntax Update(PunctuationSyntax? lessThanToken, XmlNameSyntax? name, SyntaxList<XmlAttributeSyntax> attributes, PunctuationSyntax? greaterThanToken)
+        public XmlElementStartTagSyntax Update(PunctuationSyntax lessThanToken, XmlNameSyntax name, SyntaxList<XmlAttributeSyntax> attributes, PunctuationSyntax greaterThanToken)
         {
             if (lessThanToken != this.LessThanToken || name != this.NameNode || attributes != this.AttributesNode || greaterThanToken != this.GreaterThanToken)
             {
-                var newNode = SyntaxFactory.XmlElementStartTag(lessThanToken!, name!, attributes, greaterThanToken!);
+                var newNode = SyntaxFactory.XmlElementStartTag(lessThanToken, name, attributes, greaterThanToken);
                 var annotations = this.GetAnnotations();
                 if (annotations != null && annotations.Length > 0)
                     return newNode.WithAnnotations(annotations);

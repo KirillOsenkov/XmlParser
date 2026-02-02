@@ -73,9 +73,9 @@ namespace Microsoft.Language.Xml
         SyntaxNode? textTokens;
         PunctuationSyntax? endCData;
 
-        public PunctuationSyntax? BeginCData => GetRed(ref beginCData, 0);
+        public PunctuationSyntax BeginCData => GetRed(ref beginCData, 0)!;
         public SyntaxList<SyntaxNode> TextTokens => new SyntaxList<SyntaxNode>(GetRed(ref textTokens, 1));
-        public PunctuationSyntax? EndCData => GetRed(ref endCData, 2);
+        public PunctuationSyntax EndCData => GetRed(ref endCData, 2)!;
 
         internal XmlCDataSectionSyntax(Green green, SyntaxNode? parent, int position)
             : base(green, parent, position)

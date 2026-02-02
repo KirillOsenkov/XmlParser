@@ -102,10 +102,10 @@ namespace Microsoft.Language.Xml
 
         public XmlDeclarationSyntax? Prologue => GetRed(ref prologue, 0);
         public SyntaxList<SyntaxNode> PrecedingMisc => new SyntaxList<SyntaxNode>(GetRed(ref precedingMisc, 1));
-        public XmlNodeSyntax? Body => GetRed(ref body, 2);
+        public XmlNodeSyntax Body => GetRed(ref body, 2)!;
         public SyntaxList<SyntaxNode> FollowingMisc => new SyntaxList<SyntaxNode>(GetRed(ref followingMisc, 3));
         public SkippedTokensTriviaSyntax? SkippedTokens => GetRed(ref skippedTokens, 4);
-        public SyntaxToken? Eof => GetRed(ref eof, 5);
+        public SyntaxToken Eof => GetRed(ref eof, 5)!;
 
         internal XmlDocumentSyntax(Green green, SyntaxNode? parent, int position)
             : base(green, parent, position)

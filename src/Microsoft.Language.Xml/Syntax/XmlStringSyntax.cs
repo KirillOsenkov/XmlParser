@@ -77,9 +77,9 @@ namespace Microsoft.Language.Xml
         SyntaxNode? textTokens;
         PunctuationSyntax? endQuoteToken;
 
-        public PunctuationSyntax? StartQuoteToken => GetRed(ref startQuoteToken, 0);
+        public PunctuationSyntax StartQuoteToken => GetRed(ref startQuoteToken, 0)!;
         public SyntaxList<SyntaxNode> TextTokens => new SyntaxList<SyntaxNode>(GetRed(ref textTokens, 1));
-        public PunctuationSyntax? EndQuoteToken => GetRed(ref endQuoteToken, 2);
+        public PunctuationSyntax EndQuoteToken => GetRed(ref endQuoteToken, 2)!;
 
         internal XmlStringSyntax(Green green, SyntaxNode? parent, int position)
             : base(green, parent, position)
@@ -114,7 +114,7 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        public XmlStringSyntax Update(PunctuationSyntax? startQuoteToken, SyntaxList<SyntaxNode> textTokens, PunctuationSyntax? endQuoteToken)
+        public XmlStringSyntax Update(PunctuationSyntax startQuoteToken, SyntaxList<SyntaxNode> textTokens, PunctuationSyntax endQuoteToken)
         {
             if (startQuoteToken != this.StartQuoteToken || textTokens != this.TextTokens || endQuoteToken != this.EndQuoteToken)
             {

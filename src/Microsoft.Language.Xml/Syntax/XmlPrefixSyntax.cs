@@ -67,8 +67,8 @@ namespace Microsoft.Language.Xml
         XmlNameTokenSyntax? name;
         PunctuationSyntax? colonToken;
 
-        public XmlNameTokenSyntax? Name => GetRed(ref name, 0);
-        public PunctuationSyntax? ColonToken => GetRed(ref colonToken, 1);
+        public XmlNameTokenSyntax Name => GetRed(ref name, 0)!;
+        public PunctuationSyntax ColonToken => GetRed(ref colonToken, 1)!;
 
         internal XmlPrefixSyntax(Green green, SyntaxNode? parent, int position)
             : base(green, parent, position)
@@ -100,7 +100,7 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        public XmlPrefixSyntax Update(XmlNameTokenSyntax? name, PunctuationSyntax? colonToken)
+        public XmlPrefixSyntax Update(XmlNameTokenSyntax name, PunctuationSyntax colonToken)
         {
             if (name != this.Name || colonToken != this.ColonToken)
             {

@@ -27,7 +27,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
             return new XmlDocumentSyntax.Green(prologue, precedingMisc, body, followingMisc, skippedTokens, eof);
         }
 
-        internal static XmlNodeSyntax.Green XmlElement(XmlElementStartTagSyntax.Green? startElement, GreenNode? content, XmlElementEndTagSyntax.Green endElement)
+        internal static XmlNodeSyntax.Green XmlElement(XmlElementStartTagSyntax.Green startElement, GreenNode? content, XmlElementEndTagSyntax.Green endElement)
         {
             return new XmlElementSyntax.Green(startElement, content, endElement);
         }
@@ -47,7 +47,7 @@ namespace Microsoft.Language.Xml.InternalSyntax
         }
 
         internal static XmlElementEndTagSyntax.Green XmlElementEndTag(PunctuationSyntax.Green lessThanSlashToken,
-                                                                       XmlNameSyntax.Green? name,
+                                                                       XmlNameSyntax.Green name,
                                                                        PunctuationSyntax.Green greaterThanToken)
         {
             return new XmlElementEndTagSyntax.Green(lessThanSlashToken, name, greaterThanToken);
@@ -82,12 +82,12 @@ namespace Microsoft.Language.Xml.InternalSyntax
             return result;
         }
 
-        internal static XmlDeclarationOptionSyntax.Green XmlDeclarationOption(XmlNameTokenSyntax.Green? name, PunctuationSyntax.Green? equals, XmlStringSyntax.Green? value)
+        internal static XmlDeclarationOptionSyntax.Green XmlDeclarationOption(XmlNameTokenSyntax.Green name, PunctuationSyntax.Green equals, XmlStringSyntax.Green value)
         {
             return new XmlDeclarationOptionSyntax.Green(name, equals, value);
         }
 
-        internal static XmlDeclarationSyntax.Green XmlDeclaration(PunctuationSyntax.Green lessThanQuestionToken, SyntaxToken.Green? xmlKeyword, XmlDeclarationOptionSyntax.Green? version, XmlDeclarationOptionSyntax.Green? encoding, XmlDeclarationOptionSyntax.Green? standalone, PunctuationSyntax.Green? questionGreaterThanToken)
+        internal static XmlDeclarationSyntax.Green XmlDeclaration(PunctuationSyntax.Green lessThanQuestionToken, SyntaxToken.Green xmlKeyword, XmlDeclarationOptionSyntax.Green version, XmlDeclarationOptionSyntax.Green? encoding, XmlDeclarationOptionSyntax.Green? standalone, PunctuationSyntax.Green questionGreaterThanToken)
         {
             return new XmlDeclarationSyntax.Green(lessThanQuestionToken, xmlKeyword, version, encoding, standalone, questionGreaterThanToken);
         }
