@@ -960,19 +960,20 @@ namespace Microsoft.Language.Xml
         private XmlNameTokenSyntax.Green XmlMakeXmlNCNameToken(GreenNode? precedingTrivia, int tokenWidth)
         {
             Debug.Assert(tokenWidth > 0);
+            // The preceding trivia, name text, and following whitespace form a
+            // contiguous region in the source buffer. Hash and compare directly
+            // from the buffer to avoid allocating a concatenated cache key string.
+            var precedingTriviaWidth = precedingTrivia?.FullWidth ?? 0;
+            var keyStart = _lineBufferOffset - precedingTriviaWidth;
             var text = GetText(tokenWidth);
             var followingTrivia = ScanXmlWhitespace();
-            // TODO: do something more efficient than create an intermediary string
-            // for instance augment TextKeyedCache to work directly on the Buffer
-            // instance instead of string or char[]
-            var key = (precedingTrivia == null ? string.Empty : precedingTrivia.ToFullString())
-                + text
-                + (followingTrivia == null ? string.Empty : followingTrivia.ToFullString());
-            var hashCode = Hash.GetFNVHashCode(key);
-            var nameToken = _nameTokenCache.FindItem(key, 0, key.Length, hashCode);
+            var followingTriviaWidth = followingTrivia?.FullWidth ?? 0;
+            var keyLength = precedingTriviaWidth + tokenWidth + followingTriviaWidth;
+            var hashCode = Hash.GetFNVHashCode(buffer.GetSpan(keyStart, keyLength));
+            var nameToken = _nameTokenCache.FindItem(buffer, keyStart, keyLength, hashCode);
             if (nameToken == null) {
                 nameToken = new XmlNameTokenSyntax.Green(text, precedingTrivia, followingTrivia);
-                _nameTokenCache.AddItem(key, 0, key.Length, hashCode, nameToken);
+                _nameTokenCache.AddItem(buffer, keyStart, keyLength, hashCode, nameToken);
             }
 
             return nameToken;
@@ -2021,10 +2022,28 @@ namespace Microsoft.Language.Xml
             int length = GetXmlWhitespaceLength();
             if (length > 0)
             {
-                return MakeWhiteSpaceTrivia(GetText(length));
+                return MakeWhiteSpaceTriviaFromBuffer(length);
             }
 
             return null;
+        }
+
+        private GreenNode MakeWhiteSpaceTriviaFromBuffer(int length)
+        {
+            var hashCode = Hash.GetFNVHashCode(buffer.GetSpan(_lineBufferOffset, length));
+            var ws = _triviaCache.FindItem(buffer, _lineBufferOffset, length, hashCode);
+            if (ws == null)
+            {
+                var text = GetText(length);
+                ws = new SyntaxTrivia.Green(SyntaxKind.WhitespaceTrivia, text);
+                _triviaCache.AddItem(text, 0, text.Length, hashCode, ws);
+            }
+            else
+            {
+                AdvanceChar(length);
+            }
+
+            return ws;
         }
 
         private int GetXmlWhitespaceLength()

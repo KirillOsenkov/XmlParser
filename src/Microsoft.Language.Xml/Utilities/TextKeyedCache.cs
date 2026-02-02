@@ -173,6 +173,80 @@ namespace Microsoft.Language.Xml
             return e;
         }
 
+        internal T? FindItem(Buffer buffer, int start, int len, int hashCode)
+        {
+            ref var localSlot = ref _localTable[LocalIdxFromHash(hashCode)];
+
+            var text = localSlot.Text;
+
+            if (text != null && localSlot.HashCode == hashCode)
+            {
+                if (text.AsSpan().SequenceEqual(buffer.GetSpan(start, len)))
+                {
+                    return localSlot.Item;
+                }
+            }
+
+            SharedEntryValue? e = FindSharedEntry(buffer, start, len, hashCode);
+            if (e != null)
+            {
+                localSlot.HashCode = hashCode;
+                localSlot.Text = e.Text;
+
+                var tk = e.Item;
+                localSlot.Item = tk;
+
+                return tk;
+            }
+
+            return null;
+        }
+
+        private SharedEntryValue? FindSharedEntry(Buffer buffer, int start, int len, int hashCode)
+        {
+            var arr = _sharedTableInst;
+            int idx = SharedIdxFromHash(hashCode);
+
+            SharedEntryValue? e = null;
+            int hash;
+
+            for (int i = 1; i < SharedBucketSize + 1; i++)
+            {
+                (hash, e) = arr[idx];
+
+                if (e != null)
+                {
+                    if (hash == hashCode && e.Text.AsSpan().SequenceEqual(buffer.GetSpan(start, len)))
+                    {
+                        break;
+                    }
+
+                    e = null;
+                }
+                else
+                {
+                    break;
+                }
+
+                idx = (idx + i) & SharedSizeMask;
+            }
+
+            return e;
+        }
+
+        internal void AddItem(Buffer buffer, int start, int len, int hashCode, T item)
+        {
+            var text = _strings.Add(buffer.GetSpan(start, len));
+
+            var e = new SharedEntryValue(text, item);
+            AddSharedEntry(hashCode, e);
+
+            ref var localSlot = ref _localTable[LocalIdxFromHash(hashCode)];
+            localSlot.HashCode = hashCode;
+            localSlot.Text = text;
+            localSlot.Item = item;
+        }
+
         internal void AddItem(string chars, int start, int len, int hashCode, T item)
         {
             var text = _strings.Add(chars, start, len);

@@ -129,6 +129,18 @@ namespace Microsoft.Language.Xml
         /// <param name="start">The start index of the first character to hash</param>
         /// <param name="length">The number of characters, beginning with <paramref name="start"/> to hash</param>
         /// <returns>The FNV-1a hash code of the substring beginning at <paramref name="start"/> and ending after <paramref name="length"/> characters.</returns>
+        public static int GetFNVHashCode(ReadOnlySpan<char> text)
+        {
+            int hashCode = Hash.FnvOffsetBias;
+
+            for (int i = 0; i < text.Length; i++)
+            {
+                hashCode = unchecked((hashCode ^ text[i]) * Hash.FnvPrime);
+            }
+
+            return hashCode;
+        }
+
         public static int GetFNVHashCode(string text, int start, int length)
         {
             int hashCode = Hash.FnvOffsetBias;
