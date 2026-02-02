@@ -234,6 +234,15 @@ namespace Microsoft.Language.Xml
             Debug.Assert(_currentNode != null);
             if (_currentNode.IsMissing)
                 return false;
+            // Don't reuse XmlElement nodes with missing end tags, since
+            // indent-aware closing can restructure their content when
+            // siblings are added or removed.
+            if (node.Kind == SyntaxKind.XmlElement)
+            {
+                var endTag = node.GetSlot(2); // EndTag is slot 2
+                if (endTag != null && endTag.FullWidth == 0)
+                    return false;
+            }
             return true;
         }
 

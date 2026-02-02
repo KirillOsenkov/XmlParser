@@ -280,6 +280,11 @@ namespace Microsoft.Language.Xml
                         var reused = _scanner.GetCurrentSyntaxNode() as XmlNodeSyntax.Green;
                         if (reused != null && (reused.Kind == SyntaxKind.XmlElement || reused.Kind == SyntaxKind.XmlEmptyElement))
                         {
+                            var reusedIndent = GetIndentAtPosition(_scanner.CurrentTokenPosition + CurrentToken.GetLeadingTriviaWidth());
+                            if (reusedIndent >= 0 && contexts.Count > 1)
+                            {
+                                CloseContextsDeeperThan(contexts, reusedIndent);
+                            }
                             xml = reused;
                             GetNextSyntaxNode();
                             break;
@@ -293,6 +298,14 @@ namespace Microsoft.Language.Xml
 
                         var startTagIndent = GetIndentAtPosition(_scanner.CurrentTokenPosition + CurrentToken.GetLeadingTriviaWidth());
                         xml = ParseXmlElementStartTag(nextState);
+
+                        // Close any open contexts that are more deeply indented than
+                        // this new element. This handles the case where a sibling
+                        // element appears at the same indent as an unclosed element.
+                        if (startTagIndent >= 0 && contexts.Count > 1)
+                        {
+                            CloseContextsDeeperThan(contexts, startTagIndent);
+                        }
 
                         if (xml.Kind == SyntaxKind.XmlElementStartTag)
                         {
@@ -1063,6 +1076,32 @@ namespace Microsoft.Language.Xml
 
             contexts.Pop();
             return element;
+        }
+
+        /// <summary>
+        /// Closes any open contexts whose indent is strictly greater than the given
+        /// indent. This is used to implicitly close unclosed elements when a sibling
+        /// element appears at the same or lesser indentation level.
+        /// </summary>
+        private void CloseContextsDeeperThan(List<XmlContext> contexts, int indent)
+        {
+            // Need at least 2 contexts: one to close and one parent to add to.
+            while (contexts.Count > 1)
+            {
+                var current = contexts[contexts.Count - 1];
+                if (current.Indent < 0 || current.Indent < indent)
+                {
+                    break;
+                }
+
+                var missingEndElement = XmlElementEndTag(
+                    ((PunctuationSyntax.Green)HandleUnexpectedToken(SyntaxKind.LessThanSlashToken)),
+                    ReportSyntaxError(XmlName(null, XmlNameToken("", null, null)), ERRID.ERR_ExpectedXmlName),
+                    ((PunctuationSyntax.Green)HandleUnexpectedToken(SyntaxKind.GreaterThanToken)));
+                var xml = contexts.Peek().CreateElement(missingEndElement, ErrorFactory.ErrorInfo(ERRID.ERR_MissingXmlEndTag));
+                contexts.Pop();
+                contexts.Peek().Add(xml);
+            }
         }
 
         /// <summary>
