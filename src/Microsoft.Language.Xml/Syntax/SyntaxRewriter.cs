@@ -130,7 +130,7 @@ namespace Microsoft.Language.Xml
                 anyChanges = true;
             }
 
-            var newEof = node.Eof != null ? VisitSyntaxToken(node.Eof) : null;
+            var newEof = VisitSyntaxToken(node.Eof);
             if (node.Eof != newEof)
             {
                 anyChanges = true;

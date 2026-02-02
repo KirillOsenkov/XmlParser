@@ -162,21 +162,16 @@ namespace Microsoft.Language.Xml
         {
             get
             {
-                if (StartTag.AttributesNode == null)
-                {
-                    yield break;
-                }
-
                 var singleAttribute = StartTag.AttributesNode.Node as XmlAttributeSyntax;
                 if (singleAttribute != null)
                 {
-                    yield return new KeyValuePair<string, string>(singleAttribute.Name, singleAttribute.Value ?? string.Empty);
+                    yield return new KeyValuePair<string, string>(singleAttribute.Name, singleAttribute.Value);
                     yield break;
                 }
 
                 foreach (var attribute in StartTag.AttributesNode.OfType<XmlAttributeSyntax>())
                 {
-                    yield return new KeyValuePair<string, string>(attribute.Name, attribute.Value ?? string.Empty);
+                    yield return new KeyValuePair<string, string>(attribute.Name, attribute.Value);
                 }
             }
         }

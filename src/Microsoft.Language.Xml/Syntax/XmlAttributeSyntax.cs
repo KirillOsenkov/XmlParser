@@ -95,19 +95,15 @@ namespace Microsoft.Language.Xml
         /// <seealso href="https://www.w3.org/TR/2006/REC-xml11-20060816/#sec-line-ends">2.2.12 [XML] Section 3.3.3</seealso/>
         /// <seealso href="https://learn.microsoft.com/en-us/openspecs/ie_standards/ms-xml/389b8ef1-e19e-40ac-80de-eec2cd0c58ae">2.11 [XML} End-of-Line Handling</seealso/>
         /// </remarks>
-        public string? Value
+        public string Value
         {
             get
             {
-                if (ValueNode is XmlStringSyntax xmlString)
+                return ValueNode.TextTokens.Node switch
                 {
-                    return xmlString.TextTokens.Node switch
-                    {
-                        SyntaxNode node => node.GetNormalizedAttributeValue(),
-                        _ => string.Empty
-                    };
-                }
-                return null;
+                    SyntaxNode node => node.GetNormalizedAttributeValue(),
+                    _ => string.Empty
+                };
             }
         }
 
