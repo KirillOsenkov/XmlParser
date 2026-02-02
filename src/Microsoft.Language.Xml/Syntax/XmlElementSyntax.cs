@@ -188,17 +188,17 @@ namespace Microsoft.Language.Xml
 
         #region IXmlElementSyntax
 
-        IEnumerable<XmlAttributeSyntax>? IXmlElementSyntax.Attributes => (IEnumerable<XmlAttributeSyntax>?)StartTag?.AttributesNode;
+        IEnumerable<XmlAttributeSyntax> IXmlElementSyntax.Attributes => (IEnumerable<XmlAttributeSyntax>)StartTag.AttributesNode;
         IXmlElementSyntax? IXmlElementSyntax.Parent => ParentElement;
         XmlNodeSyntax IXmlElementSyntax.AsNode => this;
-        SyntaxList<XmlAttributeSyntax> IXmlElementSyntax.AttributesNode { get { Debug.Assert(StartTag != null); return StartTag.AttributesNode; } }
+        SyntaxList<XmlAttributeSyntax> IXmlElementSyntax.AttributesNode => StartTag.AttributesNode;
 
-        IXmlElementSyntax IXmlElementSyntax.WithName(XmlNameSyntax newName) { Debug.Assert(StartTag != null); return WithStartTag(StartTag.WithName(newName)); }
+        IXmlElementSyntax IXmlElementSyntax.WithName(XmlNameSyntax newName) => WithStartTag(StartTag.WithName(newName));
 
         IXmlElementSyntax IXmlElementSyntax.WithContent(SyntaxList<SyntaxNode> newContent) => Update(StartTag, newContent, EndTag);
 
-        IXmlElementSyntax IXmlElementSyntax.WithAttributes(IEnumerable<XmlAttributeSyntax> newAttributes) { Debug.Assert(StartTag != null); return WithStartTag(StartTag.WithAttributes(new SyntaxList<XmlAttributeSyntax>(newAttributes))); }
-        IXmlElementSyntax IXmlElementSyntax.WithAttributes(SyntaxList<XmlAttributeSyntax> newAttributes) { Debug.Assert(StartTag != null); return WithStartTag(StartTag.WithAttributes(newAttributes)); }
+        IXmlElementSyntax IXmlElementSyntax.WithAttributes(IEnumerable<XmlAttributeSyntax> newAttributes) => WithStartTag(StartTag.WithAttributes(new SyntaxList<XmlAttributeSyntax>(newAttributes)));
+        IXmlElementSyntax IXmlElementSyntax.WithAttributes(SyntaxList<XmlAttributeSyntax> newAttributes) => WithStartTag(StartTag.WithAttributes(newAttributes));
 
         #endregion
 

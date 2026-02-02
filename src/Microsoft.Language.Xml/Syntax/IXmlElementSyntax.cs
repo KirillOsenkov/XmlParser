@@ -9,7 +9,7 @@ namespace Microsoft.Language.Xml
         SyntaxList<SyntaxNode> Content { get; }
         IXmlElementSyntax? Parent { get; }
         IEnumerable<IXmlElementSyntax> Elements { get; }
-        IEnumerable<XmlAttributeSyntax>? Attributes { get; }
+        IEnumerable<XmlAttributeSyntax> Attributes { get; }
         SyntaxList<XmlAttributeSyntax> AttributesNode { get; }
         XmlAttributeSyntax? GetAttribute(string localName, string? prefix = null);
         string? GetAttributeValue(string localName, string? prefix = null);
