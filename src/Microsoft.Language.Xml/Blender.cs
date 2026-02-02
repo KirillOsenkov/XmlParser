@@ -45,14 +45,13 @@ namespace Microsoft.Language.Xml
                 var change = changes[i];
                 var node = root.FindNode(change.Span.Start, includeTrivia: false);
                 MarkNodeHierarchyDirty(allSpans, node, changes, i);
-                /* Check if the position maps to the start of a node with leading trivia
-                 * or if the change affected the tail end of the buffer. In both those
-                 * cases it's more likely that the node affected by the change is
-                 * actually the previous one. In that situation we also mark that chain
-                 * as well so that we don't end up with an incorrect parsing
+                /* Also mark the node at the position before the change as dirty.
+                 * When an insertion happens at a node boundary (e.g. appending to
+                 * an attribute name), FindNode returns the following node rather
+                 * than the one being edited. Marking the previous position ensures
+                 * the correct node is invalidated.
                  */
-                if ((change.Span.Start > 0 && node.HasLeadingTrivia && node.Start == change.Span.Start)
-                    || change.Span.Start >= root.FullWidth)
+                if (change.Span.Start > 0)
                 {
                     node = root.FindNode(change.Span.Start - 1, includeTrivia: false);
                     MarkNodeHierarchyDirty(allSpans, node, changes, i);
