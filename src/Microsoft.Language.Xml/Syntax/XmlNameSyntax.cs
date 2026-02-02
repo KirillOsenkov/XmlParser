@@ -83,9 +83,9 @@ namespace Microsoft.Language.Xml
         }
 
         public string LocalName => LocalNameNode.Text;
-        public string? Prefix => PrefixNode?.Name?.Text;
+        public string? Prefix => PrefixNode?.Name.Text;
 
-        public string FullName => (PrefixNode != null ? (PrefixNode.Name?.Text ?? string.Empty) + ":" : string.Empty) + LocalNameNode.Text;
+        public string FullName => (PrefixNode != null ? (PrefixNode.Name.Text ?? string.Empty) + ":" : string.Empty) + LocalNameNode.Text;
 
         public override string ToString()
         {

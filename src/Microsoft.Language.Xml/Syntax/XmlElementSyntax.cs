@@ -136,8 +136,8 @@ namespace Microsoft.Language.Xml
             }
         }
 
-        public XmlAttributeSyntax? GetAttribute(string localName, string? prefix = null) => StartTag?.AttributesNode.FirstOrDefault(
-            attr => string.Equals(attr.NameNode?.LocalName, localName, StringComparison.Ordinal) && string.Equals(attr.NameNode?.Prefix, prefix, StringComparison.Ordinal)
+        public XmlAttributeSyntax? GetAttribute(string localName, string? prefix = null) => StartTag.AttributesNode.FirstOrDefault(
+            attr => string.Equals(attr.NameNode.LocalName, localName, StringComparison.Ordinal) && string.Equals(attr.NameNode.Prefix, prefix, StringComparison.Ordinal)
         );
 
         public string? GetAttributeValue(string localName, string? prefix = null) => GetAttribute(localName, prefix)?.Value;
@@ -162,21 +162,21 @@ namespace Microsoft.Language.Xml
         {
             get
             {
-                if (StartTag?.AttributesNode == null)
+                if (StartTag.AttributesNode == null)
                 {
                     yield break;
                 }
 
-                var singleAttribute = StartTag?.AttributesNode.Node as XmlAttributeSyntax;
+                var singleAttribute = StartTag.AttributesNode.Node as XmlAttributeSyntax;
                 if (singleAttribute != null)
                 {
-                    yield return new KeyValuePair<string, string>(singleAttribute.Name ?? string.Empty, singleAttribute.Value ?? string.Empty);
+                    yield return new KeyValuePair<string, string>(singleAttribute.Name, singleAttribute.Value ?? string.Empty);
                     yield break;
                 }
 
-                foreach (var attribute in StartTag!.AttributesNode.OfType<XmlAttributeSyntax>())
+                foreach (var attribute in StartTag.AttributesNode.OfType<XmlAttributeSyntax>())
                 {
-                    yield return new KeyValuePair<string, string>(attribute.Name ?? string.Empty, attribute.Value ?? string.Empty);
+                    yield return new KeyValuePair<string, string>(attribute.Name, attribute.Value ?? string.Empty);
                 }
             }
         }
@@ -233,7 +233,6 @@ namespace Microsoft.Language.Xml
 
         public XmlElementSyntax AddStartTagAttributes(params XmlAttributeSyntax[] items)
         {
-            Debug.Assert(StartTag != null);
             return this.WithStartTag(this.StartTag.WithAttributes(this.StartTag.AttributesNode.AddRange(items)));
         }
 

@@ -1048,11 +1048,11 @@ namespace Microsoft.Language.Xml
                     var name = ((XmlNameSyntax)nameExpr);
                     if (name.PrefixNode != null)
                     {
-                        prefix = name.PrefixNode.Name?.Text ?? "";
+                        prefix = name.PrefixNode.Name.Text ?? "";
                         colon = ":";
                     }
 
-                    localName = name.LocalNameNode?.Text ?? "";
+                    localName = name.LocalNameNode.Text ?? "";
                 }
 
                 endElement = ReportSyntaxError(endElement, ERRID.ERR_MismatchedXmlEndTag, prefix, colon, localName);

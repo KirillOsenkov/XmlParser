@@ -29,7 +29,6 @@ namespace Microsoft.Language.Xml
         public static IXmlElementSyntax WithPrefixName(this IXmlElementSyntax element, string prefixName)
         {
             var existingName = element.NameNode;
-            Debug.Assert(existingName != null);
             var existingPrefix = existingName.PrefixNode;
             Debug.Assert(existingPrefix != null);
             var newName = SyntaxFactory.XmlNameToken(prefixName, null, null);
@@ -44,14 +43,12 @@ namespace Microsoft.Language.Xml
         public static XmlAttributeSyntax WithValue(this XmlAttributeSyntax attribute, string attributeValue)
         {
             var textTokens = SyntaxFactory.SingletonList(SyntaxFactory.XmlTextLiteralToken(attributeValue, null, null));
-            Debug.Assert(attribute.ValueNode != null);
             return attribute.WithValue(attribute.ValueNode.WithTextTokens(textTokens));
         }
 
         public static XmlAttributeSyntax WithPrefixName(this XmlAttributeSyntax attribute, string prefixName)
         {
             var existingName = attribute.NameNode;
-            Debug.Assert(existingName != null);
             var existingPrefix = existingName.PrefixNode;
             Debug.Assert(existingPrefix != null);
             var newName = SyntaxFactory.XmlNameToken(prefixName, null, null);
@@ -62,7 +59,6 @@ namespace Microsoft.Language.Xml
         public static XmlAttributeSyntax WithLocalName(this XmlAttributeSyntax attribute, string localName)
         {
             var existingName = attribute.NameNode;
-            Debug.Assert(existingName != null);
             var existingLocalName = existingName.LocalNameNode;
             var newName = SyntaxFactory.XmlNameToken(localName, null, null);
 
