@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Resources;
 
-
 namespace Microsoft.Language.Xml
 {
     /// <summary>

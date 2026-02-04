@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 
-
 namespace Microsoft.Language.Xml.InternalSyntax
 {
     internal class SyntaxRewriter : SyntaxVisitor

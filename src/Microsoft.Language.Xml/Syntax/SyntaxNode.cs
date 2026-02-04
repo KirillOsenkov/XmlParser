@@ -6,7 +6,6 @@ using System.Globalization;
 using System.IO;
 using System.Threading;
 
-
 namespace Microsoft.Language.Xml
 {
     using System.Diagnostics.CodeAnalysis;

@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 
-
 namespace Microsoft.Language.Xml
 {
     /// <summary>
