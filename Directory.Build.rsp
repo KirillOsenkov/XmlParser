@@ -1,1 +1,1 @@
-/r /m /bl
+/r /m /bl /verbosity:minimal /clp:Summary;ForceNoAlign
