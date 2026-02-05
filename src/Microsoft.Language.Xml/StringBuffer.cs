@@ -1,3 +1,5 @@
+using System;
+
 namespace Microsoft.Language.Xml
 {
     /// <summary>
@@ -33,6 +35,11 @@ namespace Microsoft.Language.Xml
         public override void CopyTo(int sourceIndex, char[] destination, int destinationIndex, int count)
         {
             text.CopyTo(sourceIndex, destination, destinationIndex, count);
+        }
+
+        public override ReadOnlySpan<char> GetSpan(int start, int length)
+        {
+            return text.AsSpan(start, length);
         }
     }
 }

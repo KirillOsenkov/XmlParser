@@ -12,7 +12,7 @@ namespace Microsoft.Language.Xml
             SyntaxNode[] nodesToRemove = nodes.ToArray();
             if (nodesToRemove.Length == 0)
                 return root;
-            var remover = new SyntaxRemover(nodes.ToArray(), options);
+            var remover = new SyntaxRemover(nodesToRemove, options);
             var result = remover.Visit(root);
             var residualTrivia = remover.ResidualTrivia;
             if (residualTrivia.Count > 0)
